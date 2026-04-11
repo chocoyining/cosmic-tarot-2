@@ -135,6 +135,18 @@ const CARD_BACK = "";
 const BGM_URL  = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775831307/Silver_Leaf_Drift_jrf2xh.mp3";
 const FLIP_URL = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775905865/freesound_community-flipcard-91468_oiatib.mp3";
 
+// Colour palette for the breathing card — from the provided swatch image
+const PALETTE = [
+  ["#655D8A", "#9B8FBF"],  // deep purple → mid purple
+  ["#9B8FBF", "#C8BDEA"],  // mid purple → lavender
+  ["#7897AB", "#5A7A8E"],  // steel blue → slate
+  ["#2E5A6B", "#1A3D50"],  // deep teal → midnight teal
+  ["#D885A3", "#C87090"],  // blush pink → rose
+  ["#B85A78", "#7B2040"],  // rose → deep burgundy
+  ["#FDCEB9", "#F0A07A"],  // peach → soft coral
+  ["#E8845A", "#C85A3A"],  // coral → deep terracotta
+];
+
 // How many fan cards to show (more = denser fan)
 const FAN_COUNT = 21;
 
@@ -234,8 +246,16 @@ export default function App() {
   const [saving, setSaving]                 = useState(false);
   const [intentionMsg, setIntentionMsg]     = useState(0);
   const [hoveredFan, setHoveredFan]         = useState(null);
+  const [slotIndex, setSlotIndex]           = useState(0);
+  const [slotPicked, setSlotPicked]         = useState([]);
+  const [slotCurrent, setSlotCurrent]       = useState(0);
+  const [topColorIdx, setTopColorIdx]       = useState(0);  // index of front layer
+  const [backColorIdx, setBackColorIdx]     = useState(1);  // index of back layer
+  const [topOpacity, setTopOpacity]         = useState(1);  // front layer fading out
   const bgmAudio  = useRef(null);
   const captureRef = useRef(null);
+  const slotTimer  = useRef(null);
+  const colorTimer = useRef(null);
 
   useEffect(() => {
     const onResize = () => setWinW(window.innerWidth);
@@ -293,10 +313,58 @@ export default function App() {
     setIntentionMsg(0);
   }
 
+  function startColorCycle() {
+    if (colorTimer.current) clearInterval(colorTimer.current);
+    let opacity = 1;
+    let front = 0;
+    let back = 1;
+    setTopColorIdx(front);
+    setBackColorIdx(back);
+    setTopOpacity(1);
+
+    // Fade out front layer over 0.5s (step every 50ms)
+    const FADE_DURATION = 500;
+    const HOLD_DURATION = 100;
+    const STEP = 50;
+    const fadeStep = STEP / FADE_DURATION;
+    let holding = false;
+    let holdCount = 0;
+    const holdSteps = HOLD_DURATION / STEP;
+
+    colorTimer.current = setInterval(() => {
+      if (holding) {
+        holdCount++;
+        if (holdCount >= holdSteps) {
+          holding = false;
+          holdCount = 0;
+        }
+        return;
+      }
+      opacity -= fadeStep;
+      if (opacity <= 0) {
+        opacity = 1;
+        front = back;
+        back = (back + 1) % PALETTE.length;
+        setTopColorIdx(front);
+        setBackColorIdx(back);
+        setTopOpacity(1);
+        holding = true;
+      } else {
+        setTopOpacity(opacity);
+      }
+    }, STEP);
+  }
+
   function handleIntentionReady() {
     const deck = shuffle(CARD_IMAGES);
     setShuffledDeck(deck);
-    setPickedIndices([]);
+    setSlotPicked([]);
+    setSlotIndex(0);
+    setSlotCurrent(0);
+    setTopColorIdx(0);
+    setBackColorIdx(1);
+    setTopOpacity(1);
+    startColorCycle();
     setScreen("fan");
   }
 
@@ -343,22 +411,26 @@ export default function App() {
     setSaving(false);
   }
 
-  function getCardSize(cols) {
+  function getCardSize(cols, captureMode = false) {
+    if (captureMode) {
+      // Always fit within 480px for saved image
+      return clamp(50, Math.floor((480 - 48) / cols) - 12, 120);
+    }
     const maxW = Math.min(winW - 48, 1000);
     return clamp(70, Math.floor(maxW / cols) - 16, 180);
   }
 
-  function renderGrid() {
+  function renderGrid(captureMode = false) {
     const { cards, cols, rows } = spread;
-    const size = getCardSize(cols);
-    const gap = 14;
+    const size = getCardSize(cols, captureMode);
+    const gap = captureMode ? 10 : 14;
     const cellW = size + gap;
     const cellH = Math.round(size * 1.6) + gap + 28;
     return (
       <div style={{ position: "relative", width: cols * cellW, height: rows * cellH, margin: "0 auto" }}>
         {cards.map((c, i) => (
           <div key={i} style={{ position: "absolute", left: c.x * cellW, top: c.y * cellH }}>
-            <CardSlot label={c.label} img={drawnCards[i]} flipped={flipped[i]} onClick={() => flipCard(i)} cardBack={CARD_BACK} size={size} />
+            <CardSlot label={c.label} img={drawnCards[i]} flipped={flipped[i]} onClick={() => !captureMode && flipCard(i)} cardBack={CARD_BACK} size={size} />
           </div>
         ))}
       </div>
@@ -375,7 +447,12 @@ export default function App() {
   };
 
   const maxW = desktop ? 600 : "100%";
-  const resetHome = () => { setScreen("home"); setClientName(""); setClientDob(""); setClientQuestion(""); setPickedIndices([]); };
+  const resetHome = () => {
+    if (slotTimer.current) { clearInterval(slotTimer.current); slotTimer.current = null; }
+    if (colorTimer.current) { clearInterval(colorTimer.current); colorTimer.current = null; }
+    setScreen("home"); setClientName(""); setClientDob(""); setClientQuestion("");
+    setSlotPicked([]); setSlotCurrent(0); setPickedIndices([]);
+  };
 
   const BgmBtn = () => BGM_URL ? (
     <button onClick={toggleBgm} style={{ ...btn(bgmOn ? "#1f3a1f" : "#2a1a40"), fontSize: 12 }}>
@@ -542,81 +619,142 @@ export default function App() {
     </div>
   );
 
-  // ── SHUFFLE ANIMATION (Option B) ──
+  // ── SLOT MACHINE DRAW ──
   if (screen === "fan") {
-    const cardW = desktop ? 100 : 75;
+    const needed = spread.cards.length;
+    const picked = slotPicked.length;
+    const isComplete = picked >= needed;
+    const cardW = desktop ? 160 : 120;
     const cardH = Math.round(cardW * 1.6);
-    const DECK_CARDS = 7;
 
-    function drawNow() {
-      const deck = shuffle(CARD_IMAGES);
-      setDrawnCards(deck.slice(0, spread.cards.length));
-      setFlipped(new Array(spread.cards.length).fill(false));
-      setScreen("draw");
+    function stopCard() {
+      if (isComplete) return;
+      playCardFlip();
+      if (slotTimer.current) { clearInterval(slotTimer.current); slotTimer.current = null; }
+      const chosenImg = shuffledDeck[slotCurrent % shuffledDeck.length];
+      const newPicked = [...slotPicked, chosenImg];
+      setSlotPicked(newPicked);
+      if (newPicked.length >= needed) {
+        setTimeout(() => {
+          setDrawnCards(newPicked);
+          setFlipped(new Array(needed).fill(false));
+          setScreen("draw");
+        }, 800);
+      } else {
+        setTimeout(() => {
+          setSlotIndex(newPicked.length);
+          if (slotTimer.current) clearInterval(slotTimer.current);
+          slotTimer.current = setInterval(() => setSlotCurrent(c => c + 1), 80);
+        }, 500);
+      }
+    }
+
+    if (!slotTimer.current && !isComplete) {
+      slotTimer.current = setInterval(() => setSlotCurrent(c => c + 1), 80);
     }
 
     return (
       <div style={{ ...bgStyle, justifyContent: "center" }}>
         <Stars />
         <style>{`
-          @keyframes shuffle-0 { 0%{transform:rotate(-15deg) translate(-60px,10px)} 25%{transform:rotate(5deg) translate(30px,-20px)} 50%{transform:rotate(-8deg) translate(-20px,15px)} 75%{transform:rotate(12deg) translate(50px,-10px)} 100%{transform:rotate(-15deg) translate(-60px,10px)} }
-          @keyframes shuffle-1 { 0%{transform:rotate(10deg) translate(50px,-15px)} 25%{transform:rotate(-12deg) translate(-40px,20px)} 50%{transform:rotate(18deg) translate(60px,-5px)} 75%{transform:rotate(-6deg) translate(-10px,25px)} 100%{transform:rotate(10deg) translate(50px,-15px)} }
-          @keyframes shuffle-2 { 0%{transform:rotate(-5deg) translate(20px,20px)} 25%{transform:rotate(15deg) translate(-50px,-10px)} 50%{transform:rotate(-20deg) translate(40px,15px)} 75%{transform:rotate(8deg) translate(-30px,-20px)} 100%{transform:rotate(-5deg) translate(20px,20px)} }
-          @keyframes shuffle-3 { 0%{transform:rotate(20deg) translate(-30px,-20px)} 25%{transform:rotate(-10deg) translate(60px,10px)} 50%{transform:rotate(5deg) translate(-15px,-25px)} 75%{transform:rotate(-18deg) translate(40px,20px)} 100%{transform:rotate(20deg) translate(-30px,-20px)} }
-          @keyframes shuffle-4 { 0%{transform:rotate(-12deg) translate(40px,5px)} 25%{transform:rotate(20deg) translate(-20px,-25px)} 50%{transform:rotate(-3deg) translate(55px,20px)} 75%{transform:rotate(14deg) translate(-45px,-5px)} 100%{transform:rotate(-12deg) translate(40px,5px)} }
-          @keyframes shuffle-5 { 0%{transform:rotate(8deg) translate(-50px,-10px)} 25%{transform:rotate(-18deg) translate(35px,20px)} 50%{transform:rotate(12deg) translate(-25px,-20px)} 75%{transform:rotate(-4deg) translate(55px,5px)} 100%{transform:rotate(8deg) translate(-50px,-10px)} }
-          @keyframes shuffle-6 { 0%{transform:rotate(-18deg) translate(25px,15px)} 25%{transform:rotate(8deg) translate(-55px,-15px)} 50%{transform:rotate(22deg) translate(30px,10px)} 75%{transform:rotate(-10deg) translate(-20px,-25px)} 100%{transform:rotate(-18deg) translate(25px,15px)} }
+          @keyframes card-lock { 0%{transform:scale(1.15);} 100%{transform:scale(1);} }
         `}</style>
 
-        <div style={{ textAlign: "center", position: "relative", zIndex: 1, marginBottom: 32 }}>
+        {/* Header */}
+        <div style={{ textAlign: "center", position: "relative", zIndex: 1, marginBottom: 24 }}>
           <div style={{ fontSize: desktop ? 14 : 12, color: "#a07840", letterSpacing: 2, marginBottom: 6 }}>
             {spread.name.toUpperCase()}
           </div>
-          <div style={{ fontSize: desktop ? 26 : 20, color: "#c9a84c", letterSpacing: 2 }}>
-            The cards are shuffling...
+          <div style={{ fontSize: desktop ? 22 : 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 4 }}>
+            {isComplete ? "Your cards are ready..." : `Card ${picked + 1} of ${needed}`}
           </div>
-          {clientQuestion && (
-            <div style={{ fontSize: 12, color: "#c9a84c88", fontStyle: "italic", marginTop: 8, maxWidth: 320, margin: "8px auto 0" }}>
-              "{clientQuestion}"
-            </div>
-          )}
+          <div style={{ display: "flex", justifyContent: "center", gap: 10, marginTop: 8 }}>
+            {Array.from({ length: needed }).map((_, i) => (
+              <div key={i} style={{
+                width: 10, height: 10, borderRadius: "50%",
+                background: i < picked ? "#c9a84c" : i === picked ? "#c9a84c66" : "#ffffff22",
+                border: `1px solid ${i <= picked ? "#c9a84c" : "#c9a84c33"}`,
+                transition: "all 0.3s",
+              }} />
+            ))}
+          </div>
         </div>
 
-        {/* Shuffling cards */}
-        <div style={{ position: "relative", width: cardW, height: cardH, margin: "0 auto 48px", zIndex: 1 }}>
-          {Array.from({ length: DECK_CARDS }).map((_, i) => (
-            <div key={i} style={{
-              position: "absolute", top: 0, left: 0,
-              width: cardW, height: cardH,
-              borderRadius: 10, overflow: "hidden",
-              border: "2px solid #7c5c2e",
-              boxShadow: "0 8px 24px #0008",
-              background: "#1a0545",
-              animation: `shuffle-${i} ${2.2 + i * 0.15}s ease-in-out infinite`,
-              animationDelay: `${i * 0.12}s`,
-            }}>
-              {CARD_BACK
-                ? <img src={CARD_BACK} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="card" />
-                : <div style={{
-                  width: "100%", height: "100%",
-                  background: "linear-gradient(135deg,#0d0221,#2d0b6b,#0d0221)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 32, color: "#c9a84c55",
-                }}>✦</div>
-              }
-            </div>
-          ))}
+        {/* Flashing card */}
+        <div style={{ position: "relative", zIndex: 1, marginBottom: 32 }}>
+          <div
+            onClick={!isComplete ? stopCard : undefined}
+            style={{
+              width: cardW, height: cardH, borderRadius: 12, overflow: "hidden",
+              border: `2px solid ${isComplete ? "#c9a84c" : "#7c5c2e"}`,
+              boxShadow: isComplete ? "0 0 24px #c9a84c88" : "0 8px 32px #0009",
+              animation: isComplete ? "card-lock 0.4s ease-out" : "none",
+              cursor: isComplete ? "default" : "pointer",
+            }}
+          >
+            {CARD_BACK
+              ? <img src={CARD_BACK} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="card" />
+              : <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                  {/* Back layer — always opacity 1, next colour ready */}
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    background: `linear-gradient(135deg, ${PALETTE[backColorIdx][0]}, ${PALETTE[backColorIdx][1]})`,
+                  }} />
+                  {/* Front layer — fades out slowly */}
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    background: `linear-gradient(135deg, ${PALETTE[topColorIdx][0]}, ${PALETTE[topColorIdx][1]})`,
+                    opacity: topOpacity,
+                  }} />
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 56, color: "#ffffff22", zIndex: 10,
+                  }}>✦</div>
+                </div>
+            }
+          </div>
         </div>
 
+        {/* Locked cards row */}
+        {picked > 0 && (
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center", marginBottom: 24, zIndex: 1, position: "relative" }}>
+            {slotPicked.map((img, i) => (
+              <div key={i} style={{
+                width: desktop ? 60 : 46, height: Math.round((desktop ? 60 : 46) * 1.6),
+                borderRadius: 6, overflow: "hidden",
+                border: "2px solid #c9a84c",
+                boxShadow: "0 0 10px #c9a84c44",
+              }}>
+                {img
+                  ? <img src={img} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt={`card ${i + 1}`} />
+                  : <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg,#1a0545,#2d0b6b)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: "#c9a84c" }}>✦</div>
+                }
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Stop button */}
         <div style={{ textAlign: "center", position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-          <div style={{ fontSize: 12, color: "#7a5a3a", marginBottom: 4 }}>
-            When you feel ready, draw your cards
-          </div>
-          <button onClick={drawNow}
-            style={{ ...btn("#3b1f6e"), fontSize: desktop ? 17 : 15, padding: desktop ? "14px 48px" : "12px 32px", letterSpacing: 2 }}>
-            ✦ Draw My Cards
-          </button>
-          <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12, marginTop: 4 }}>⌂ Home</button>
+          {!isComplete && (
+            <>
+              <div style={{ fontSize: 12, color: "#7a5a3a", marginBottom: 4 }}>
+                Focus on your question · tap when you feel it
+              </div>
+              <button onClick={stopCard} style={{
+                ...btn("#7c1f1f"),
+                fontSize: desktop ? 20 : 17,
+                padding: desktop ? "16px 60px" : "14px 44px",
+                letterSpacing: 3,
+                border: "2px solid #c94c4c",
+                animation: "slot-flash 1.2s ease-in-out infinite",
+              }}>
+                ✦ Select
+              </button>
+            </>
+          )}
+          <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12, marginTop: 8 }}>⌂ Home</button>
         </div>
       </div>
     );
@@ -626,9 +764,39 @@ export default function App() {
   return (
     <div style={bgStyle}>
       <Stars />
+
+      {/* Hidden capture div — always 480px wide for consistent saved image */}
       <div ref={captureRef} style={{
+        position: "fixed", left: -9999, top: 0,
         background: "linear-gradient(160deg,#0d0221 0%,#1a0545 40%,#2d0b6b 70%,#0d0221 100%)",
-        padding: "24px 24px 28px", width: "100%", maxWidth: desktop ? 800 : 480,
+        padding: "24px 16px 28px", width: 480,
+        display: "flex", flexDirection: "column", alignItems: "center",
+      }}>
+        <div style={{ fontSize: 13, color: "#c9a84c", letterSpacing: 3, marginBottom: 10 }}>✦ Coco's Cosmic Tarot ✦</div>
+        <div style={{ textAlign: "center", marginBottom: 12 }}>
+          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginBottom: 2 }}>READING FOR</div>
+          <div style={{ fontSize: 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 2 }}>{clientName}</div>
+          {clientDob && (
+            <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 1, marginBottom: 4 }}>
+              {new Date(clientDob + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+            </div>
+          )}
+          {clientQuestion && (
+            <div style={{ fontSize: 12, color: "#c9a84c99", fontStyle: "italic", maxWidth: 440, margin: "4px auto 8px", lineHeight: 1.6 }}>
+              "{clientQuestion}"
+            </div>
+          )}
+          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginTop: 4, marginBottom: 2 }}>{spread.desc.toUpperCase()}</div>
+          <div style={{ fontSize: 15, color: "#c9a84c", letterSpacing: 2 }}>{spread.name}</div>
+        </div>
+        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+          {renderGrid(true)}
+        </div>
+      </div>
+
+      {/* Visible display area */}
+      <div style={{
+        width: "100%", maxWidth: desktop ? 900 : "100%",
         display: "flex", flexDirection: "column", alignItems: "center",
         position: "relative", zIndex: 1,
       }}>
@@ -650,7 +818,7 @@ export default function App() {
           <div style={{ fontSize: desktop ? 20 : 15, color: "#c9a84c", letterSpacing: 2 }}>{spread.name}</div>
         </div>
         <div style={{ overflowX: "auto", width: "100%", display: "flex", justifyContent: "center" }}>
-          {renderGrid()}
+          {renderGrid(false)}
         </div>
       </div>
 

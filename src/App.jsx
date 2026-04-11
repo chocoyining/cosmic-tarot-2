@@ -135,6 +135,9 @@ const CARD_BACK = "";
 const BGM_URL  = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775831307/Silver_Leaf_Drift_jrf2xh.mp3";
 const FLIP_URL = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775905865/freesound_community-flipcard-91468_oiatib.mp3";
 
+// How many fan cards to show (more = denser fan)
+const FAN_COUNT = 21;
+
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -206,6 +209,15 @@ const inputStyle = {
 
 const clamp = (min, val, max) => Math.max(min, Math.min(max, val));
 
+// ── Intention screen messages ──
+const INTENTION_MESSAGES = [
+  "Close your eyes for a moment...",
+  "Take a deep breath...",
+  "Hold your question in your heart...",
+  "The cards are listening...",
+  "Trust your intuition...",
+];
+
 export default function App() {
   const [screen, setScreen]                 = useState("home");
   const [clientName, setClientName]         = useState("");
@@ -213,12 +225,16 @@ export default function App() {
   const [clientQuestion, setClientQuestion] = useState("");
   const [nameError, setNameError]           = useState(false);
   const [spread, setSpread]                 = useState(null);
+  const [shuffledDeck, setShuffledDeck]     = useState([]);
+  const [pickedIndices, setPickedIndices]   = useState([]);
   const [drawnCards, setDrawnCards]         = useState([]);
   const [flipped, setFlipped]               = useState([]);
   const [bgmOn, setBgmOn]                   = useState(false);
   const [winW, setWinW]                     = useState(window.innerWidth);
   const [saving, setSaving]                 = useState(false);
-  const bgmAudio = useRef(null);
+  const [intentionMsg, setIntentionMsg]     = useState(0);
+  const [hoveredFan, setHoveredFan]         = useState(null);
+  const bgmAudio  = useRef(null);
   const captureRef = useRef(null);
 
   useEffect(() => {
@@ -227,14 +243,20 @@ export default function App() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  // Cycle intention messages
+  useEffect(() => {
+    if (screen !== "intention") return;
+    const id = setInterval(() => setIntentionMsg(m => (m + 1) % INTENTION_MESSAGES.length), 2000);
+    return () => clearInterval(id);
+  }, [screen]);
+
   const desktop = winW > 600;
 
   function startBgm() {
     if (!BGM_URL || bgmOn) return;
     if (!bgmAudio.current) {
       const audio = new Audio(BGM_URL);
-      audio.loop = true;
-      audio.volume = 0.5;
+      audio.loop = true; audio.volume = 0.5;
       bgmAudio.current = audio;
     }
     bgmAudio.current.play().then(() => setBgmOn(true)).catch(() => {});
@@ -244,16 +266,11 @@ export default function App() {
     if (!BGM_URL) return;
     if (!bgmAudio.current) {
       const audio = new Audio(BGM_URL);
-      audio.loop = true;
-      audio.volume = 0.5;
+      audio.loop = true; audio.volume = 0.5;
       bgmAudio.current = audio;
     }
-    if (bgmOn) {
-      bgmAudio.current.pause();
-      setBgmOn(false);
-    } else {
-      bgmAudio.current.play().then(() => setBgmOn(true)).catch(() => {});
-    }
+    if (bgmOn) { bgmAudio.current.pause(); setBgmOn(false); }
+    else { bgmAudio.current.play().then(() => setBgmOn(true)).catch(() => {}); }
   }
 
   function playCardFlip() {
@@ -264,27 +281,43 @@ export default function App() {
 
   function handleInfoSubmit() {
     if (!clientName.trim()) { setNameError(true); return; }
-    setNameError(false);
-    startBgm();
-    setScreen("spreads");
+    setNameError(false); startBgm(); setScreen("spreads");
   }
 
   function selectSpread(sp) {
-    setSpread(sp);
-    setClientQuestion("");
-    setScreen("question");
+    setSpread(sp); setClientQuestion(""); setScreen("question");
   }
 
   function handleQuestionSubmit() {
-    const shuffled = shuffle(CARD_IMAGES);
-    setDrawnCards(shuffled.slice(0, spread.cards.length));
-    setFlipped(new Array(spread.cards.length).fill(false));
-    setScreen("draw");
+    setScreen("intention");
+    setIntentionMsg(0);
+  }
+
+  function handleIntentionReady() {
+    const deck = shuffle(CARD_IMAGES);
+    setShuffledDeck(deck);
+    setPickedIndices([]);
+    setScreen("fan");
+  }
+
+  function pickFanCard(idx) {
+    if (pickedIndices.includes(idx)) return;
+    if (pickedIndices.length >= spread.cards.length) return;
+    playCardFlip();
+    const newPicked = [...pickedIndices, idx];
+    setPickedIndices(newPicked);
+    if (newPicked.length === spread.cards.length) {
+      setTimeout(() => {
+        setDrawnCards(newPicked.map(i => shuffledDeck[i]));
+        setFlipped(new Array(spread.cards.length).fill(false));
+        setScreen("draw");
+      }, 600);
+    }
   }
 
   function flipCard(i) {
     playCardFlip();
-    setFlipped((prev) => { const n = [...prev]; n[i] = true; return n; });
+    setFlipped(prev => { const n = [...prev]; n[i] = true; return n; });
   }
 
   function flipAll() {
@@ -292,23 +325,13 @@ export default function App() {
     setFlipped(new Array(spread.cards.length).fill(true));
   }
 
-  function getCardSize(cols) {
-    const maxW = Math.min(winW - 48, 1000);
-    const perCell = Math.floor(maxW / cols);
-    return clamp(70, perCell - 16, 180);
-  }
-
   async function saveSpread() {
     if (!captureRef.current || saving) return;
     setSaving(true);
     try {
       const canvas = await window.html2canvas(captureRef.current, {
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: "#0d0221",
-        scale: 2,
-        width: 480,
-        windowWidth: 480,
+        useCORS: true, allowTaint: true,
+        backgroundColor: "#0d0221", scale: 2, width: 480, windowWidth: 480,
       });
       const link = document.createElement("a");
       link.download = `${clientName.replace(/\s+/g, "_")}_tarot_reading.png`;
@@ -318,6 +341,11 @@ export default function App() {
       alert("Could not save image. Please take a screenshot instead.");
     }
     setSaving(false);
+  }
+
+  function getCardSize(cols) {
+    const maxW = Math.min(winW - 48, 1000);
+    return clamp(70, Math.floor(maxW / cols) - 16, 180);
   }
 
   function renderGrid() {
@@ -347,6 +375,7 @@ export default function App() {
   };
 
   const maxW = desktop ? 600 : "100%";
+  const resetHome = () => { setScreen("home"); setClientName(""); setClientDob(""); setClientQuestion(""); setPickedIndices([]); };
 
   const BgmBtn = () => BGM_URL ? (
     <button onClick={toggleBgm} style={{ ...btn(bgmOn ? "#1f3a1f" : "#2a1a40"), fontSize: 12 }}>
@@ -376,7 +405,7 @@ export default function App() {
       <div style={{ width: "100%", maxWidth: maxW, position: "relative", zIndex: 1, marginTop: desktop ? 60 : 40 }}>
         <div style={{ textAlign: "center", marginBottom: 36 }}>
           <div style={{ fontSize: desktop ? 28 : 20, color: "#c9a84c", letterSpacing: 2, marginBottom: 8 }}>✦ Your Reading ✦</div>
-          <div style={{ fontSize: desktop ? 13 : 12, color: "#a07840", letterSpacing: 2 }}>TELL US A LITTLE ABOUT YOURSELF</div>
+          <div style={{ fontSize: 12, color: "#a07840", letterSpacing: 2 }}>TELL US A LITTLE ABOUT YOURSELF</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div>
@@ -395,7 +424,7 @@ export default function App() {
             Choose My Spread →
           </button>
           <div style={{ textAlign: "center" }}><BgmBtn /></div>
-          <button onClick={() => { setScreen("home"); setClientName(""); setClientDob(""); setClientQuestion(""); }} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
+          <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
         </div>
       </div>
     </div>
@@ -426,7 +455,7 @@ export default function App() {
           </button>
         ))}
         <button onClick={() => setScreen("info")} style={{ ...btn("#2a1a1a"), fontSize: 12, marginTop: 4 }}>← Back</button>
-        <button onClick={() => { setScreen("home"); setClientName(""); setClientDob(""); setClientQuestion(""); }} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
+        <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
       </div>
     </div>
   );
@@ -453,32 +482,157 @@ export default function App() {
           </div>
           <button onClick={handleQuestionSubmit}
             style={{ ...btn("#3b1f6e"), fontSize: desktop ? 16 : 14, padding: "13px 0", width: "100%", letterSpacing: 2 }}>
-            Reveal My Cards →
+            Continue →
           </button>
           <button onClick={() => setScreen("spreads")} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>← Back</button>
-          <button onClick={() => { setScreen("home"); setClientName(""); setClientDob(""); setClientQuestion(""); }} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
+          <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
         </div>
       </div>
     </div>
   );
 
+  // ── INTENTION (Option D) ──
+  if (screen === "intention") return (
+    <div style={{ ...bgStyle, justifyContent: "center" }}>
+      <Stars />
+      <style>{`
+        @keyframes pulse-glow {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.12); }
+        }
+        @keyframes fade-msg {
+          0% { opacity: 0; transform: translateY(8px); }
+          20%, 80% { opacity: 1; transform: translateY(0); }
+          100% { opacity: 0; transform: translateY(-8px); }
+        }
+      `}</style>
+      <div style={{ textAlign: "center", position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 32 }}>
+        {/* Glowing orb */}
+        <div style={{
+          width: desktop ? 160 : 120, height: desktop ? 160 : 120,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, #c9a84c55 0%, #7c2d9e44 50%, transparent 70%)",
+          border: "1px solid #c9a84c44",
+          animation: "pulse-glow 3s ease-in-out infinite",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: desktop ? 52 : 40, color: "#c9a84c",
+        }}>✦</div>
+
+        {/* Cycling message */}
+        <div key={intentionMsg} style={{
+          fontSize: desktop ? 20 : 16, color: "#e8d5b7", letterSpacing: 2,
+          fontStyle: "italic", animation: "fade-msg 2s ease-in-out",
+          minHeight: 32,
+        }}>
+          {INTENTION_MESSAGES[intentionMsg]}
+        </div>
+
+        {clientQuestion && (
+          <div style={{ fontSize: desktop ? 14 : 12, color: "#c9a84c88", fontStyle: "italic", maxWidth: 360, lineHeight: 1.7 }}>
+            "{clientQuestion}"
+          </div>
+        )}
+
+        <button onClick={handleIntentionReady}
+          style={{ ...btn("#3b1f6e"), fontSize: desktop ? 16 : 14, padding: desktop ? "14px 48px" : "12px 32px", letterSpacing: 2, marginTop: 8 }}>
+          I'm Ready · Draw My Cards
+        </button>
+        <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
+      </div>
+    </div>
+  );
+
+  // ── SHUFFLE ANIMATION (Option B) ──
+  if (screen === "fan") {
+    const cardW = desktop ? 100 : 75;
+    const cardH = Math.round(cardW * 1.6);
+    const DECK_CARDS = 7;
+
+    function drawNow() {
+      const deck = shuffle(CARD_IMAGES);
+      setDrawnCards(deck.slice(0, spread.cards.length));
+      setFlipped(new Array(spread.cards.length).fill(false));
+      setScreen("draw");
+    }
+
+    return (
+      <div style={{ ...bgStyle, justifyContent: "center" }}>
+        <Stars />
+        <style>{`
+          @keyframes shuffle-0 { 0%{transform:rotate(-15deg) translate(-60px,10px)} 25%{transform:rotate(5deg) translate(30px,-20px)} 50%{transform:rotate(-8deg) translate(-20px,15px)} 75%{transform:rotate(12deg) translate(50px,-10px)} 100%{transform:rotate(-15deg) translate(-60px,10px)} }
+          @keyframes shuffle-1 { 0%{transform:rotate(10deg) translate(50px,-15px)} 25%{transform:rotate(-12deg) translate(-40px,20px)} 50%{transform:rotate(18deg) translate(60px,-5px)} 75%{transform:rotate(-6deg) translate(-10px,25px)} 100%{transform:rotate(10deg) translate(50px,-15px)} }
+          @keyframes shuffle-2 { 0%{transform:rotate(-5deg) translate(20px,20px)} 25%{transform:rotate(15deg) translate(-50px,-10px)} 50%{transform:rotate(-20deg) translate(40px,15px)} 75%{transform:rotate(8deg) translate(-30px,-20px)} 100%{transform:rotate(-5deg) translate(20px,20px)} }
+          @keyframes shuffle-3 { 0%{transform:rotate(20deg) translate(-30px,-20px)} 25%{transform:rotate(-10deg) translate(60px,10px)} 50%{transform:rotate(5deg) translate(-15px,-25px)} 75%{transform:rotate(-18deg) translate(40px,20px)} 100%{transform:rotate(20deg) translate(-30px,-20px)} }
+          @keyframes shuffle-4 { 0%{transform:rotate(-12deg) translate(40px,5px)} 25%{transform:rotate(20deg) translate(-20px,-25px)} 50%{transform:rotate(-3deg) translate(55px,20px)} 75%{transform:rotate(14deg) translate(-45px,-5px)} 100%{transform:rotate(-12deg) translate(40px,5px)} }
+          @keyframes shuffle-5 { 0%{transform:rotate(8deg) translate(-50px,-10px)} 25%{transform:rotate(-18deg) translate(35px,20px)} 50%{transform:rotate(12deg) translate(-25px,-20px)} 75%{transform:rotate(-4deg) translate(55px,5px)} 100%{transform:rotate(8deg) translate(-50px,-10px)} }
+          @keyframes shuffle-6 { 0%{transform:rotate(-18deg) translate(25px,15px)} 25%{transform:rotate(8deg) translate(-55px,-15px)} 50%{transform:rotate(22deg) translate(30px,10px)} 75%{transform:rotate(-10deg) translate(-20px,-25px)} 100%{transform:rotate(-18deg) translate(25px,15px)} }
+        `}</style>
+
+        <div style={{ textAlign: "center", position: "relative", zIndex: 1, marginBottom: 32 }}>
+          <div style={{ fontSize: desktop ? 14 : 12, color: "#a07840", letterSpacing: 2, marginBottom: 6 }}>
+            {spread.name.toUpperCase()}
+          </div>
+          <div style={{ fontSize: desktop ? 26 : 20, color: "#c9a84c", letterSpacing: 2 }}>
+            The cards are shuffling...
+          </div>
+          {clientQuestion && (
+            <div style={{ fontSize: 12, color: "#c9a84c88", fontStyle: "italic", marginTop: 8, maxWidth: 320, margin: "8px auto 0" }}>
+              "{clientQuestion}"
+            </div>
+          )}
+        </div>
+
+        {/* Shuffling cards */}
+        <div style={{ position: "relative", width: cardW, height: cardH, margin: "0 auto 48px", zIndex: 1 }}>
+          {Array.from({ length: DECK_CARDS }).map((_, i) => (
+            <div key={i} style={{
+              position: "absolute", top: 0, left: 0,
+              width: cardW, height: cardH,
+              borderRadius: 10, overflow: "hidden",
+              border: "2px solid #7c5c2e",
+              boxShadow: "0 8px 24px #0008",
+              background: "#1a0545",
+              animation: `shuffle-${i} ${2.2 + i * 0.15}s ease-in-out infinite`,
+              animationDelay: `${i * 0.12}s`,
+            }}>
+              {CARD_BACK
+                ? <img src={CARD_BACK} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="card" />
+                : <div style={{
+                  width: "100%", height: "100%",
+                  background: "linear-gradient(135deg,#0d0221,#2d0b6b,#0d0221)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 32, color: "#c9a84c55",
+                }}>✦</div>
+              }
+            </div>
+          ))}
+        </div>
+
+        <div style={{ textAlign: "center", position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+          <div style={{ fontSize: 12, color: "#7a5a3a", marginBottom: 4 }}>
+            When you feel ready, draw your cards
+          </div>
+          <button onClick={drawNow}
+            style={{ ...btn("#3b1f6e"), fontSize: desktop ? 17 : 15, padding: desktop ? "14px 48px" : "12px 32px", letterSpacing: 2 }}>
+            ✦ Draw My Cards
+          </button>
+          <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12, marginTop: 4 }}>⌂ Home</button>
+        </div>
+      </div>
+    );
+  }
+
   // ── DRAW ──
   return (
     <div style={bgStyle}>
       <Stars />
-
-      {/* Captured area for saving */}
       <div ref={captureRef} style={{
         background: "linear-gradient(160deg,#0d0221 0%,#1a0545 40%,#2d0b6b 70%,#0d0221 100%)",
-        padding: "24px 16px 28px",
-        width: 480, maxWidth: "100%",
+        padding: "24px 16px 28px", width: 480, maxWidth: "100%",
         display: "flex", flexDirection: "column", alignItems: "center",
         position: "relative", zIndex: 1,
       }}>
-        {/* Branding */}
         <div style={{ fontSize: 13, color: "#c9a84c", letterSpacing: 3, marginBottom: 10 }}>✦ Coco's Cosmic Tarot ✦</div>
-
-        {/* Client info */}
         <div style={{ textAlign: "center", marginBottom: 12 }}>
           <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginBottom: 2 }}>READING FOR</div>
           <div style={{ fontSize: desktop ? 26 : 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 2 }}>{clientName}</div>
@@ -495,14 +649,11 @@ export default function App() {
           <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginTop: 4, marginBottom: 2 }}>{spread.desc.toUpperCase()}</div>
           <div style={{ fontSize: desktop ? 20 : 15, color: "#c9a84c", letterSpacing: 2 }}>{spread.name}</div>
         </div>
-
-        {/* Cards */}
         <div style={{ overflowX: "auto", width: "100%", display: "flex", justifyContent: "center" }}>
           {renderGrid()}
         </div>
       </div>
 
-      {/* Buttons */}
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", position: "relative", zIndex: 1, marginTop: 20 }}>
         {flipped.some((f) => !f) && <button onClick={flipAll} style={btn("#3b1f6e")}>Reveal All</button>}
         {flipped.every((f) => f) && (
@@ -510,9 +661,9 @@ export default function App() {
             {saving ? "Saving..." : "📸 Save My Spread"}
           </button>
         )}
-        <button onClick={handleQuestionSubmit} style={btn("#1f3a1f")}>Draw Again</button>
+        <button onClick={() => { handleIntentionReady(); }} style={btn("#1f3a1f")}>Draw Again</button>
         <button onClick={() => setScreen("spreads")} style={btn("#2a1a2a")}>← Spreads</button>
-        <button onClick={() => { setScreen("home"); setClientName(""); setClientDob(""); setClientQuestion(""); }} style={btn("#2a1a1a")}>⌂ Home</button>
+        <button onClick={resetHome} style={btn("#2a1a1a")}>⌂ Home</button>
         <BgmBtn />
       </div>
 

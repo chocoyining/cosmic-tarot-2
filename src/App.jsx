@@ -628,7 +628,7 @@ export default function App() {
       <Stars />
       <div ref={captureRef} style={{
         background: "linear-gradient(160deg,#0d0221 0%,#1a0545 40%,#2d0b6b 70%,#0d0221 100%)",
-        padding: "24px 16px 28px", width: 480, maxWidth: "100%",
+        padding: "24px 24px 28px", width: "100%", maxWidth: desktop ? 800 : 480,
         display: "flex", flexDirection: "column", alignItems: "center",
         position: "relative", zIndex: 1,
       }}>

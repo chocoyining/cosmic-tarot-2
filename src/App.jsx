@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+// html2canvas loaded via CDN in index.html
 
 const SPREADS = [
   {
@@ -216,7 +217,9 @@ export default function App() {
   const [flipped, setFlipped]               = useState([]);
   const [bgmOn, setBgmOn]                   = useState(false);
   const [winW, setWinW]                     = useState(window.innerWidth);
+  const [saving, setSaving]                 = useState(false);
   const bgmAudio = useRef(null);
+  const captureRef = useRef(null);
 
   useEffect(() => {
     const onResize = () => setWinW(window.innerWidth);
@@ -293,6 +296,28 @@ export default function App() {
     const maxW = Math.min(winW - 48, 1000);
     const perCell = Math.floor(maxW / cols);
     return clamp(70, perCell - 16, 180);
+  }
+
+  async function saveSpread() {
+    if (!captureRef.current || saving) return;
+    setSaving(true);
+    try {
+      const canvas = await window.html2canvas(captureRef.current, {
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#0d0221",
+        scale: 2,
+        width: 480,
+        windowWidth: 480,
+      });
+      const link = document.createElement("a");
+      link.download = `${clientName.replace(/\s+/g, "_")}_tarot_reading.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } catch (e) {
+      alert("Could not save image. Please take a screenshot instead.");
+    }
+    setSaving(false);
   }
 
   function renderGrid() {
@@ -441,29 +466,50 @@ export default function App() {
   return (
     <div style={bgStyle}>
       <Stars />
-      <div style={{ textAlign: "center", marginBottom: 12, position: "relative", zIndex: 1 }}>
-        <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginBottom: 2 }}>READING FOR</div>
-        <div style={{ fontSize: desktop ? 26 : 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 2 }}>{clientName}</div>
-        {clientDob && (
-          <div style={{ fontSize: desktop ? 13 : 11, color: "#a07840", letterSpacing: 1, marginBottom: 4 }}>
-            {new Date(clientDob + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
-          </div>
-        )}
-        {clientQuestion && (
-          <div style={{ fontSize: desktop ? 14 : 12, color: "#c9a84c99", fontStyle: "italic", maxWidth: maxW, margin: "4px auto 8px", lineHeight: 1.6 }}>
-            "{clientQuestion}"
-          </div>
-        )}
-        <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginTop: 4, marginBottom: 2 }}>{spread.desc.toUpperCase()}</div>
-        <div style={{ fontSize: desktop ? 20 : 15, color: "#c9a84c", letterSpacing: 2 }}>{spread.name}</div>
+
+      {/* Captured area for saving */}
+      <div ref={captureRef} style={{
+        background: "linear-gradient(160deg,#0d0221 0%,#1a0545 40%,#2d0b6b 70%,#0d0221 100%)",
+        padding: "24px 16px 28px",
+        width: 480, maxWidth: "100%",
+        display: "flex", flexDirection: "column", alignItems: "center",
+        position: "relative", zIndex: 1,
+      }}>
+        {/* Branding */}
+        <div style={{ fontSize: 13, color: "#c9a84c", letterSpacing: 3, marginBottom: 10 }}>✦ Coco's Cosmic Tarot ✦</div>
+
+        {/* Client info */}
+        <div style={{ textAlign: "center", marginBottom: 12 }}>
+          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginBottom: 2 }}>READING FOR</div>
+          <div style={{ fontSize: desktop ? 26 : 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 2 }}>{clientName}</div>
+          {clientDob && (
+            <div style={{ fontSize: desktop ? 13 : 11, color: "#a07840", letterSpacing: 1, marginBottom: 4 }}>
+              {new Date(clientDob + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+            </div>
+          )}
+          {clientQuestion && (
+            <div style={{ fontSize: desktop ? 14 : 12, color: "#c9a84c99", fontStyle: "italic", maxWidth: maxW, margin: "4px auto 8px", lineHeight: 1.6 }}>
+              "{clientQuestion}"
+            </div>
+          )}
+          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginTop: 4, marginBottom: 2 }}>{spread.desc.toUpperCase()}</div>
+          <div style={{ fontSize: desktop ? 20 : 15, color: "#c9a84c", letterSpacing: 2 }}>{spread.name}</div>
+        </div>
+
+        {/* Cards */}
+        <div style={{ overflowX: "auto", width: "100%", display: "flex", justifyContent: "center" }}>
+          {renderGrid()}
+        </div>
       </div>
 
-      <div style={{ marginBottom: 24, overflowX: "auto", width: "100%", display: "flex", justifyContent: "center", position: "relative", zIndex: 1 }}>
-        {renderGrid()}
-      </div>
-
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", position: "relative", zIndex: 1 }}>
+      {/* Buttons */}
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", position: "relative", zIndex: 1, marginTop: 20 }}>
         {flipped.some((f) => !f) && <button onClick={flipAll} style={btn("#3b1f6e")}>Reveal All</button>}
+        {flipped.every((f) => f) && (
+          <button onClick={saveSpread} style={btn("#5a2e0e")} disabled={saving}>
+            {saving ? "Saving..." : "📸 Save My Spread"}
+          </button>
+        )}
         <button onClick={handleQuestionSubmit} style={btn("#1f3a1f")}>Draw Again</button>
         <button onClick={() => setScreen("spreads")} style={btn("#2a1a2a")}>← Spreads</button>
         <button onClick={() => { setScreen("home"); setClientName(""); setClientDob(""); setClientQuestion(""); }} style={btn("#2a1a1a")}>⌂ Home</button>

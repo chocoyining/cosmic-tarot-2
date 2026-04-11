@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const SPREADS = [
   {
@@ -131,7 +131,8 @@ const CARD_IMAGES = [
 ];
 
 const CARD_BACK = "";
-const BGM_URL   = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775831307/Silver_Leaf_Drift_jrf2xh.mp3";
+const BGM_URL  = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775831307/Silver_Leaf_Drift_jrf2xh.mp3";
+const FLIP_URL = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775905865/freesound_community-flipcard-91468_oiatib.mp3";
 
 function shuffle(arr) {
   const a = [...arr];
@@ -142,11 +143,11 @@ function shuffle(arr) {
   return a;
 }
 
-function btn(bg) {
+function btn(bg, extra = {}) {
   return {
     background: bg, border: "1px solid #7c5c2e", borderRadius: 8,
-    color: "#e8d5b7", padding: "8px 16px", fontSize: 13, cursor: "pointer", letterSpacing: 0.5,
-    fontFamily: "'Georgia', serif",
+    color: "#e8d5b7", padding: "8px 16px", fontSize: 13, cursor: "pointer",
+    letterSpacing: 0.5, fontFamily: "'Georgia', serif", ...extra,
   };
 }
 
@@ -197,27 +198,44 @@ const Stars = () => (
 );
 
 const inputStyle = {
-  background: "#ffffff0d",
-  border: "1px solid #7c5c2e",
-  borderRadius: 8,
-  color: "#e8d5b7",
-  padding: "10px 14px",
-  fontSize: 14,
-  width: "100%",
-  fontFamily: "'Georgia', serif",
-  outline: "none",
+  background: "#ffffff0d", border: "1px solid #7c5c2e", borderRadius: 8,
+  color: "#e8d5b7", padding: "10px 14px", fontSize: 14, width: "100%",
+  fontFamily: "'Georgia', serif", outline: "none",
 };
 
+const clamp = (min, val, max) => Math.max(min, Math.min(max, val));
+
 export default function App() {
-  const [screen, setScreen]         = useState("home");
-  const [clientName, setClientName] = useState("");
-  const [clientDob, setClientDob]   = useState("");
-  const [nameError, setNameError]   = useState(false);
-  const [spread, setSpread]         = useState(null);
-  const [drawnCards, setDrawnCards] = useState([]);
-  const [flipped, setFlipped]       = useState([]);
-  const [bgmOn, setBgmOn]           = useState(false);
+  const [screen, setScreen]                 = useState("home");
+  const [clientName, setClientName]         = useState("");
+  const [clientDob, setClientDob]           = useState("");
+  const [clientQuestion, setClientQuestion] = useState("");
+  const [nameError, setNameError]           = useState(false);
+  const [spread, setSpread]                 = useState(null);
+  const [drawnCards, setDrawnCards]         = useState([]);
+  const [flipped, setFlipped]               = useState([]);
+  const [bgmOn, setBgmOn]                   = useState(false);
+  const [winW, setWinW]                     = useState(window.innerWidth);
   const bgmAudio = useRef(null);
+
+  useEffect(() => {
+    const onResize = () => setWinW(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const desktop = winW > 600;
+
+  function startBgm() {
+    if (!BGM_URL || bgmOn) return;
+    if (!bgmAudio.current) {
+      const audio = new Audio(BGM_URL);
+      audio.loop = true;
+      audio.volume = 0.5;
+      bgmAudio.current = audio;
+    }
+    bgmAudio.current.play().then(() => setBgmOn(true)).catch(() => {});
+  }
 
   function toggleBgm() {
     if (!BGM_URL) return;
@@ -236,25 +254,28 @@ export default function App() {
   }
 
   function playCardFlip() {
-    const audio = new Audio("https://res.cloudinary.com/da1asg0hq/video/upload/v1775905865/freesound_community-flipcard-91468_oiatib.mp3");
+    const audio = new Audio(FLIP_URL);
     audio.volume = 0.8;
     audio.play().catch(() => {});
   }
 
   function handleInfoSubmit() {
-    if (!clientName.trim()) {
-      setNameError(true);
-      return;
-    }
+    if (!clientName.trim()) { setNameError(true); return; }
     setNameError(false);
+    startBgm();
     setScreen("spreads");
   }
 
-  function startDraw(sp) {
-    const shuffled = shuffle(CARD_IMAGES);
+  function selectSpread(sp) {
     setSpread(sp);
-    setDrawnCards(shuffled.slice(0, sp.cards.length));
-    setFlipped(new Array(sp.cards.length).fill(false));
+    setClientQuestion("");
+    setScreen("question");
+  }
+
+  function handleQuestionSubmit() {
+    const shuffled = shuffle(CARD_IMAGES);
+    setDrawnCards(shuffled.slice(0, spread.cards.length));
+    setFlipped(new Array(spread.cards.length).fill(false));
     setScreen("draw");
   }
 
@@ -268,12 +289,18 @@ export default function App() {
     setFlipped(new Array(spread.cards.length).fill(true));
   }
 
+  function getCardSize(cols) {
+    const maxW = Math.min(winW - 48, 1000);
+    const perCell = Math.floor(maxW / cols);
+    return clamp(70, perCell - 16, 180);
+  }
+
   function renderGrid() {
     const { cards, cols, rows } = spread;
-    const size = Math.min(110, Math.floor(380 / cols));
-    const gap = 12;
+    const size = getCardSize(cols);
+    const gap = 14;
     const cellW = size + gap;
-    const cellH = Math.round(size * 1.6) + gap + 24;
+    const cellH = Math.round(size * 1.6) + gap + 28;
     return (
       <div style={{ position: "relative", width: cols * cellW, height: rows * cellH, margin: "0 auto" }}>
         {cards.map((c, i) => (
@@ -289,125 +316,146 @@ export default function App() {
     minHeight: "100vh",
     background: "linear-gradient(160deg,#0d0221 0%,#1a0545 40%,#2d0b6b 70%,#0d0221 100%)",
     display: "flex", flexDirection: "column", alignItems: "center",
-    fontFamily: "'Georgia', serif", color: "#e8d5b7", padding: "24px 16px",
+    fontFamily: "'Georgia', serif", color: "#e8d5b7",
+    padding: desktop ? "40px 60px" : "24px 16px",
     position: "relative", overflow: "hidden",
   };
 
-  // ── SCREEN 1: HOME ──
+  const maxW = desktop ? 600 : "100%";
+
+  const BgmBtn = () => BGM_URL ? (
+    <button onClick={toggleBgm} style={{ ...btn(bgmOn ? "#1f3a1f" : "#2a1a40"), fontSize: 12 }}>
+      {bgmOn ? "🔊 Music ON" : "🔇 Music OFF"}
+    </button>
+  ) : null;
+
+  // ── HOME ──
   if (screen === "home") return (
     <div style={bgStyle}>
       <Stars />
-      <div style={{ textAlign: "center", position: "relative", zIndex: 1, marginTop: 60 }}>
-        <div style={{ fontSize: 28, color: "#c9a84c", letterSpacing: 3, marginBottom: 12 }}>✦ Coco's Cosmic Tarot ✦</div>
-        <div style={{ fontSize: 13, color: "#a07840", letterSpacing: 3, marginBottom: 40 }}>THE STARS ARE READY FOR YOU</div>
-        <button onClick={() => setScreen("info")} style={{ ...btn("#3b1f6e"), fontSize: 15, padding: "12px 32px", letterSpacing: 2 }}>
+      <div style={{ textAlign: "center", position: "relative", zIndex: 1, marginTop: desktop ? 120 : 60 }}>
+        <div style={{ fontSize: desktop ? 40 : 26, color: "#c9a84c", letterSpacing: 3, marginBottom: 14 }}>✦ Coco's Cosmic Tarot ✦</div>
+        <div style={{ fontSize: desktop ? 15 : 12, color: "#a07840", letterSpacing: 3, marginBottom: 52 }}>THE STARS ARE READY FOR YOU</div>
+        <button onClick={() => { startBgm(); setScreen("info"); }}
+          style={{ ...btn("#3b1f6e"), fontSize: desktop ? 18 : 15, padding: desktop ? "16px 52px" : "12px 32px", letterSpacing: 2 }}>
           Begin Your Reading
         </button>
       </div>
     </div>
   );
 
-  // ── SCREEN 2: CLIENT INFO ──
+  // ── INFO ──
   if (screen === "info") return (
     <div style={bgStyle}>
       <Stars />
-      <div style={{ width: "100%", maxWidth: 400, position: "relative", zIndex: 1, marginTop: 40 }}>
-        <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ fontSize: 20, color: "#c9a84c", letterSpacing: 2, marginBottom: 6 }}>✦ Your Reading ✦</div>
-          <div style={{ fontSize: 12, color: "#a07840", letterSpacing: 2 }}>TELL US A LITTLE ABOUT YOURSELF</div>
+      <div style={{ width: "100%", maxWidth: maxW, position: "relative", zIndex: 1, marginTop: desktop ? 60 : 40 }}>
+        <div style={{ textAlign: "center", marginBottom: 36 }}>
+          <div style={{ fontSize: desktop ? 28 : 20, color: "#c9a84c", letterSpacing: 2, marginBottom: 8 }}>✦ Your Reading ✦</div>
+          <div style={{ fontSize: desktop ? 13 : 12, color: "#a07840", letterSpacing: 2 }}>TELL US A LITTLE ABOUT YOURSELF</div>
         </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div>
             <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>YOUR NAME *</label>
-            <input
-              style={{ ...inputStyle, borderColor: nameError ? "#c94c4c" : "#7c5c2e" }}
-              type="text"
-              placeholder="Enter your name"
-              value={clientName}
-              onChange={(e) => { setClientName(e.target.value); setNameError(false); }}
-            />
+            <input style={{ ...inputStyle, fontSize: desktop ? 16 : 14, borderColor: nameError ? "#c94c4c" : "#7c5c2e" }}
+              type="text" placeholder="Enter your name" value={clientName}
+              onChange={(e) => { setClientName(e.target.value); setNameError(false); }} />
             {nameError && <div style={{ color: "#c94c4c", fontSize: 11, marginTop: 4 }}>Please enter your name to continue.</div>}
           </div>
-
           <div>
             <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>DATE OF BIRTH</label>
-            <input
-              style={inputStyle}
-              type="date"
-              value={clientDob}
-              onChange={(e) => setClientDob(e.target.value)}
-            />
+            <input style={{ ...inputStyle, fontSize: desktop ? 16 : 14 }} type="date" value={clientDob} onChange={(e) => setClientDob(e.target.value)} />
           </div>
-
-          <button onClick={handleInfoSubmit} style={{ ...btn("#3b1f6e"), fontSize: 14, padding: "12px 0", marginTop: 8, width: "100%", letterSpacing: 2 }}>
+          <button onClick={handleInfoSubmit}
+            style={{ ...btn("#3b1f6e"), fontSize: desktop ? 16 : 14, padding: "13px 0", width: "100%", letterSpacing: 2 }}>
             Choose My Spread →
           </button>
-
-          {BGM_URL && (
-            <button onClick={toggleBgm} style={{ ...btn(bgmOn ? "#1f3a1f" : "#2a1a40"), fontSize: 12, width: "100%" }}>
-              {bgmOn ? "🔊 BGM ON" : "🔇 BGM OFF"}
-            </button>
-          )}
+          <div style={{ textAlign: "center" }}><BgmBtn /></div>
+          <button onClick={() => { setScreen("home"); setClientName(""); setClientDob(""); setClientQuestion(""); }} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
         </div>
       </div>
     </div>
   );
 
-  // ── SCREEN 3: SPREADS ──
+  // ── SPREADS ──
   if (screen === "spreads") return (
     <div style={bgStyle}>
       <Stars />
-      <div style={{ textAlign: "center", marginBottom: 24, position: "relative", zIndex: 1 }}>
-        <div style={{ fontSize: 13, color: "#a07840", letterSpacing: 2, marginBottom: 4 }}>
-          Welcome, {clientName}
-        </div>
-        <div style={{ fontSize: 20, color: "#c9a84c", letterSpacing: 3, marginBottom: 4 }}>✦ Choose Your Spread ✦</div>
-        {BGM_URL && (
-          <button onClick={toggleBgm} style={{ ...btn(bgmOn ? "#1f3a1f" : "#2a1a40"), marginTop: 10, fontSize: 12 }}>
-            {bgmOn ? "🔊 BGM ON" : "🔇 BGM OFF"}
-          </button>
-        )}
+      <div style={{ textAlign: "center", marginBottom: 28, position: "relative", zIndex: 1 }}>
+        <div style={{ fontSize: desktop ? 14 : 13, color: "#a07840", letterSpacing: 2, marginBottom: 6 }}>Welcome, {clientName}</div>
+        <div style={{ fontSize: desktop ? 28 : 20, color: "#c9a84c", letterSpacing: 3, marginBottom: 8 }}>✦ Choose Your Spread ✦</div>
+        <BgmBtn />
       </div>
-
-      <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", maxWidth: 400, position: "relative", zIndex: 1 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", maxWidth: maxW, position: "relative", zIndex: 1 }}>
         {SPREADS.map((sp) => (
-          <button key={sp.id} onClick={() => startDraw(sp)} style={{
-            background: "#ffffff0d",
-            border: "1px solid #7c5c2e",
-            borderRadius: 12, padding: "16px 20px", display: "flex", alignItems: "center", gap: 16,
-            cursor: "pointer",
-            color: "#e8d5b7",
-            textAlign: "left", width: "100%",
+          <button key={sp.id} onClick={() => selectSpread(sp)} style={{
+            background: "#ffffff0d", border: "1px solid #7c5c2e", borderRadius: 12,
+            padding: desktop ? "20px 28px" : "16px 20px",
+            display: "flex", alignItems: "center", gap: 18,
+            cursor: "pointer", color: "#e8d5b7", textAlign: "left", width: "100%",
           }}>
-            <span style={{ fontSize: 28, width: 36, textAlign: "center" }}>{sp.icon}</span>
+            <span style={{ fontSize: desktop ? 36 : 28, width: 44, textAlign: "center" }}>{sp.icon}</span>
             <div>
-              <div style={{ fontWeight: "bold", fontSize: 15 }}>{sp.name}</div>
-              <div style={{ fontSize: 12, color: "#a07840", marginTop: 2 }}>{sp.desc} · {sp.cards.length} cards</div>
+              <div style={{ fontWeight: "bold", fontSize: desktop ? 18 : 15 }}>{sp.name}</div>
+              <div style={{ fontSize: desktop ? 13 : 12, color: "#a07840", marginTop: 3 }}>{sp.desc} · {sp.cards.length} cards</div>
             </div>
           </button>
         ))}
         <button onClick={() => setScreen("info")} style={{ ...btn("#2a1a1a"), fontSize: 12, marginTop: 4 }}>← Back</button>
+        <button onClick={() => { setScreen("home"); setClientName(""); setClientDob(""); setClientQuestion(""); }} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
       </div>
     </div>
   );
 
-  // ── SCREEN 4: DRAW ──
+  // ── QUESTION ──
+  if (screen === "question") return (
+    <div style={bgStyle}>
+      <Stars />
+      <div style={{ width: "100%", maxWidth: maxW, position: "relative", zIndex: 1, marginTop: desktop ? 60 : 40 }}>
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <div style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, marginBottom: 6 }}>{spread.name.toUpperCase()}</div>
+          <div style={{ fontSize: desktop ? 28 : 20, color: "#c9a84c", letterSpacing: 2, marginBottom: 8 }}>✦ Set Your Intention ✦</div>
+          <div style={{ fontSize: desktop ? 14 : 12, color: "#a07840", letterSpacing: 1 }}>What would you like the cards to guide you on?</div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <div>
+            <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>YOUR QUESTION OR INTENTION</label>
+            <textarea
+              style={{ ...inputStyle, minHeight: desktop ? 120 : 100, resize: "vertical", lineHeight: 1.7, fontSize: desktop ? 16 : 14 }}
+              placeholder="e.g. What should I focus on in my career right now?"
+              value={clientQuestion}
+              onChange={(e) => setClientQuestion(e.target.value)}
+            />
+          </div>
+          <button onClick={handleQuestionSubmit}
+            style={{ ...btn("#3b1f6e"), fontSize: desktop ? 16 : 14, padding: "13px 0", width: "100%", letterSpacing: 2 }}>
+            Reveal My Cards →
+          </button>
+          <button onClick={() => setScreen("spreads")} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>← Back</button>
+          <button onClick={() => { setScreen("home"); setClientName(""); setClientDob(""); setClientQuestion(""); }} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── DRAW ──
   return (
     <div style={bgStyle}>
       <Stars />
-
-      {/* Client info header */}
-      <div style={{ textAlign: "center", marginBottom: 6, position: "relative", zIndex: 1 }}>
+      <div style={{ textAlign: "center", marginBottom: 12, position: "relative", zIndex: 1 }}>
         <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginBottom: 2 }}>READING FOR</div>
-        <div style={{ fontSize: 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 2 }}>{clientName}</div>
+        <div style={{ fontSize: desktop ? 26 : 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 2 }}>{clientName}</div>
         {clientDob && (
-          <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 1 }}>
+          <div style={{ fontSize: desktop ? 13 : 11, color: "#a07840", letterSpacing: 1, marginBottom: 4 }}>
             {new Date(clientDob + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
           </div>
         )}
-        <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginTop: 6, marginBottom: 2 }}>{spread.desc.toUpperCase()}</div>
-        <div style={{ fontSize: 16, color: "#c9a84c", letterSpacing: 2 }}>{spread.name}</div>
+        {clientQuestion && (
+          <div style={{ fontSize: desktop ? 14 : 12, color: "#c9a84c99", fontStyle: "italic", maxWidth: maxW, margin: "4px auto 8px", lineHeight: 1.6 }}>
+            "{clientQuestion}"
+          </div>
+        )}
+        <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginTop: 4, marginBottom: 2 }}>{spread.desc.toUpperCase()}</div>
+        <div style={{ fontSize: desktop ? 20 : 15, color: "#c9a84c", letterSpacing: 2 }}>{spread.name}</div>
       </div>
 
       <div style={{ marginBottom: 24, overflowX: "auto", width: "100%", display: "flex", justifyContent: "center", position: "relative", zIndex: 1 }}>
@@ -416,9 +464,10 @@ export default function App() {
 
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", position: "relative", zIndex: 1 }}>
         {flipped.some((f) => !f) && <button onClick={flipAll} style={btn("#3b1f6e")}>Reveal All</button>}
-        <button onClick={() => startDraw(spread)} style={btn("#1f3a1f")}>Draw Again</button>
+        <button onClick={handleQuestionSubmit} style={btn("#1f3a1f")}>Draw Again</button>
         <button onClick={() => setScreen("spreads")} style={btn("#2a1a2a")}>← Spreads</button>
-        <button onClick={() => { setScreen("home"); setClientName(""); setClientDob(""); }} style={btn("#2a1a1a")}>⌂ Home</button>
+        <button onClick={() => { setScreen("home"); setClientName(""); setClientDob(""); setClientQuestion(""); }} style={btn("#2a1a1a")}>⌂ Home</button>
+        <BgmBtn />
       </div>
 
       {flipped.every((f) => !f) && (

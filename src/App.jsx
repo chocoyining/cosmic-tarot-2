@@ -719,16 +719,16 @@ export default function App() {
         {/* Locked cards row */}
         {picked > 0 && (
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center", marginBottom: 24, zIndex: 1, position: "relative" }}>
-            {slotPicked.map((img, i) => (
+            {slotPicked.map((_, i) => (
               <div key={i} style={{
                 width: desktop ? 60 : 46, height: Math.round((desktop ? 60 : 46) * 1.6),
                 borderRadius: 6, overflow: "hidden",
                 border: "2px solid #c9a84c",
                 boxShadow: "0 0 10px #c9a84c44",
               }}>
-                {img
-                  ? <img src={img} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt={`card ${i + 1}`} />
-                  : <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg,#1a0545,#2d0b6b)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: "#c9a84c" }}>✦</div>
+                {CARD_BACK
+                  ? <img src={CARD_BACK} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="card back" />
+                  : <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg,#0d0221,#2d0b6b,#0d0221)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: "#c9a84c" }}>✦</div>
                 }
               </div>
             ))}

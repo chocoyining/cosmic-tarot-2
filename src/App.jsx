@@ -636,6 +636,8 @@ export default function App() {
       setSlotPicked(newPicked);
       if (newPicked.length >= needed) {
         setTimeout(() => {
+          if (colorTimer.current) { clearInterval(colorTimer.current); colorTimer.current = null; }
+          if (slotTimer.current) { clearInterval(slotTimer.current); slotTimer.current = null; }
           setDrawnCards(newPicked);
           setFlipped(new Array(needed).fill(false));
           setScreen("draw");

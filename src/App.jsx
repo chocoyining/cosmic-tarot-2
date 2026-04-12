@@ -245,6 +245,7 @@ export default function App() {
   const [bgmOn, setBgmOn]                   = useState(false);
   const [winW, setWinW]                     = useState(window.innerWidth);
   const [saving, setSaving]                 = useState(false);
+  const [toast, setToast]                   = useState(false);
   const [intentionMsg, setIntentionMsg]     = useState(0);
   const [hoveredFan, setHoveredFan]         = useState(null);
   const [slotIndex, setSlotIndex]           = useState(0);
@@ -394,6 +395,11 @@ export default function App() {
     setFlipped(new Array(spread.cards.length).fill(true));
   }
 
+  function showToast() {
+    setToast(true);
+    setTimeout(() => setToast(false), 3500);
+  }
+
   async function saveSpread() {
     if (!captureRef.current || saving) return;
     setSaving(true);
@@ -413,6 +419,7 @@ export default function App() {
           if (navigator.canShare({ files: [file] })) {
             await navigator.share({ files: [file], title: `${clientName}'s Tarot Reading` });
             setSaving(false);
+            showToast();
             return;
           }
         } catch (shareErr) {
@@ -425,6 +432,7 @@ export default function App() {
       link.download = filename;
       link.href = jpgDataUrl;
       link.click();
+      showToast();
     } catch (e) {
       alert("Could not save image. Please take a screenshot instead.");
     }
@@ -869,9 +877,31 @@ export default function App() {
         <BgmBtn />
       </div>
 
+      </div>
+
       {flipped.every((f) => !f) && (
         <div style={{ marginTop: 20, fontSize: 12, color: "#7a5a3a", position: "relative", zIndex: 1 }}>
           Tap a card to reveal it
+        </div>
+      )}
+
+      {/* Toast notification */}
+      <style>{`
+        @keyframes toastIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+        @keyframes toastOut { from { opacity:1; } to { opacity:0; } }
+      `}</style>
+      {toast && (
+        <div style={{
+          position: "fixed", bottom: 40, left: "50%", transform: "translateX(-50%)",
+          background: "linear-gradient(135deg, #2d0b6b, #1a0545)",
+          border: "1px solid #c9a84c88", borderRadius: 32,
+          padding: "12px 24px", fontSize: 13, color: "#c9a84c",
+          letterSpacing: 0.5, textAlign: "center", zIndex: 999,
+          boxShadow: "0 4px 24px #0009",
+          animation: "toastIn 0.4s ease-out, toastOut 0.6s ease-in 2.8s forwards",
+          whiteSpace: "nowrap",
+        }}>
+          ✦ Send it to Miss Coco now for an exquisite reading ✦
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import BirthChart from "./BirthChart";
 // html2canvas loaded via CDN in index.html
 
 const SPREADS = [
@@ -464,18 +465,30 @@ export default function App() {
   if (screen === "home") return (
     <div style={bgStyle}>
       <Stars />
-      <div style={{ textAlign: "center", position: "relative", zIndex: 1, marginTop: desktop ? 120 : 60 }}>
-        <div style={{ fontSize: desktop ? 40 : 26, color: "#c9a84c", letterSpacing: 3, marginBottom: 14 }}>✦ Coco's Cosmic Tarot ✦</div>
-        <div style={{ fontSize: desktop ? 15 : 12, color: "#a07840", letterSpacing: 3, marginBottom: 52 }}>THE STARS ARE READY FOR YOU</div>
-        <button onClick={() => { startBgm(); setScreen("info"); }}
-          style={{ ...btn("#3b1f6e"), fontSize: desktop ? 18 : 15, padding: desktop ? "16px 52px" : "12px 32px", letterSpacing: 2 }}>
-          Begin Your Reading
-        </button>
+      <div style={{ textAlign: "center", position: "relative", zIndex: 1, marginTop: desktop ? 100 : 50 }}>
+        <div style={{ fontSize: desktop ? 40 : 26, color: "#c9a84c", letterSpacing: 3, marginBottom: 10 }}>✦ Coco's Cosmic Tarot ✦</div>
+        <div style={{ fontSize: desktop ? 15 : 12, color: "#a07840", letterSpacing: 3, marginBottom: 48 }}>THE STARS ARE READY FOR YOU</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16, alignItems: "center" }}>
+          <button onClick={() => { startBgm(); setScreen("info"); }} style={{
+            ...btn("#3b1f6e"), fontSize: desktop ? 17 : 15,
+            padding: desktop ? "16px 52px" : "13px 32px", letterSpacing: 2, width: "auto", minWidth: desktop ? 320 : 260,
+          }}>
+            🎴 Begin Your Tarot Reading
+          </button>
+          <button onClick={() => setScreen("chart")} style={{
+            ...btn("#1a3a2a"), fontSize: desktop ? 17 : 15,
+            padding: desktop ? "16px 52px" : "13px 32px", letterSpacing: 2, width: "auto", minWidth: desktop ? 320 : 260,
+          }}>
+            ✦ Calculate My Cosmic Blueprint
+          </button>
+        </div>
       </div>
     </div>
   );
 
-  // ── INFO ──
+  // ── BIRTH CHART ──
+  if (screen === "chart") return <BirthChart onHome={() => setScreen("home")} />;
+
   if (screen === "info") return (
     <div style={bgStyle}>
       <Stars />

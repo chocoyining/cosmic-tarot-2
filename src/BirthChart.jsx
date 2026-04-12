@@ -432,9 +432,27 @@ export default function BirthChart({ onHome }) {
       const canvas = await window.html2canvas(captureRef.current, {
         useCORS:true, allowTaint:true, backgroundColor:"#0d0221", scale:2, width:480, windowWidth:480,
       });
+      const filename = `${(name||"my").replace(/\s+/g,"_")}_cosmic_blueprint.jpg`;
+      const jpgDataUrl = canvas.toDataURL("image/jpeg", 0.92);
+
+      // Try Web Share API first (opens native share sheet on mobile)
+      if (navigator.share && navigator.canShare) {
+        try {
+          const blob = await (await fetch(jpgDataUrl)).blob();
+          const file = new File([blob], filename, { type: "image/jpeg" });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: `${name || "My"} Cosmic Blueprint` });
+            return;
+          }
+        } catch (shareErr) {
+          // Share cancelled or failed — fall through to download
+        }
+      }
+
+      // Fallback: download as JPG
       const link = document.createElement("a");
-      link.download = `${(name||"my").replace(/\s+/g,"_")}_cosmic_blueprint.png`;
-      link.href = canvas.toDataURL("image/png");
+      link.download = filename;
+      link.href = jpgDataUrl;
       link.click();
     } catch(e) {
       alert("Could not save. Please take a screenshot instead.");

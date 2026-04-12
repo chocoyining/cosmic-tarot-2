@@ -411,6 +411,7 @@ export default function BirthChart({ onHome }) {
   const [screen, setScreen]   = useState("form");
   const [chart, setChart]     = useState(null);
   const [error, setError]     = useState("");
+  const [toast, setToast]     = useState(false);
   const captureRef            = useRef(null);
   const desktop               = window.innerWidth > 600;
 
@@ -424,6 +425,11 @@ export default function BirthChart({ onHome }) {
 
   function handleCountryChange(e) {
     setCountry(e.target.value); setCityIdx(0); setDst(false); setChart(null);
+  }
+
+  function showToast() {
+    setToast(true);
+    setTimeout(() => setToast(false), 3500);
   }
 
   async function saveChart() {
@@ -442,6 +448,7 @@ export default function BirthChart({ onHome }) {
           const file = new File([blob], filename, { type: "image/jpeg" });
           if (navigator.canShare({ files: [file] })) {
             await navigator.share({ files: [file], title: `${name || "My"} Cosmic Blueprint` });
+            showToast();
             return;
           }
         } catch (shareErr) {
@@ -454,6 +461,7 @@ export default function BirthChart({ onHome }) {
       link.download = filename;
       link.href = jpgDataUrl;
       link.click();
+      showToast();
     } catch(e) {
       alert("Could not save. Please take a screenshot instead.");
     }
@@ -565,6 +573,26 @@ export default function BirthChart({ onHome }) {
             </button>
           </div>
         </div>
+
+        {/* Toast notification */}
+        <style>{`
+          @keyframes toastIn { from { opacity:0; transform: translateX(-50%) translateY(20px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
+          @keyframes toastOut { from { opacity:1; } to { opacity:0; } }
+        `}</style>
+        {toast && (
+          <div style={{
+            position:"fixed", bottom:40, left:"50%", transform:"translateX(-50%)",
+            background:"linear-gradient(135deg,#2d0b6b,#1a0545)",
+            border:"1px solid #c9a84c88", borderRadius:32,
+            padding:"12px 24px", fontSize:13, color:"#c9a84c",
+            letterSpacing:0.5, textAlign:"center", zIndex:999,
+            boxShadow:"0 4px 24px #0009",
+            animation:"toastIn 0.4s ease-out, toastOut 0.6s ease-in 2.8s forwards",
+            whiteSpace:"nowrap",
+          }}>
+            ✦ Send it to Miss Coco now for an exquisite reading ✦
+          </div>
+        )}
       </div>
     );
   }

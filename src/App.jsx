@@ -397,7 +397,7 @@ export default function App() {
 
   function showToast() {
     setToast(true);
-    setTimeout(() => setToast(false), 3500);
+    setTimeout(() => setToast(false), 5000);
   }
 
   async function saveSpread() {
@@ -411,8 +411,9 @@ export default function App() {
       const filename = `${clientName.replace(/\s+/g, "_")}_tarot_reading.jpg`;
       const jpgDataUrl = canvas.toDataURL("image/jpeg", 0.92);
 
-      // Try Web Share API first (opens native share sheet on mobile)
-      if (navigator.share && navigator.canShare) {
+      // Try Web Share API on mobile only (touch devices)
+      const isMobileDevice = navigator.maxTouchPoints > 0 && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+      if (isMobileDevice && navigator.share && navigator.canShare) {
         try {
           const blob = await (await fetch(jpgDataUrl)).blob();
           const file = new File([blob], filename, { type: "image/jpeg" });
@@ -427,7 +428,7 @@ export default function App() {
         }
       }
 
-      // Fallback: download as JPG
+      // Desktop or fallback: download as JPG
       const link = document.createElement("a");
       link.download = filename;
       link.href = jpgDataUrl;
@@ -896,7 +897,7 @@ export default function App() {
           padding: "12px 24px", fontSize: 13, color: "#c9a84c",
           letterSpacing: 0.5, textAlign: "center", zIndex: 999,
           boxShadow: "0 4px 24px #0009",
-          animation: "toastIn 0.4s ease-out, toastOut 0.6s ease-in 2.8s forwards",
+          animation: "toastIn 0.4s ease-out, toastOut 0.6s ease-in 4.3s forwards",
           whiteSpace: "nowrap",
         }}>
           ✦ Send it to Miss Coco now for an exquisite reading ✦

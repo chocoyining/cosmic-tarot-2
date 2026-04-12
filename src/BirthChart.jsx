@@ -6,21 +6,20 @@ const LOCATION_DB = {
   "Malaysia": {
     dst: false,
     cities: [
-      { label: "Johor Bahru",       lat: 1.4927,   lon: 103.7414, tz: 8 },
+      { label: "Johor",       lat: 1.4927,   lon: 103.7414, tz: 8 },
       { label: "Kuala Lumpur",      lat: 3.1390,   lon: 101.6869, tz: 8 },
-      { label: "Petaling Jaya",     lat: 3.1073,   lon: 101.6067, tz: 8 },
-      { label: "Shah Alam",         lat: 3.0733,   lon: 101.5185, tz: 8 },
+      { label: "Selangor",     lat: 3.1073,   lon: 101.6067, tz: 8 },
       { label: "Penang",            lat: 5.4141,   lon: 100.3288, tz: 8 },
-      { label: "Ipoh",              lat: 4.5975,   lon: 101.0901, tz: 8 },
+      { label: "Perak",              lat: 4.5975,   lon: 101.0901, tz: 8 },
       { label: "Melaka",            lat: 2.1896,   lon: 102.2501, tz: 8 },
-      { label: "Seremban",          lat: 2.7297,   lon: 101.9381, tz: 8 },
-      { label: "Kota Kinabalu",     lat: 5.9804,   lon: 116.0735, tz: 8 },
-      { label: "Kuching",           lat: 1.5535,   lon: 110.3593, tz: 8 },
-      { label: "Miri",              lat: 4.3995,   lon: 113.9914, tz: 8 },
-      { label: "Alor Setar",        lat: 6.1248,   lon: 100.3678, tz: 8 },
-      { label: "Kota Bharu",        lat: 6.1254,   lon: 102.2380, tz: 8 },
-      { label: "Kuala Terengganu",  lat: 5.3302,   lon: 103.1408, tz: 8 },
-      { label: "Kuantan",           lat: 3.8077,   lon: 103.3260, tz: 8 },
+      { label: "Negeri Sembilan",          lat: 2.7297,   lon: 101.9381, tz: 8 },
+      { label: "Sarawak",           lat: 1.5535,   lon: 110.3593, tz: 8 },
+      { label: "Sabah",              lat: 4.3995,   lon: 113.9914, tz: 8 },
+      { label: "Kedah",        lat: 6.1248,   lon: 100.3678, tz: 8 },
+      { label: "Kelantan",        lat: 6.1254,   lon: 102.2380, tz: 8 },
+      { label: "Terengganu",  lat: 5.3302,   lon: 103.1408, tz: 8 },
+      { label: "Pahang",           lat: 3.8077,   lon: 103.3260, tz: 8 },
+      { label: "Perlis",        lat: 6.1248,   lon: 100.3678, tz: 8 },
     ],
   },
   "Singapore": {
@@ -429,7 +428,7 @@ export default function BirthChart({ onHome }) {
 
   function showToast() {
     setToast(true);
-    setTimeout(() => setToast(false), 3500);
+    setTimeout(() => setToast(false), 5000);
   }
 
   async function saveChart() {
@@ -441,8 +440,9 @@ export default function BirthChart({ onHome }) {
       const filename = `${(name||"my").replace(/\s+/g,"_")}_cosmic_blueprint.jpg`;
       const jpgDataUrl = canvas.toDataURL("image/jpeg", 0.92);
 
-      // Try Web Share API first (opens native share sheet on mobile)
-      if (navigator.share && navigator.canShare) {
+      // Try Web Share API on mobile only (touch devices)
+      const isMobileDevice = navigator.maxTouchPoints > 0 && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+      if (isMobileDevice && navigator.share && navigator.canShare) {
         try {
           const blob = await (await fetch(jpgDataUrl)).blob();
           const file = new File([blob], filename, { type: "image/jpeg" });
@@ -456,7 +456,7 @@ export default function BirthChart({ onHome }) {
         }
       }
 
-      // Fallback: download as JPG
+      // Desktop or fallback: download as JPG
       const link = document.createElement("a");
       link.download = filename;
       link.href = jpgDataUrl;
@@ -587,7 +587,7 @@ export default function BirthChart({ onHome }) {
             padding:"12px 24px", fontSize:13, color:"#c9a84c",
             letterSpacing:0.5, textAlign:"center", zIndex:999,
             boxShadow:"0 4px 24px #0009",
-            animation:"toastIn 0.4s ease-out, toastOut 0.6s ease-in 2.8s forwards",
+            animation:"toastIn 0.4s ease-out, toastOut 0.6s ease-in 4.3s forwards",
             whiteSpace:"nowrap",
           }}>
             ✦ Send it to Miss Coco now for an exquisite reading ✦

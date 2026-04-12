@@ -877,8 +877,6 @@ export default function App() {
         <BgmBtn />
       </div>
 
-      </div>
-
       {flipped.every((f) => !f) && (
         <div style={{ marginTop: 20, fontSize: 12, color: "#7a5a3a", position: "relative", zIndex: 1 }}>
           Tap a card to reveal it

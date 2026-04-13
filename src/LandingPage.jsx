@@ -225,11 +225,12 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
         {/* Text content */}
         <div style={{ position: "relative", zIndex: 2, animation: "fadeUp 1s ease-out 0.4s both", width: "100%", maxWidth: isMobile ? 500 : 860, margin: "0 auto" }}>
           <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 5, marginBottom: isMobile ? 12 : 10 }}>
-            ✦ WELCOME TO COCO'S COSMIC WORLD ✦
+            WELCOME TO 
+            ✦COCO'S COSMIC WORLD ✦
           </div>
 
           <h1 style={{
-            fontSize: isMobile ? "46px" : "clamp(40px, 5vw, 52px)",
+            fontSize: isMobile ? "40px" : "clamp(40px, 5vw, 52px)",
             letterSpacing: 4,
             marginBottom: 6,
             lineHeight: 1.05,

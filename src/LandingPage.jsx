@@ -217,7 +217,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           <div style={{
             position: "absolute",
             bottom: 0, left: 0, right: 0,
-            height: 120,
+            height: 160,
             background: "linear-gradient(to bottom, transparent, #0d0221)",
           }} />
         </div>

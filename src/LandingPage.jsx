@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
 
 const HERO_CARDS_MOBILE = [
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/6_-_The_Lovers_copy_jg6jio.png",   w: 110, rotate: -18, x: "-2%",  y: "5%",  z: 1 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/18_-_The_Moon_copy_m3xziw.png",    w: 130, rotate: -7,  x: "13%",  y: "0%",  z: 3 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/19_-_The_Sun_copy_b2enqm.png",     w: 155, rotate: 2,   x: "33%",  y: "-2%", z: 5 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/7_of_cups_l2yseq.png",             w: 128, rotate: 10,  x: "54%",  y: "1%",  z: 3 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901833/WhatsApp_Image_2026-04-11_at_17.58.10_ivi5hm.jpg", w: 108, rotate: 20, x: "72%", y: "6%", z: 1 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/6_-_The_Lovers_copy_jg6jio.png",   w: 90,  rotate: -18, cx: -175, y: "12%", z: 1 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/18_-_The_Moon_copy_m3xziw.png",    w: 105, rotate: -7,  cx: -90,  y: "6%",  z: 3 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/19_-_The_Sun_copy_b2enqm.png",     w: 118, rotate: 2,   cx: 0,    y: "4%",  z: 5 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/7_of_cups_l2yseq.png",             w: 105, rotate: 10,  cx: 90,   y: "7%",  z: 3 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901833/WhatsApp_Image_2026-04-11_at_17.58.10_ivi5hm.jpg", w: 90, rotate: 20, cx: 175, y: "13%", z: 1 },
 ];
 
 const HERO_CARDS_DESKTOP = [
@@ -95,6 +95,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           0%, 100% { opacity: 0.2; transform: scale(1); }
           50% { opacity: 0.8; transform: scale(1.3); }
         }
+        @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap');
         @keyframes float-y0 { 0%,100%{margin-top:0px} 50%{margin-top:-10px} }
         @keyframes float-y1 { 0%,100%{margin-top:0px} 50%{margin-top:-14px} }
         @keyframes float-y2 { 0%,100%{margin-top:0px} 50%{margin-top:-8px} }
@@ -126,9 +127,9 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           border-radius: 40px;
           color: #c9a84c;
           font-family: 'Georgia', serif;
-          font-size: 14px;
-          letter-spacing: 2px;
-          padding: 14px 36px;
+          font-size: 13px;
+          letter-spacing: 1px;
+          padding: 11px 28px;
           cursor: pointer;
           transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
@@ -172,9 +173,9 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "flex-end",
+        justifyContent: "center",
         textAlign: "center",
-        padding: "0 24px 80px",
+        padding: isMobile ? "180px 16px 40px" : "380px 24px 80px",
         position: "relative",
         zIndex: 1,
       }}>
@@ -183,7 +184,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
         <div style={{
           position: "absolute",
           top: 0, left: 0, right: 0,
-          height: isMobile ? 260 : 360,
+          height: isMobile ? 200 : 360,
           pointerEvents: "none",
           overflow: "hidden",
         }}>
@@ -191,9 +192,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
             const mobileW = Math.round(card.w * 0.72);
             const w = isMobile ? mobileW : card.w;
             const h = Math.round(w * 1.6);
-            const leftStyle = isMobile
-              ? card.x
-              : `calc(50% + ${card.cx - w / 2}px)`;
+            const leftStyle = `calc(50% + ${card.cx - w / 2}px)`;
             return (
               <img
                 key={i}
@@ -230,25 +229,26 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           </div>
 
           <h1 style={{
-            fontSize: "clamp(40px, 9vw, 80px)",
+            fontSize: isMobile ? "52px" : "clamp(40px, 9vw, 80px)",
             letterSpacing: 4,
             marginBottom: 6,
             lineHeight: 1.05,
+            fontFamily: "'IM Fell English', serif",
             background: "linear-gradient(135deg, #c9a84c, #f0d882, #c9a84c)",
             backgroundSize: "200% auto",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             animation: "shimmer 4s linear infinite",
           }}>
-            Coco
+            Coco Chen
           </h1>
 
-          <div style={{ fontSize: 14, color: "#a07840", letterSpacing: 5, marginBottom: 28 }}>
+          <div style={{ fontSize: 13, color: "#a07840", letterSpacing: 4, marginBottom: isMobile ? 12 : 28 }}>
             The Cartomancer
           </div>
 
           {/* Descriptors */}
-          <div style={{ display: "flex", gap: 20, justifyContent: "center", flexWrap: "wrap", marginBottom: 24 }}>
+          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", marginBottom: isMobile ? 12 : 24 }}>
             {["Gentle", "Honest", "Intuitive", "Spiritual"].map((d, i) => (
               <span key={i} style={{
                 fontSize: 11, color: "#c9a84c88", letterSpacing: 3,
@@ -262,17 +262,31 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
             fontSize: "clamp(13px, 2vw, 16px)",
             color: "#a07840",
             maxWidth: 540,
-            margin: "0 auto 40px",
-            lineHeight: 1.9,
+            margin: isMobile ? "0 auto 16px" : "0 auto 40px",
+            lineHeight: 1.8,
             letterSpacing: 0.5,
           }}>
-            Through tarot and the stars, let me guide you to find clarity
-            in life's uncertainties, illuminate the path ahead, and discover
-            who you truly are.
+            Through tarot and the stars, I will guide you to find clarity in life's uncertainties,
+            <br />illuminate the path ahead, and discover who you truly are.
+          </p>
+
+          {/* Deck story */}
+          <p style={{
+            fontSize: "clamp(12px, 1.8vw, 14px)",
+            color: "#7a5a3a",
+            maxWidth: 480,
+            margin: isMobile ? "0 auto 20px" : "0 auto 36px",
+            lineHeight: isMobile ? 1.7 : 2,
+            letterSpacing: 0.3,
+            fontStyle: "italic",
+            borderTop: "1px solid #7c5c2e33",
+            paddingTop: isMobile ? 16 : 24,
+          }}>
+            "Every card in this deck is illustrated with my own Pomeranian — a little soul who brings warmth, curiosity and love into every reading. Drawing from this deck not only creates an extra layer of connection between us, but I hope it also brings extra positivity and strength to whatever you're going through."
           </p>
 
           {/* CTAs */}
-          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", marginBottom: 16 }}>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: isMobile ? 10 : 16 }}>
             <button className="cta-btn" onClick={() => {
               document.getElementById("how-it-works").scrollIntoView({ behavior: "smooth" });
             }}>

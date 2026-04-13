@@ -95,13 +95,13 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           0%, 100% { opacity: 0.2; transform: scale(1); }
           50% { opacity: 0.8; transform: scale(1.3); }
         }
-        @keyframes float-y { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-10px)} }
-        @keyframes float-y1 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-14px)} }
-        @keyframes float-y2 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-8px)} }
-        @keyframes float-y3 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-12px)} }
-        @keyframes float-y4 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-9px)} }
-        @keyframes float-y5 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-13px)} }
-        @keyframes float-y6 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-11px)} }
+        @keyframes float-y0 { 0%,100%{margin-top:0px} 50%{margin-top:-10px} }
+        @keyframes float-y1 { 0%,100%{margin-top:0px} 50%{margin-top:-14px} }
+        @keyframes float-y2 { 0%,100%{margin-top:0px} 50%{margin-top:-8px} }
+        @keyframes float-y3 { 0%,100%{margin-top:0px} 50%{margin-top:-12px} }
+        @keyframes float-y4 { 0%,100%{margin-top:0px} 50%{margin-top:-9px} }
+        @keyframes float-y5 { 0%,100%{margin-top:0px} 50%{margin-top:-13px} }
+        @keyframes float-y6 { 0%,100%{margin-top:0px} 50%{margin-top:-11px} }
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(40px); }
           to { opacity: 1; transform: translateY(0); }
@@ -209,7 +209,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
                   zIndex: card.z,
                   transform: `rotate(${card.rotate}deg)`,
                   animation: `float-y${i} ${5 + i * 0.4}s ease-in-out infinite`,
-                  animationDelay: `${i * 0.3}s`,
+                  animationDelay: `${i * 0.4}s`,
                 }}
               />
             );

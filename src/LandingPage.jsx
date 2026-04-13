@@ -287,18 +287,13 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
 
           {/* CTAs */}
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: isMobile ? 10 : 16 }}>
+            <div style={{ fontSize: 13, color: "#c9a84c", letterSpacing: 3, marginBottom: 12 }}>✦ Every reading is personally done by Coco ✦</div>
+          </div>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: isMobile ? 10 : 16 }}>
             <button className="cta-btn" onClick={() => {
               document.getElementById("how-it-works").scrollIntoView({ behavior: "smooth" });
             }}>
-              💡 How it works
-            </button>
-          </div>
-          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <button className="cta-btn cta-btn-primary" onClick={onBeginReading}>
-              🎴 Begin Your Tarot Reading
-            </button>
-            <button className="cta-btn" onClick={onBeginChart}>
-              ✦ Calculate My Cosmic Blueprint
+              🔮 See how it works
             </button>
           </div>
         </div>
@@ -369,10 +364,10 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 3, marginBottom: 24 }}>✦ READY TO BEGIN? ✦</div>
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
             <button className="cta-btn cta-btn-primary" onClick={onBeginReading}>
-              🎴 Begin Your Tarot Reading
+              🌙 Begin Your Tarot Reading
             </button>
             <button className="cta-btn" onClick={onBeginChart}>
-              ✦ Calculate My Cosmic Blueprint
+              🌌 Calculate My Cosmic Blueprint
             </button>
           </div>
         </div>

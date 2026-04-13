@@ -1,25 +1,31 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import * as Astronomy from "astronomy-engine";
+
+const EMAILJS_SERVICE_ID  = "service_fcfjy1t";
+const EMAILJS_TEMPLATE_ID = "template_lpj8t7s";
+const EMAILJS_PUBLIC_KEY  = "sy_V-u-yyGBno659d";
 
 // ── Location Database ─────────────────────────────────────────────────────────
 const LOCATION_DB = {
   "Malaysia": {
     dst: false,
     cities: [
-      { label: "Johor",       lat: 1.4927,   lon: 103.7414, tz: 8 },
+      { label: "Johor",             lat: 1.4927,   lon: 103.7414, tz: 8 },
       { label: "Kuala Lumpur",      lat: 3.1390,   lon: 101.6869, tz: 8 },
-      { label: "Selangor",     lat: 3.1073,   lon: 101.6067, tz: 8 },
+      { label: "Selangor",          lat: 3.1073,   lon: 101.6067, tz: 8 },
       { label: "Penang",            lat: 5.4141,   lon: 100.3288, tz: 8 },
-      { label: "Perak",              lat: 4.5975,   lon: 101.0901, tz: 8 },
+      { label: "Perak",             lat: 4.5975,   lon: 101.0901, tz: 8 },
       { label: "Melaka",            lat: 2.1896,   lon: 102.2501, tz: 8 },
-      { label: "Negeri Sembilan",          lat: 2.7297,   lon: 101.9381, tz: 8 },
+      { label: "Negeri Sembilan",   lat: 2.7297,   lon: 101.9381, tz: 8 },
       { label: "Sarawak",           lat: 1.5535,   lon: 110.3593, tz: 8 },
-      { label: "Sabah",              lat: 4.3995,   lon: 113.9914, tz: 8 },
-      { label: "Kedah",        lat: 6.1248,   lon: 100.3678, tz: 8 },
-      { label: "Kelantan",        lat: 6.1254,   lon: 102.2380, tz: 8 },
-      { label: "Terengganu",  lat: 5.3302,   lon: 103.1408, tz: 8 },
-      { label: "Pahang",           lat: 3.8077,   lon: 103.3260, tz: 8 },
-      { label: "Perlis",        lat: 6.1248,   lon: 100.3678, tz: 8 },
+      { label: "Sabah",             lat: 5.9804,   lon: 116.0735, tz: 8 },
+      { label: "Kedah",             lat: 6.1248,   lon: 100.3678, tz: 8 },
+      { label: "Kelantan",          lat: 6.1254,   lon: 102.2380, tz: 8 },
+      { label: "Terengganu",        lat: 5.3302,   lon: 103.1408, tz: 8 },
+      { label: "Pahang",            lat: 3.8077,   lon: 103.3260, tz: 8 },
+      { label: "Perlis",            lat: 6.4449,   lon: 100.1985, tz: 8 },
+      { label: "Putrajaya",         lat: 2.9264,   lon: 101.6964, tz: 8 },
+      { label: "Labuan",            lat: 5.2831,   lon: 115.2308, tz: 8 },
     ],
   },
   "Singapore": {
@@ -409,10 +415,20 @@ export default function BirthChart({ onHome }) {
   const [dst, setDst]         = useState(false);
   const [screen, setScreen]   = useState("form");
   const [chart, setChart]     = useState(null);
-  const [error, setError]     = useState("");
-  const [toast, setToast]     = useState(false);
+  const [error, setError]       = useState("");
+  const [toast, setToast]       = useState(false);
+  const [clientContact, setClientContact] = useState("");
+  const [contactError, setContactError]   = useState(false);
   const captureRef            = useRef(null);
   const desktop               = window.innerWidth > 600;
+
+  useEffect(() => {
+    if (window.emailjs) return;
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
+    script.onload = () => window.emailjs.init(EMAILJS_PUBLIC_KEY);
+    document.head.appendChild(script);
+  }, []);
 
 
 
@@ -424,6 +440,50 @@ export default function BirthChart({ onHome }) {
 
   function handleCountryChange(e) {
     setCountry(e.target.value); setCityIdx(0); setDst(false); setChart(null);
+  }
+
+  async function sendAndSaveChart() {
+    if (!captureRef.current) return;
+    try {
+      const canvas = await window.html2canvas(captureRef.current, {
+        useCORS:true, allowTaint:true, backgroundColor:"#0d0221", scale:2, width:480, windowWidth:480,
+      });
+      const filename = `${(name||"my").replace(/\s+/g,"_")}_cosmic_blueprint.jpg`;
+      const jpgDataUrl = canvas.toDataURL("image/jpeg", 0.92);
+
+      // Send email via EmailJS
+      if (window.emailjs) {
+        await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          client_name:     name || "Unknown",
+          client_dob:      day && month && year ? `${day}/${month}/${year}` : "Not provided",
+          client_contact:  clientContact || "Not provided",
+          spread_name:     "Cosmic Blueprint (Birth Chart)",
+          client_question: `${city.label}, ${country}`,
+          sent_at:         new Date().toLocaleString("en-GB"),
+        });
+      }
+
+      // Save image
+      const isMobileDevice = navigator.maxTouchPoints > 0 && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+      if (isMobileDevice && navigator.share && navigator.canShare) {
+        try {
+          const blob = await (await fetch(jpgDataUrl)).blob();
+          const file = new File([blob], filename, { type: "image/jpeg" });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: `${name || "My"} Cosmic Blueprint` });
+            showToast();
+            return;
+          }
+        } catch (shareErr) {}
+      }
+      const link = document.createElement("a");
+      link.download = filename;
+      link.href = jpgDataUrl;
+      link.click();
+      showToast();
+    } catch(e) {
+      alert("Something went wrong. Please try again.");
+    }
   }
 
   function showToast() {
@@ -561,6 +621,9 @@ export default function BirthChart({ onHome }) {
           </div>
 
           <div style={{display:"flex",gap:12,flexWrap:"wrap",justifyContent:"center",marginBottom:16}}>
+            <button onClick={sendAndSaveChart} style={{...btn("#5a0e3a"),width:"auto",padding:"11px 28px",fontSize:13}}>
+              ✦ Send My Chart to Coco
+            </button>
             <button onClick={saveChart} style={{...btn("#5a2e0e"),width:"auto",padding:"11px 28px",fontSize:13}}>
               📸 Save My Chart
             </button>
@@ -590,7 +653,7 @@ export default function BirthChart({ onHome }) {
             animation:"toastIn 0.4s ease-out, toastOut 0.6s ease-in 4.3s forwards",
             whiteSpace:"nowrap",
           }}>
-            ✦ Send it to Miss Coco now for an exquisite reading ✦
+            ✦ Successfully sent to Coco! You will be contacted soon for an exquisite reading ✦
           </div>
         )}
       </div>
@@ -697,6 +760,15 @@ export default function BirthChart({ onHome }) {
             )}
 
             {error && <div style={{color:"#c94c4c",fontSize:12}}>{error}</div>}
+
+            <div>
+              <Label>YOUR EMAIL OR WHATSAPP NUMBER *</Label>
+              <input style={{...inputStyle, fontSize: desktop ? 16 : 14, borderColor: contactError ? "#c94c4c" : "#7c5c2e"}}
+                type="text" placeholder="Fill in to receive your reading from Coco"
+                value={clientContact}
+                onChange={e => { setClientContact(e.target.value); setContactError(false); }} />
+              {contactError && <div style={{color:"#c94c4c", fontSize:11, marginTop:4}}>Please enter your email or WhatsApp to continue.</div>}
+            </div>
 
             <button onClick={calculate} style={btn("#3b1f6e")}>✦ Calculate My Chart</button>
 

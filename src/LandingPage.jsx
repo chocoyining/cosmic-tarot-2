@@ -226,7 +226,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
         <div style={{ position: "relative", zIndex: 2, animation: "fadeUp 1s ease-out 0.4s both", width: "100%", maxWidth: isMobile ? 500 : 860, margin: "0 auto" }}>
           <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 5, marginBottom: isMobile ? 12 : 10 }}>
             WELCOME TO 
-            ✦COCO'S COSMIC WORLD ✦
+               <br /> ✦COCO'S COSMIC WORLD ✦
           </div>
 
           <h1 style={{
@@ -267,8 +267,10 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
             lineHeight: 1.9,
             letterSpacing: 0.5,
           }}>
-            Through tarot and the stars, I will guide you to find clarity,
-            <br />illuminate the path ahead, and discover who you truly are.
+            Through tarot and the stars, 
+               <br /> I will guide you to find clarity,
+            <br />illuminate the path ahead, 
+               <br /> and discover who you truly are.
           </p>
 
           {/* Deck story */}

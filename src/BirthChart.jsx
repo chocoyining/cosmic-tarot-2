@@ -313,11 +313,11 @@ function calcChart(year, month, day, hour, minute, tz, lat, lon) {
   const utcDate = new Date(Date.UTC(year, month - 1, day, Math.floor(utcHour), Math.round((utcHour % 1) * 60)));
 
   const origin = new Origin({
-    year:   utcDate.getUTCFullYear(),
-    month:  utcDate.getUTCMonth(), // 0-indexed
-    date:   utcDate.getUTCDate(),
-    hour:   utcDate.getUTCHours(),
-    minute: utcDate.getUTCMinutes(),
+    year:      utcDate.getUTCFullYear(),
+    month:     utcDate.getUTCMonth(), // 0-indexed
+    date:      utcDate.getUTCDate(),
+    hour:      utcDate.getUTCHours(),
+    minute:    utcDate.getUTCMinutes(),
     latitude:  lat,
     longitude: lon,
   });
@@ -344,10 +344,11 @@ function calcChart(year, month, day, hour, minute, tz, lat, lon) {
     { key: "pluto",   name: "Pluto" },
   ];
 
-  // Rising (Ascendant)
-  const asc = horoscope.Angles.Ascendant;
-  const ascDeg = Math.floor(asc.ChartPosition.Ecliptic.DecimalDegrees % 30);
-  const ascMin = Math.floor(((asc.ChartPosition.Ecliptic.DecimalDegrees % 30) - ascDeg) * 60);
+  // Rising — use horoscope.Ascendant (direct property)
+  const asc = horoscope.Ascendant;
+  const ascDecDeg = asc.ChartPosition.Ecliptic.DecimalDegrees;
+  const ascDeg = Math.floor(ascDecDeg % 30);
+  const ascMin = Math.floor(((ascDecDeg % 30) - ascDeg) * 60);
 
   const results = [{
     planet:    "Rising",
@@ -364,13 +365,15 @@ function calcChart(year, month, day, hour, minute, tz, lat, lon) {
       const decDeg = body.ChartPosition.Ecliptic.DecimalDegrees;
       const deg = Math.floor(decDeg % 30);
       const min = Math.floor(((decDeg % 30) - deg) * 60);
+      // House index: Houses array is 0-indexed, id is 1-12
+      const houseNum = body.House ? body.House.id : 1;
       results.push({
         planet:    name,
         sign:      body.Sign.label,
         signGlyph: getSignGlyph(body.Sign.label),
         degrees:   deg,
         minutes:   min,
-        house:     body.House.id,
+        house:     houseNum,
       });
     } catch(e) {
       results.push({ planet: name, sign: "?", signGlyph: "?", degrees: 0, minutes: 0, house: 0 });

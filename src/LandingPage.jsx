@@ -249,7 +249,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
 
           {/* Descriptors */}
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", marginBottom: isMobile ? 12 : 16 }}>
-            {["Gentle", "Honest", "Intuitive", "Spiritual"].map((d, i) => (
+            {["Tarot", "Birth Chart", "Astrology"].map((d, i) => (
               <span key={i} style={{
                 fontSize: isMobile ? 10 : 13, color: "#c9a84c88", letterSpacing: 3,
                 borderBottom: "1px solid #c9a84c33", paddingBottom: 2,
@@ -267,7 +267,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
             letterSpacing: 0.5,
           }}>
             {isMobile ? (
-              <>Through tarot and the stars,<br />I will guide you to find clarity,<br />illuminate the path ahead,<br />and discover who you truly are.</>
+              <>Through tarot and the stars, I will guide you<br />to find clarity, illuminate the path ahead,<br />and discover who you truly are.</>
             ) : (
               <>Through tarot and the stars, I will guide you to find clarity,<br />illuminate the path ahead, and discover who you truly are.</>
             )}
@@ -285,12 +285,12 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
             borderTop: "1px solid #7c5c2e33",
             paddingTop: isMobile ? 12 : 20,
           }}>
-            "Every card in this deck is illustrated with my own Pomeranian — a little soul who brings warmth, curiosity and love into my life. Drawing from this deck not only creates an extra layer of connection between us, but I hope it also brings extra positivity and strength to whatever you're going through."
+            "Every card in this deck is illustrated with my own Pomeranian — a little soul who brings warmth, curiosity and love into every reading. Drawing from this deck not only creates an extra layer of connection between us, but I hope it also brings extra positivity and strength to whatever you're going through."
           </p>
 
           {/* CTAs */}
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: isMobile ? 10 : 16 }}>
-            <div style={{ fontSize: 13, color: "#c9a84c", letterSpacing: 3, marginBottom: 12 }}>✦ Every reading is personally done by Coco ✦</div>
+            <div style={{ fontSize: 13, color: "#c9a84c", letterSpacing: 3, marginBottom: 12 }}>✦ Every reading is personally done by Coco ✦</div>
           </div>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: isMobile ? 10 : 16 }}>
             <button className="cta-btn" onClick={() => {
@@ -378,7 +378,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
         {/* Footer */}
         <div style={{ textAlign: "center", marginTop: 80, paddingTop: 40, borderTop: "1px solid #7c5c2e22" }}>
           <div style={{ fontSize: 18, color: "#c9a84c", letterSpacing: 3, marginBottom: 8 }}>✦ Coco · The Cartomancer ✦</div>
-          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2 }}>Gentle · Honest · Intuitive · Spiritual</div>
+          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2 }}>Tarot · Birth Chart · Astrology</div>
         </div>
       </section>
     </div>

@@ -308,16 +308,14 @@ function getSignGlyph(signName) {
 }
 
 function calcChart(year, month, day, hour, minute, tz, lat, lon) {
-  // Convert local time to UTC
-  const utcHour = hour + minute / 60 - tz;
-  const utcDate = new Date(Date.UTC(year, month - 1, day, Math.floor(utcHour), Math.round((utcHour % 1) * 60)));
-
+  // Origin handles timezone automatically from lat/lon
+  // Pass LOCAL time directly — do NOT convert to UTC
   const origin = new Origin({
-    year:      utcDate.getUTCFullYear(),
-    month:     utcDate.getUTCMonth(), // 0-indexed
-    date:      utcDate.getUTCDate(),
-    hour:      utcDate.getUTCHours(),
-    minute:    utcDate.getUTCMinutes(),
+    year:      year,
+    month:     month - 1, // Origin uses 0-indexed months (0=Jan, 11=Dec)
+    date:      day,
+    hour:      hour,
+    minute:    minute,
     latitude:  lat,
     longitude: lon,
   });

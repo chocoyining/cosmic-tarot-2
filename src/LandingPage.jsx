@@ -224,12 +224,12 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
 
         {/* Text content */}
         <div style={{ position: "relative", zIndex: 2, animation: "fadeUp 1s ease-out 0.4s both" }}>
-          <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 5, marginBottom: 16 }}>
+          <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 5, marginBottom: isMobile ? 12 : 10 }}>
             ✦ WELCOME TO COCO'S COSMIC WORLD ✦
           </div>
 
           <h1 style={{
-            fontSize: isMobile ? "52px" : "clamp(40px, 9vw, 80px)",
+            fontSize: isMobile ? "46px" : "clamp(36px, 6vw, 60px)",
             letterSpacing: 4,
             marginBottom: 6,
             lineHeight: 1.05,
@@ -243,15 +243,15 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
             Coco Chen
           </h1>
 
-          <div style={{ fontSize: 13, color: "#a07840", letterSpacing: 4, marginBottom: isMobile ? 12 : 28 }}>
+          <div style={{ fontSize: 13, color: "#a07840", letterSpacing: 4, marginBottom: isMobile ? 12 : 16 }}>
             The Cartomancer
           </div>
 
           {/* Descriptors */}
-          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", marginBottom: isMobile ? 12 : 24 }}>
+          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", marginBottom: isMobile ? 12 : 16 }}>
             {["Gentle", "Honest", "Intuitive", "Spiritual"].map((d, i) => (
               <span key={i} style={{
-                fontSize: 11, color: "#c9a84c88", letterSpacing: 3,
+                fontSize: 10, color: "#c9a84c88", letterSpacing: 2,
                 borderBottom: "1px solid #c9a84c33", paddingBottom: 2,
               }}>{d}</span>
             ))}
@@ -262,7 +262,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
             fontSize: "clamp(13px, 2vw, 16px)",
             color: "#a07840",
             maxWidth: 540,
-            margin: isMobile ? "0 auto 16px" : "0 auto 40px",
+            margin: isMobile ? "0 auto 16px" : "0 auto 20px",
             lineHeight: 1.8,
             letterSpacing: 0.5,
           }}>
@@ -275,12 +275,12 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
             fontSize: "clamp(12px, 1.8vw, 14px)",
             color: "#7a5a3a",
             maxWidth: 480,
-            margin: isMobile ? "0 auto 20px" : "0 auto 36px",
+            margin: isMobile ? "0 auto 20px" : "0 auto 20px",
             lineHeight: isMobile ? 1.7 : 2,
             letterSpacing: 0.3,
             fontStyle: "italic",
             borderTop: "1px solid #7c5c2e33",
-            paddingTop: isMobile ? 16 : 24,
+            paddingTop: isMobile ? 16 : 16,
           }}>
             "Every card in this deck is illustrated with my own Pomeranian — a little soul who brings warmth, curiosity and love into every reading. Drawing from this deck not only creates an extra layer of connection between us, but I hope it also brings extra positivity and strength to whatever you're going through."
           </p>

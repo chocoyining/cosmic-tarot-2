@@ -426,20 +426,23 @@ export default function App() {
       const jpgDataUrl = canvas.toDataURL("image/jpeg", 0.92);
 
       // Upload to Cloudinary
-      let spreadImageUrl = "Not available";
+      let spreadImageUrl = "Image upload failed";
       try {
         const blob = await (await fetch(jpgDataUrl)).blob();
         const formData = new FormData();
         formData.append("file", blob, filename);
         formData.append("upload_preset", CLOUDINARY_PRESET);
-        formData.append("folder", "coco_readings");
         const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
           method: "POST", body: formData,
         });
         const data = await res.json();
-        spreadImageUrl = data.secure_url || "Not available";
+        if (data.secure_url) {
+          spreadImageUrl = data.secure_url;
+        } else {
+          spreadImageUrl = `Upload error: ${JSON.stringify(data.error || data)}`;
+        }
       } catch(uploadErr) {
-        console.error("Cloudinary upload failed:", uploadErr);
+        spreadImageUrl = `Upload exception: ${uploadErr.message}`;
       }
 
       // Send email via EmailJS

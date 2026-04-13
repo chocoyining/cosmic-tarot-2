@@ -9,13 +9,13 @@ const HERO_CARDS_MOBILE = [
 ];
 
 const HERO_CARDS_DESKTOP = [
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829850/0_The_Fool_copy_befech.png",       w: 105, rotate: -22, x: "1%",   y: "10%", z: 1 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/6_-_The_Lovers_copy_jg6jio.png",  w: 118, rotate: -12, x: "12%",  y: "2%",  z: 2 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/18_-_The_Moon_copy_m3xziw.png",   w: 132, rotate: -5,  x: "24%",  y: "0%",  z: 3 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/19_-_The_Sun_copy_b2enqm.png",    w: 152, rotate: 2,   x: "38%",  y: "-2%", z: 5 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/7_of_cups_l2yseq.png",            w: 130, rotate: 9,   x: "54%",  y: "0%",  z: 3 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829855/21_-_The_World_copy_qy9oah.png",  w: 116, rotate: 16,  x: "67%",  y: "4%",  z: 2 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901833/WhatsApp_Image_2026-04-11_at_17.58.10_ivi5hm.jpg", w: 104, rotate: 22, x: "78%", y: "9%", z: 1 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829850/0_The_Fool_copy_befech.png",       w: 105, rotate: -22, cx: -520, y: "10%", z: 1 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/6_-_The_Lovers_copy_jg6jio.png",  w: 118, rotate: -12, cx: -330, y: "2%",  z: 2 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/18_-_The_Moon_copy_m3xziw.png",   w: 132, rotate: -5,  cx: -155, y: "0%",  z: 3 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/19_-_The_Sun_copy_b2enqm.png",    w: 152, rotate: 2,   cx:    0, y: "-2%", z: 5 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/7_of_cups_l2yseq.png",            w: 130, rotate: 9,   cx:  170, y: "0%",  z: 3 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829855/21_-_The_World_copy_qy9oah.png",  w: 116, rotate: 16,  cx:  330, y: "4%",  z: 2 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901833/WhatsApp_Image_2026-04-11_at_17.58.10_ivi5hm.jpg", w: 104, rotate: 22, cx: 500, y: "9%", z: 1 },
 ];
 
 const STEPS = [
@@ -134,22 +134,29 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           transition: all 0.3s ease;
         }
         .cta-btn:hover {
-          background: #c9a84c18;
-          box-shadow: 0 0 30px #c9a84c44;
-          transform: translateY(-2px);
-        }
-        .cta-btn-primary {
           background: linear-gradient(135deg, #c9a84c, #e8c96d, #c9a84c);
           background-size: 200% auto;
-          border: none;
           color: #0d0221;
           font-weight: bold;
-          animation: shimmer 3s linear infinite;
+          box-shadow: 0 0 20px #c9a84c44;
+          transform: translateY(-2px);
+          animation: shimmer 2s linear infinite;
+          border-color: transparent;
+        }
+        .cta-btn-primary {
+          background: transparent;
+          border: 1px solid #c9a84c;
+          color: #c9a84c;
         }
         .cta-btn-primary:hover {
-          box-shadow: 0 0 40px #c9a84c66;
-          transform: translateY(-3px);
+          background: linear-gradient(135deg, #c9a84c, #e8c96d, #c9a84c);
+          background-size: 200% auto;
           color: #0d0221;
+          font-weight: bold;
+          box-shadow: 0 0 20px #c9a84c44;
+          transform: translateY(-2px);
+          animation: shimmer 2s linear infinite;
+          border-color: transparent;
         }
         .step-card:hover { transform: translateY(-4px); }
         .step-card { transition: transform 0.3s ease; }
@@ -189,6 +196,9 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
             const mobileW = Math.round(card.w * 0.72);
             const w = isMobile ? mobileW : card.w;
             const h = Math.round(w * 1.6);
+            const leftStyle = isMobile
+              ? card.x
+              : `calc(50% + ${card.cx - w / 2}px)`;
             return (
               <img
                 key={i}
@@ -197,7 +207,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
                 className="card-img"
                 style={{
                   position: "absolute",
-                  left: card.x,
+                  left: leftStyle,
                   top: card.y,
                   width: w,
                   height: h,
@@ -267,6 +277,13 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           </p>
 
           {/* CTAs */}
+          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", marginBottom: 16 }}>
+            <button className="cta-btn" onClick={() => {
+              document.getElementById("how-it-works").scrollIntoView({ behavior: "smooth" });
+            }}>
+              💡 How it works
+            </button>
+          </div>
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
             <button className="cta-btn cta-btn-primary" onClick={onBeginReading}>
               🎴 Begin Your Tarot Reading
@@ -289,7 +306,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section style={{
+      <section id="how-it-works" style={{
         padding: "100px 24px",
         maxWidth: 860,
         margin: "0 auto",

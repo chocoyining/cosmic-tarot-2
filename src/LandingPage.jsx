@@ -175,7 +175,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
         alignItems: "center",
         justifyContent: "center",
         textAlign: "center",
-        padding: isMobile ? "180px 16px 40px" : "380px 24px 80px",
+        padding: isMobile ? "180px 16px 40px" : "230px 24px 40px",
         position: "relative",
         zIndex: 1,
       }}>
@@ -184,7 +184,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
         <div style={{
           position: "absolute",
           top: 0, left: 0, right: 0,
-          height: isMobile ? 200 : 360,
+          height: isMobile ? 200 : 240,
           pointerEvents: "none",
           overflow: "hidden",
         }}>

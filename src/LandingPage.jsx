@@ -95,11 +95,13 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           0%, 100% { opacity: 0.2; transform: scale(1); }
           50% { opacity: 0.8; transform: scale(1.3); }
         }
-        @keyframes float-0 { 0%,100%{transform:rotate(-18deg) translateY(0px)} 50%{transform:rotate(-18deg) translateY(-10px)} }
-        @keyframes float-1 { 0%,100%{transform:rotate(-7deg) translateY(0px)} 50%{transform:rotate(-7deg) translateY(-14px)} }
-        @keyframes float-2 { 0%,100%{transform:rotate(2deg) translateY(0px)} 50%{transform:rotate(2deg) translateY(-8px)} }
-        @keyframes float-3 { 0%,100%{transform:rotate(10deg) translateY(0px)} 50%{transform:rotate(10deg) translateY(-12px)} }
-        @keyframes float-4 { 0%,100%{transform:rotate(20deg) translateY(0px)} 50%{transform:rotate(20deg) translateY(-10px)} }
+        @keyframes float-y { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-10px)} }
+        @keyframes float-y1 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-14px)} }
+        @keyframes float-y2 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-8px)} }
+        @keyframes float-y3 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-12px)} }
+        @keyframes float-y4 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-9px)} }
+        @keyframes float-y5 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-13px)} }
+        @keyframes float-y6 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-11px)} }
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(40px); }
           to { opacity: 1; transform: translateY(0); }
@@ -108,10 +110,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           0% { background-position: -200% center; }
           100% { background-position: 200% center; }
         }
-        @keyframes cardReveal {
-          from { opacity: 0; transform: rotate(var(--r)) translateY(40px); }
-          to { opacity: 1; transform: rotate(var(--r)) translateY(0); }
-        }
+
         .reveal {
           opacity: 0;
           transform: translateY(30px);
@@ -131,15 +130,13 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           letter-spacing: 2px;
           padding: 14px 36px;
           cursor: pointer;
-          transition: all 0.3s ease;
+          transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
         .cta-btn:hover {
           background: linear-gradient(135deg, #c9a84c, #e8c96d, #c9a84c);
           background-size: 200% auto;
           color: #0d0221;
           font-weight: bold;
-          box-shadow: 0 0 20px #c9a84c44;
-          transform: translateY(-2px);
           animation: shimmer 2s linear infinite;
           border-color: transparent;
         }
@@ -153,8 +150,6 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           background-size: 200% auto;
           color: #0d0221;
           font-weight: bold;
-          box-shadow: 0 0 20px #c9a84c44;
-          transform: translateY(-2px);
           animation: shimmer 2s linear infinite;
           border-color: transparent;
         }
@@ -212,9 +207,9 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
                   width: w,
                   height: h,
                   zIndex: card.z,
-                  animation: `float-${i % 5} ${5 + i * 0.4}s ease-in-out infinite`,
-                  animationDelay: `${i * 0.3}s`,
                   transform: `rotate(${card.rotate}deg)`,
+                  animation: `float-y${i} ${5 + i * 0.4}s ease-in-out infinite`,
+                  animationDelay: `${i * 0.3}s`,
                 }}
               />
             );

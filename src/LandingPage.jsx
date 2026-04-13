@@ -223,13 +223,13 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
         </div>
 
         {/* Text content */}
-        <div style={{ position: "relative", zIndex: 2, animation: "fadeUp 1s ease-out 0.4s both" }}>
+        <div style={{ position: "relative", zIndex: 2, animation: "fadeUp 1s ease-out 0.4s both", width: "100%", maxWidth: isMobile ? 500 : 860, margin: "0 auto" }}>
           <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 5, marginBottom: isMobile ? 12 : 10 }}>
             ✦ WELCOME TO COCO'S COSMIC WORLD ✦
           </div>
 
           <h1 style={{
-            fontSize: isMobile ? "46px" : "clamp(36px, 6vw, 60px)",
+            fontSize: isMobile ? "46px" : "clamp(48px, 6vw, 68px)",
             letterSpacing: 4,
             marginBottom: 6,
             lineHeight: 1.05,
@@ -243,7 +243,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
             Coco Chen
           </h1>
 
-          <div style={{ fontSize: 13, color: "#a07840", letterSpacing: 4, marginBottom: isMobile ? 12 : 16 }}>
+          <div style={{ fontSize: isMobile ? 13 : 16, color: "#a07840", letterSpacing: 5, marginBottom: isMobile ? 12 : 16 }}>
             The Cartomancer
           </div>
 
@@ -251,7 +251,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", marginBottom: isMobile ? 12 : 16 }}>
             {["Gentle", "Honest", "Intuitive", "Spiritual"].map((d, i) => (
               <span key={i} style={{
-                fontSize: 10, color: "#c9a84c88", letterSpacing: 2,
+                fontSize: isMobile ? 10 : 13, color: "#c9a84c88", letterSpacing: 3,
                 borderBottom: "1px solid #c9a84c33", paddingBottom: 2,
               }}>{d}</span>
             ))}
@@ -259,28 +259,28 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
 
           {/* Tagline */}
           <p style={{
-            fontSize: "clamp(13px, 2vw, 16px)",
+            fontSize: isMobile ? "13px" : "16px",
             color: "#a07840",
-            maxWidth: 540,
-            margin: isMobile ? "0 auto 16px" : "0 auto 20px",
-            lineHeight: 1.8,
+            maxWidth: isMobile ? 500 : 700,
+            margin: isMobile ? "0 auto 12px" : "0 auto 16px",
+            lineHeight: 1.9,
             letterSpacing: 0.5,
           }}>
-            Through tarot and the stars, I will guide you to find clarity in life's uncertainties,
+            Through tarot and the stars, I will guide you to find clarity,
             <br />illuminate the path ahead, and discover who you truly are.
           </p>
 
           {/* Deck story */}
           <p style={{
-            fontSize: "clamp(12px, 1.8vw, 14px)",
+            fontSize: isMobile ? "12px" : "15px",
             color: "#7a5a3a",
-            maxWidth: 480,
-            margin: isMobile ? "0 auto 20px" : "0 auto 20px",
-            lineHeight: isMobile ? 1.7 : 2,
+            maxWidth: isMobile ? 460 : 680,
+            margin: isMobile ? "0 auto 16px" : "0 auto 20px",
+            lineHeight: 1.9,
             letterSpacing: 0.3,
             fontStyle: "italic",
             borderTop: "1px solid #7c5c2e33",
-            paddingTop: isMobile ? 16 : 16,
+            paddingTop: isMobile ? 12 : 20,
           }}>
             "Every card in this deck is illustrated with my own Pomeranian — a little soul who brings warmth, curiosity and love into every reading. Drawing from this deck not only creates an extra layer of connection between us, but I hope it also brings extra positivity and strength to whatever you're going through."
           </p>

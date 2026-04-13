@@ -175,7 +175,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
         alignItems: "center",
         justifyContent: "center",
         textAlign: "center",
-        padding: isMobile ? "180px 16px 40px" : "230px 24px 40px",
+        padding: isMobile ? "180px 16px 40px" : "250px 24px 40px",
         position: "relative",
         zIndex: 1,
       }}>
@@ -229,7 +229,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           </div>
 
           <h1 style={{
-            fontSize: isMobile ? "46px" : "clamp(48px, 6vw, 68px)",
+            fontSize: isMobile ? "46px" : "clamp(40px, 5vw, 52px)",
             letterSpacing: 4,
             marginBottom: 6,
             lineHeight: 1.05,

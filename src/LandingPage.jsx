@@ -9,13 +9,13 @@ const HERO_CARDS_MOBILE = [
 ];
 
 const HERO_CARDS_DESKTOP = [
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829850/0_The_Fool_copy_befech.png",       w: 105, rotate: -24, x: "-3%",  y: "12%", z: 1 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/6_-_The_Lovers_copy_jg6jio.png",  w: 118, rotate: -13, x: "8%",   y: "3%",  z: 2 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/18_-_The_Moon_copy_m3xziw.png",   w: 132, rotate: -5,  x: "21%",  y: "0%",  z: 3 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/19_-_The_Sun_copy_b2enqm.png",    w: 152, rotate: 2,   x: "36%",  y: "-3%", z: 5 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/7_of_cups_l2yseq.png",            w: 130, rotate: 9,   x: "52%",  y: "1%",  z: 3 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829855/21_-_The_World_copy_qy9oah.png",  w: 116, rotate: 16,  x: "65%",  y: "4%",  z: 2 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901833/WhatsApp_Image_2026-04-11_at_17.58.10_ivi5hm.jpg", w: 104, rotate: 24, x: "77%", y: "10%", z: 1 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829850/0_The_Fool_copy_befech.png",       w: 105, rotate: -22, x: "1%",   y: "10%", z: 1 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/6_-_The_Lovers_copy_jg6jio.png",  w: 118, rotate: -12, x: "12%",  y: "2%",  z: 2 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/18_-_The_Moon_copy_m3xziw.png",   w: 132, rotate: -5,  x: "24%",  y: "0%",  z: 3 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/19_-_The_Sun_copy_b2enqm.png",    w: 152, rotate: 2,   x: "38%",  y: "-2%", z: 5 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/7_of_cups_l2yseq.png",            w: 130, rotate: 9,   x: "54%",  y: "0%",  z: 3 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829855/21_-_The_World_copy_qy9oah.png",  w: 116, rotate: 16,  x: "67%",  y: "4%",  z: 2 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901833/WhatsApp_Image_2026-04-11_at_17.58.10_ivi5hm.jpg", w: 104, rotate: 22, x: "78%", y: "9%", z: 1 },
 ];
 
 const STEPS = [

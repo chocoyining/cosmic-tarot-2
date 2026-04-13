@@ -7,6 +7,9 @@ const EMAILJS_SERVICE_ID  = "service_fcfjy1t";
 const EMAILJS_TEMPLATE_ID = "template_lpj8t7s";
 const EMAILJS_PUBLIC_KEY  = "sy_V-u-yyGBno659d";
 
+const CLOUDINARY_CLOUD    = "da1asg0hq";
+const CLOUDINARY_PRESET   = "coco_readings";
+
 const SPREADS = [
   {
     id: "single", name: "Single Card Draw", desc: "One card for guidance", icon: "✧",
@@ -422,15 +425,33 @@ export default function App() {
       const filename = `${clientName.replace(/\s+/g, "_")}_tarot_reading.jpg`;
       const jpgDataUrl = canvas.toDataURL("image/jpeg", 0.92);
 
+      // Upload to Cloudinary
+      let spreadImageUrl = "Not available";
+      try {
+        const blob = await (await fetch(jpgDataUrl)).blob();
+        const formData = new FormData();
+        formData.append("file", blob, filename);
+        formData.append("upload_preset", CLOUDINARY_PRESET);
+        formData.append("folder", "coco_readings");
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
+          method: "POST", body: formData,
+        });
+        const data = await res.json();
+        spreadImageUrl = data.secure_url || "Not available";
+      } catch(uploadErr) {
+        console.error("Cloudinary upload failed:", uploadErr);
+      }
+
       // Send email via EmailJS
       if (window.emailjs) {
         await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-          client_name:    clientName,
-          client_dob:     clientDob ? new Date(clientDob + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "Not provided",
-          client_contact: clientContact,
-          spread_name:    spread.name,
+          client_name:     clientName,
+          client_dob:      clientDob ? new Date(clientDob + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "Not provided",
+          client_contact:  clientContact,
+          spread_name:     spread.name,
           client_question: clientQuestion || "No question provided",
-          sent_at:        new Date().toLocaleString("en-GB"),
+          sent_at:         new Date().toLocaleString("en-GB"),
+          spread_image:    spreadImageUrl,
         });
       }
 

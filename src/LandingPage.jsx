@@ -225,8 +225,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
         {/* Text content */}
         <div style={{ position: "relative", zIndex: 2, animation: "fadeUp 1s ease-out 0.4s both", width: "100%", maxWidth: isMobile ? 500 : 860, margin: "0 auto" }}>
           <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 5, marginBottom: isMobile ? 12 : 10 }}>
-            WELCOME TO 
-               <br /> ✦COCO'S COSMIC WORLD ✦
+            {isMobile ? (<>WELCOME TO<br/>✦ COCO'S COSMIC WORLD ✦</>) : "✦ WELCOME TO COCO'S COSMIC WORLD ✦"}
           </div>
 
           <h1 style={{
@@ -267,10 +266,11 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
             lineHeight: 1.9,
             letterSpacing: 0.5,
           }}>
-            Through tarot and the stars, 
-               <br /> I will guide you to find clarity,
-            <br />illuminate the path ahead, 
-               <br /> and discover who you truly are.
+            {isMobile ? (
+              <>Through tarot and the stars,<br />I will guide you to find clarity,<br />illuminate the path ahead,<br />and discover who you truly are.</>
+            ) : (
+              <>Through tarot and the stars, I will guide you to find clarity,<br />illuminate the path ahead, and discover who you truly are.</>
+            )}
           </p>
 
           {/* Deck story */}
@@ -285,7 +285,7 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
             borderTop: "1px solid #7c5c2e33",
             paddingTop: isMobile ? 12 : 20,
           }}>
-            "Every card in this deck is illustrated with my own Pomeranian — a little soul who brings warmth, curiosity and love into every reading. Drawing from this deck not only creates an extra layer of connection between us, but I hope it also brings extra positivity and strength to whatever you're going through."
+            "Every card in this deck is illustrated with my own Pomeranian — a little soul who brings warmth, curiosity and love into my life. Drawing from this deck not only creates an extra layer of connection between us, but I hope it also brings extra positivity and strength to whatever you're going through."
           </p>
 
           {/* CTAs */}

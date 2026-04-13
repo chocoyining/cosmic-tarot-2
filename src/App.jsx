@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import BirthChart from "./BirthChart";
+import LandingPage from "./LandingPage";
 // html2canvas loaded via CDN in index.html
+
+const EMAILJS_SERVICE_ID  = "service_fcfjy1t";
+const EMAILJS_TEMPLATE_ID = "template_lpj8t7s";
+const EMAILJS_PUBLIC_KEY  = "sy_V-u-yyGBno659d";
 
 const SPREADS = [
   {
@@ -235,6 +240,8 @@ export default function App() {
   const [screen, setScreen]                 = useState("home");
   const [clientName, setClientName]         = useState("");
   const [clientDob, setClientDob]           = useState("");
+  const [clientContact, setClientContact]   = useState("");
+  const [contactError, setContactError]     = useState(false);
   const [clientQuestion, setClientQuestion] = useState("");
   const [nameError, setNameError]           = useState(false);
   const [spread, setSpread]                 = useState(null);
@@ -263,6 +270,14 @@ export default function App() {
     const onResize = () => setWinW(window.innerWidth);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    if (window.emailjs) return;
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
+    script.onload = () => window.emailjs.init(EMAILJS_PUBLIC_KEY);
+    document.head.appendChild(script);
   }, []);
 
   // Cycle intention messages
@@ -303,7 +318,8 @@ export default function App() {
 
   function handleInfoSubmit() {
     if (!clientName.trim()) { setNameError(true); return; }
-    setNameError(false); startBgm(); setScreen("spreads");
+    if (!clientContact.trim()) { setContactError(true); return; }
+    setNameError(false); setContactError(false); startBgm(); setScreen("spreads");
   }
 
   function selectSpread(sp) {
@@ -393,6 +409,54 @@ export default function App() {
   function flipAll() {
     flipped.forEach((f, i) => { if (!f) setTimeout(() => playCardFlip(), i * 120); });
     setFlipped(new Array(spread.cards.length).fill(true));
+  }
+
+  async function sendAndSave() {
+    if (!captureRef.current || saving) return;
+    setSaving(true);
+    try {
+      const canvas = await window.html2canvas(captureRef.current, {
+        useCORS: true, allowTaint: true,
+        backgroundColor: "#0d0221", scale: 2, width: 480, windowWidth: 480,
+      });
+      const filename = `${clientName.replace(/\s+/g, "_")}_tarot_reading.jpg`;
+      const jpgDataUrl = canvas.toDataURL("image/jpeg", 0.92);
+
+      // Send email via EmailJS
+      if (window.emailjs) {
+        await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          client_name:    clientName,
+          client_dob:     clientDob ? new Date(clientDob + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "Not provided",
+          client_contact: clientContact,
+          spread_name:    spread.name,
+          client_question: clientQuestion || "No question provided",
+          sent_at:        new Date().toLocaleString("en-GB"),
+        });
+      }
+
+      // Save image — mobile share sheet or download
+      const isMobileDevice = navigator.maxTouchPoints > 0 && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+      if (isMobileDevice && navigator.share && navigator.canShare) {
+        try {
+          const blob = await (await fetch(jpgDataUrl)).blob();
+          const file = new File([blob], filename, { type: "image/jpeg" });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: `${clientName}'s Tarot Reading` });
+            setSaving(false);
+            showToast();
+            return;
+          }
+        } catch (shareErr) {}
+      }
+      const link = document.createElement("a");
+      link.download = filename;
+      link.href = jpgDataUrl;
+      link.click();
+      showToast();
+    } catch (e) {
+      alert("Something went wrong. Please try again.");
+    }
+    setSaving(false);
   }
 
   function showToast() {
@@ -491,27 +555,10 @@ export default function App() {
 
   // ── HOME ──
   if (screen === "home") return (
-    <div style={bgStyle}>
-      <Stars />
-      <div style={{ textAlign: "center", position: "relative", zIndex: 1, marginTop: desktop ? 100 : 50 }}>
-        <div style={{ fontSize: desktop ? 40 : 26, color: "#c9a84c", letterSpacing: 3, marginBottom: 10 }}>✦ Coco's Cosmic Tarot ✦</div>
-        <div style={{ fontSize: desktop ? 15 : 12, color: "#a07840", letterSpacing: 3, marginBottom: 48 }}>THE STARS ARE READY FOR YOU</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 16, alignItems: "center" }}>
-          <button onClick={() => { startBgm(); setScreen("info"); }} style={{
-            ...btn("#3b1f6e"), fontSize: desktop ? 17 : 15,
-            padding: desktop ? "16px 52px" : "13px 32px", letterSpacing: 2, width: "auto", minWidth: desktop ? 320 : 260,
-          }}>
-            🎴 Begin Your Tarot Reading
-          </button>
-          <button onClick={() => setScreen("chart")} style={{
-            ...btn("#1a3a2a"), fontSize: desktop ? 17 : 15,
-            padding: desktop ? "16px 52px" : "13px 32px", letterSpacing: 2, width: "auto", minWidth: desktop ? 320 : 260,
-          }}>
-            ✦ Calculate My Cosmic Blueprint
-          </button>
-        </div>
-      </div>
-    </div>
+    <LandingPage
+      onBeginReading={() => { startBgm(); setScreen("info"); }}
+      onBeginChart={() => setScreen("chart")}
+    />
   );
 
   // ── BIRTH CHART ──
@@ -536,6 +583,14 @@ export default function App() {
           <div>
             <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>DATE OF BIRTH</label>
             <input style={{ ...inputStyle, fontSize: desktop ? 16 : 14 }} type="date" value={clientDob} onChange={(e) => setClientDob(e.target.value)} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>EMAIL OR WHATSAPP NUMBER *</label>
+            <input style={{ ...inputStyle, fontSize: desktop ? 16 : 14, borderColor: contactError ? "#c94c4c" : "#7c5c2e" }}
+              type="text" placeholder="Fill in to receive your reading from Coco"
+              value={clientContact}
+              onChange={(e) => { setClientContact(e.target.value); setContactError(false); }} />
+            {contactError && <div style={{ color: "#c94c4c", fontSize: 11, marginTop: 4 }}>Please enter your email or WhatsApp to continue.</div>}
           </div>
           <button onClick={handleInfoSubmit}
             style={{ ...btn("#3b1f6e"), fontSize: desktop ? 16 : 14, padding: "13px 0", width: "100%", letterSpacing: 2 }}>
@@ -868,9 +923,14 @@ export default function App() {
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", position: "relative", zIndex: 1, marginTop: 20 }}>
         {flipped.some((f) => !f) && <button onClick={flipAll} style={btn("#3b1f6e")}>Reveal All</button>}
         {flipped.every((f) => f) && (
-          <button onClick={saveSpread} style={btn("#5a2e0e")} disabled={saving}>
-            {saving ? "Saving..." : "📸 Save My Spread"}
-          </button>
+          <>
+            <button onClick={sendAndSave} style={btn("#5a0e3a")} disabled={saving}>
+              {saving ? "Sending..." : "✦ Send My Spread to Coco"}
+            </button>
+            <button onClick={saveSpread} style={btn("#5a2e0e")} disabled={saving}>
+              {saving ? "Saving..." : "📸 Save My Spread"}
+            </button>
+          </>
         )}
         <button onClick={() => { handleIntentionReady(); }} style={btn("#1f3a1f")}>Draw Again</button>
         <button onClick={() => setScreen("spreads")} style={btn("#2a1a2a")}>← Spreads</button>
@@ -900,7 +960,7 @@ export default function App() {
           animation: "toastIn 0.4s ease-out, toastOut 0.6s ease-in 4.3s forwards",
           whiteSpace: "nowrap",
         }}>
-          ✦ Send it to Miss Coco now for an exquisite reading ✦
+          ✦ Successfully sent to Coco! You will be contacted soon for an exquisite reading ✦
         </div>
       )}
     </div>

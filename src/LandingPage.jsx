@@ -127,9 +127,9 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           border-radius: 40px;
           color: #c9a84c;
           font-family: 'Georgia', serif;
-          font-size: 13px;
-          letter-spacing: 1px;
-          padding: 11px 28px;
+          font-size: 14px;
+          letter-spacing: 2px;
+          padding: 14px 40px;
           cursor: pointer;
           transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }

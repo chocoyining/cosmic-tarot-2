@@ -310,22 +310,100 @@ function getEclipticLon(body, date) {
   return ecl.elon;
 }
 
-function calcAscendant(date, lat, lon) {
-  // Use sidereal time + obliquity to compute Ascendant
+function getObliquity(date) {
+  const T = (Astronomy.MakeTime(date).tt) / 36525;
+  return (23.439291111 - 0.013004167 * T) * Math.PI / 180;
+}
+
+function calcRAMC(date, lon) {
   const gst = Astronomy.SiderealTime(date);
-  const lst = ((gst + lon / 15) % 24 + 24) % 24; // local sidereal time in hours
-  const ramc = lst * 15; // RAMC in degrees
-  const T = (Astronomy.MakeTime(date).tt - 0) / 36525;
-  const obliquity = (23.439291111 - 0.013004167 * T) * Math.PI / 180;
+  const lst = ((gst + lon / 15) % 24 + 24) % 24;
+  return lst * 15; // RAMC in degrees
+}
+
+function calcAscendant(date, lat, lon) {
+  const ramc = calcRAMC(date, lon);
+  const e = getObliquity(date);
   const r = ramc * Math.PI / 180;
   const latR = lat * Math.PI / 180;
-  const asc = Math.atan2(Math.cos(r), -Math.sin(r) * Math.cos(obliquity) - Math.tan(latR) * Math.sin(obliquity)) * 180 / Math.PI;
+  const asc = Math.atan2(Math.cos(r), -Math.sin(r) * Math.cos(e) - Math.tan(latR) * Math.sin(e)) * 180 / Math.PI;
   return normalizeEcliptic(asc);
 }
 
-function getHouse(planetLon, ascLon) {
-  const diff = normalizeEcliptic(planetLon - ascLon);
-  return (Math.floor(diff / 30) % 12) + 1;
+function calcMC(date, lon) {
+  const ramc = calcRAMC(date, lon);
+  const e = getObliquity(date);
+  const r = ramc * Math.PI / 180;
+  const mc = Math.atan2(Math.sin(r), Math.cos(r) * Math.cos(e)) * 180 / Math.PI;
+  return normalizeEcliptic(mc);
+}
+
+// Placidus house cusps calculation
+// Returns array of 12 house cusp longitudes (index 0 = cusp 1 = Ascendant)
+function calcPlacidusHouses(date, lat, lon) {
+  const asc = calcAscendant(date, lat, lon);
+  const mc  = calcMC(date, lon);
+  const e   = getObliquity(date);
+  const latR = lat * Math.PI / 180;
+
+  // Placidus semi-arc method
+  // House cusps 2,3 (and by opposition 8,9) calculated via Placidus
+  // Houses 1,4,7,10 are Asc, IC, Desc, MC
+  const ic  = normalizeEcliptic(mc + 180);
+  const desc = normalizeEcliptic(asc + 180);
+
+  function placidusIntermediateCusp(fraction) {
+    // fraction: 1/3 for houses 11,12,2,3; 2/3 for same
+    // Iterative solution for Placidus intermediate cusps
+    let cusp = mc + fraction * 90; // initial guess
+    for (let i = 0; i < 20; i++) {
+      const cuspR = normalizeEcliptic(cusp) * Math.PI / 180;
+      const ra = Math.atan2(Math.sin(cuspR) * Math.cos(e), Math.cos(cuspR));
+      const dec = Math.asin(Math.sin(cuspR) * Math.sin(e));
+      const md = normalizeEcliptic((ra * 180 / Math.PI) - (calcRAMC(date, lon))) * Math.PI / 180;
+      const sa = Math.acos(-Math.tan(latR) * Math.tan(dec));
+      const diff = (md / sa) - fraction;
+      cusp -= diff * 10;
+      if (Math.abs(diff) < 0.0001) break;
+    }
+    return normalizeEcliptic(cusp);
+  }
+
+  // Calculate 12 house cusps
+  const h11 = placidusIntermediateCusp(1/3);
+  const h12 = placidusIntermediateCusp(2/3);
+  const h2  = normalizeEcliptic(placidusIntermediateCusp(1/3) + 180);
+  const h3  = normalizeEcliptic(placidusIntermediateCusp(2/3) + 180);
+
+  return [
+    asc,           // 1
+    h2,            // 2
+    h3,            // 3
+    ic,            // 4
+    normalizeEcliptic(h3 + 180),  // 5
+    normalizeEcliptic(h2 + 180),  // 6
+    desc,          // 7
+    normalizeEcliptic(h11 + 180), // 8 (opposite 2)
+    normalizeEcliptic(h12 + 180), // 9 (opposite 3)
+    mc,            // 10
+    h11,           // 11
+    h12,           // 12
+  ];
+}
+
+function getHousePlacidus(planetLon, cusps) {
+  const lon = normalizeEcliptic(planetLon);
+  for (let i = 0; i < 12; i++) {
+    const start = cusps[i];
+    const end   = cusps[(i + 1) % 12];
+    if (start <= end) {
+      if (lon >= start && lon < end) return i + 1;
+    } else {
+      // Wraps around 0°
+      if (lon >= start || lon < end) return i + 1;
+    }
+  }
+  return 1;
 }
 
 function calcChart(year, month, day, hour, minute, tz, lat, lon) {
@@ -334,6 +412,7 @@ function calcChart(year, month, day, hour, minute, tz, lat, lon) {
   const date = new Date(Date.UTC(year, month - 1, day, Math.floor(utcHour), Math.round((utcHour % 1) * 60)));
 
   const ascLon = calcAscendant(date, lat, lon);
+  const cusps  = calcPlacidusHouses(date, lat, lon);
 
   const bodies = [
     { name: "Sun",     body: Astronomy.Body.Sun },
@@ -355,12 +434,11 @@ function calcChart(year, month, day, hour, minute, tz, lat, lon) {
 
   for (const { name, body } of bodies) {
     try {
-      // Get geocentric ecliptic longitude using GeoVector + Ecliptic
       const geoVec = Astronomy.GeoVector(body, date, true);
       const ecl = Astronomy.Ecliptic(geoVec);
       const lon_deg = normalizeEcliptic(ecl.elon);
       const info = eclipticToSign(lon_deg);
-      results.push({ planet: name, ...info, house: getHouse(lon_deg, ascLon) });
+      results.push({ planet: name, ...info, house: getHousePlacidus(lon_deg, cusps) });
     } catch(e) {
       results.push({ planet: name, sign: "?", signGlyph: "?", degrees: 0, minutes: 0, house: 0 });
     }

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import * as Astronomy from "astronomy-engine";
+import { Origin, Horoscope } from "circular-natal-horoscope-js";
 
 const EMAILJS_SERVICE_ID  = "service_fcfjy1t";
 const EMAILJS_TEMPLATE_ID = "template_lpj8t7s";
@@ -42,6 +42,7 @@ const LOCATION_DB = {
       { label: "Surabaya",          lat: -7.2575,  lon: 112.7521, tz: 7 },
       { label: "Bandung",           lat: -6.9175,  lon: 107.6191, tz: 7 },
       { label: "Medan",             lat: 3.5952,   lon: 98.6722,  tz: 7 },
+      { label: "Medan",             lat: 3.5952,   lon: 98.6722,  tz: 7 },
       { label: "Semarang",          lat: -6.9932,  lon: 110.4203, tz: 7 },
       { label: "Makassar",          lat: -5.1477,  lon: 119.4327, tz: 8 },
       { label: "Denpasar (Bali)",   lat: -8.6705,  lon: 115.2126, tz: 8 },
@@ -64,6 +65,8 @@ const LOCATION_DB = {
     dst: false,
     cities: [
       { label: "Bangkok",           lat: 13.7563,  lon: 100.5018, tz: 7 },
+      { label: "Chiang Mai",        lat: 18.7883,  lon: 98.9853,  tz: 7 },
+      { label: "Phuket",            lat: 7.8804,   lon: 98.3923,  tz: 7 },
       { label: "Chiang Mai",        lat: 18.7883,  lon: 98.9853,  tz: 7 },
       { label: "Phuket",            lat: 7.8804,   lon: 98.3923,  tz: 7 },
       { label: "Pattaya",           lat: 12.9236,  lon: 100.8825, tz: 7 },
@@ -170,6 +173,8 @@ const LOCATION_DB = {
     dst: false,
     cities: [
       { label: "Mumbai",            lat: 19.0760,  lon: 72.8777,  tz: 5.5 },
+      { label: "Chennai",           lat: 13.0827,  lon: 80.2707,  tz: 5.5 },
+      { label: "Kolkata",           lat: 22.5726,  lon: 88.3639,  tz: 5.5 },
       { label: "Delhi",             lat: 28.7041,  lon: 77.1025,  tz: 5.5 },
       { label: "Bangalore",         lat: 12.9716,  lon: 77.5946,  tz: 5.5 },
       { label: "Chennai",           lat: 13.0827,  lon: 80.2707,  tz: 5.5 },
@@ -292,153 +297,81 @@ const SIGN_GLYPHS = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑"
 const PLANET_GLYPHS = { Sun:"☀️", Moon:"🌙", Rising:"⬆️", Mercury:"☿", Venus:"♀", Mars:"♂", Jupiter:"♃", Saturn:"♄", Uranus:"♅", Neptune:"♆", Pluto:"♇" };
 const PLANET_COLORS = { Sun:"#F5C842", Moon:"#B8D4E8", Rising:"#C9A84C", Mercury:"#A8D8A8", Venus:"#F5A0C0", Mars:"#F07070", Jupiter:"#F0C080", Saturn:"#A09070", Uranus:"#80D8D8", Neptune:"#8080F0", Pluto:"#C080C0" };
 
-// ── Astronomy calculation using astronomy-engine ──────────────────────────────
-function normalizeEcliptic(lon) { return ((lon % 360) + 360) % 360; }
-
-function eclipticToSign(lon) {
-  const n = normalizeEcliptic(lon);
-  const idx = Math.floor(n / 30);
-  const deg = Math.floor(n % 30);
-  const min = Math.floor(((n % 30) - deg) * 60);
-  return { sign: SIGNS[idx], signGlyph: SIGN_GLYPHS[idx], degrees: deg, minutes: min };
-}
-
-function getEclipticLon(body, date) {
-  const vec = Astronomy.HelioVector(body, date);
-  // Convert heliocentric to ecliptic longitude
-  const ecl = Astronomy.Ecliptic(vec);
-  return ecl.elon;
-}
-
-function getObliquity(date) {
-  const T = (Astronomy.MakeTime(date).tt) / 36525;
-  return (23.439291111 - 0.013004167 * T) * Math.PI / 180;
-}
-
-function calcRAMC(date, lon) {
-  const gst = Astronomy.SiderealTime(date);
-  const lst = ((gst + lon / 15) % 24 + 24) % 24;
-  return lst * 15; // RAMC in degrees
-}
-
-function calcAscendant(date, lat, lon) {
-  const ramc = calcRAMC(date, lon);
-  const e = getObliquity(date);
-  const r = ramc * Math.PI / 180;
-  const latR = lat * Math.PI / 180;
-  const asc = Math.atan2(Math.cos(r), -Math.sin(r) * Math.cos(e) - Math.tan(latR) * Math.sin(e)) * 180 / Math.PI;
-  return normalizeEcliptic(asc);
-}
-
-function calcMC(date, lon) {
-  const ramc = calcRAMC(date, lon);
-  const e = getObliquity(date);
-  const r = ramc * Math.PI / 180;
-  const mc = Math.atan2(Math.sin(r), Math.cos(r) * Math.cos(e)) * 180 / Math.PI;
-  return normalizeEcliptic(mc);
-}
-
-// Placidus house cusps calculation
-// Returns array of 12 house cusp longitudes (index 0 = cusp 1 = Ascendant)
-function calcPlacidusHouses(date, lat, lon) {
-  const asc = calcAscendant(date, lat, lon);
-  const mc  = calcMC(date, lon);
-  const e   = getObliquity(date);
-  const latR = lat * Math.PI / 180;
-
-  // Placidus semi-arc method
-  // House cusps 2,3 (and by opposition 8,9) calculated via Placidus
-  // Houses 1,4,7,10 are Asc, IC, Desc, MC
-  const ic  = normalizeEcliptic(mc + 180);
-  const desc = normalizeEcliptic(asc + 180);
-
-  function placidusIntermediateCusp(fraction) {
-    // fraction: 1/3 for houses 11,12,2,3; 2/3 for same
-    // Iterative solution for Placidus intermediate cusps
-    let cusp = mc + fraction * 90; // initial guess
-    for (let i = 0; i < 20; i++) {
-      const cuspR = normalizeEcliptic(cusp) * Math.PI / 180;
-      const ra = Math.atan2(Math.sin(cuspR) * Math.cos(e), Math.cos(cuspR));
-      const dec = Math.asin(Math.sin(cuspR) * Math.sin(e));
-      const md = normalizeEcliptic((ra * 180 / Math.PI) - (calcRAMC(date, lon))) * Math.PI / 180;
-      const sa = Math.acos(-Math.tan(latR) * Math.tan(dec));
-      const diff = (md / sa) - fraction;
-      cusp -= diff * 10;
-      if (Math.abs(diff) < 0.0001) break;
-    }
-    return normalizeEcliptic(cusp);
-  }
-
-  // Calculate 12 house cusps
-  const h11 = placidusIntermediateCusp(1/3);
-  const h12 = placidusIntermediateCusp(2/3);
-  const h2  = normalizeEcliptic(placidusIntermediateCusp(1/3) + 180);
-  const h3  = normalizeEcliptic(placidusIntermediateCusp(2/3) + 180);
-
-  return [
-    asc,           // 1
-    h2,            // 2
-    h3,            // 3
-    ic,            // 4
-    normalizeEcliptic(h3 + 180),  // 5
-    normalizeEcliptic(h2 + 180),  // 6
-    desc,          // 7
-    normalizeEcliptic(h11 + 180), // 8 (opposite 2)
-    normalizeEcliptic(h12 + 180), // 9 (opposite 3)
-    mc,            // 10
-    h11,           // 11
-    h12,           // 12
-  ];
-}
-
-function getHousePlacidus(planetLon, cusps) {
-  const lon = normalizeEcliptic(planetLon);
-  for (let i = 0; i < 12; i++) {
-    const start = cusps[i];
-    const end   = cusps[(i + 1) % 12];
-    if (start <= end) {
-      if (lon >= start && lon < end) return i + 1;
-    } else {
-      // Wraps around 0°
-      if (lon >= start || lon < end) return i + 1;
-    }
-  }
-  return 1;
+// ── Chart calculation using circular-natal-horoscope-js (Placidus) ──────────
+function getSignGlyph(signName) {
+  const glyphs = {
+    "Aries":"♈","Taurus":"♉","Gemini":"♊","Cancer":"♋",
+    "Leo":"♌","Virgo":"♍","Libra":"♎","Scorpio":"♏",
+    "Sagittarius":"♐","Capricorn":"♑","Aquarius":"♒","Pisces":"♓"
+  };
+  return glyphs[signName] || "✦";
 }
 
 function calcChart(year, month, day, hour, minute, tz, lat, lon) {
   // Convert local time to UTC
   const utcHour = hour + minute / 60 - tz;
-  const date = new Date(Date.UTC(year, month - 1, day, Math.floor(utcHour), Math.round((utcHour % 1) * 60)));
+  const utcDate = new Date(Date.UTC(year, month - 1, day, Math.floor(utcHour), Math.round((utcHour % 1) * 60)));
 
-  const ascLon = calcAscendant(date, lat, lon);
-  const cusps  = calcPlacidusHouses(date, lat, lon);
+  const origin = new Origin({
+    year:   utcDate.getUTCFullYear(),
+    month:  utcDate.getUTCMonth(), // 0-indexed
+    date:   utcDate.getUTCDate(),
+    hour:   utcDate.getUTCHours(),
+    minute: utcDate.getUTCMinutes(),
+    latitude:  lat,
+    longitude: lon,
+  });
 
-  const bodies = [
-    { name: "Sun",     body: Astronomy.Body.Sun },
-    { name: "Moon",    body: Astronomy.Body.Moon },
-    { name: "Mercury", body: Astronomy.Body.Mercury },
-    { name: "Venus",   body: Astronomy.Body.Venus },
-    { name: "Mars",    body: Astronomy.Body.Mars },
-    { name: "Jupiter", body: Astronomy.Body.Jupiter },
-    { name: "Saturn",  body: Astronomy.Body.Saturn },
-    { name: "Uranus",  body: Astronomy.Body.Uranus },
-    { name: "Neptune", body: Astronomy.Body.Neptune },
-    { name: "Pluto",   body: Astronomy.Body.Pluto },
+  const horoscope = new Horoscope({
+    origin,
+    houseSystem: "placidus",
+    zodiac: "tropical",
+    aspectPoints: [],
+    aspectWithPoints: [],
+    aspectTypes: [],
+  });
+
+  const PLANET_KEYS = [
+    { key: "sun",     name: "Sun" },
+    { key: "moon",    name: "Moon" },
+    { key: "mercury", name: "Mercury" },
+    { key: "venus",   name: "Venus" },
+    { key: "mars",    name: "Mars" },
+    { key: "jupiter", name: "Jupiter" },
+    { key: "saturn",  name: "Saturn" },
+    { key: "uranus",  name: "Uranus" },
+    { key: "neptune", name: "Neptune" },
+    { key: "pluto",   name: "Pluto" },
   ];
 
-  const risingInfo = eclipticToSign(ascLon);
-  const results = [
-    { planet: "Rising", ...risingInfo, house: 1 },
-  ];
+  // Rising (Ascendant)
+  const asc = horoscope.Angles.Ascendant;
+  const ascDeg = Math.floor(asc.ChartPosition.Ecliptic.DecimalDegrees % 30);
+  const ascMin = Math.floor(((asc.ChartPosition.Ecliptic.DecimalDegrees % 30) - ascDeg) * 60);
 
-  for (const { name, body } of bodies) {
+  const results = [{
+    planet:    "Rising",
+    sign:      asc.Sign.label,
+    signGlyph: getSignGlyph(asc.Sign.label),
+    degrees:   ascDeg,
+    minutes:   ascMin,
+    house:     1,
+  }];
+
+  for (const { key, name } of PLANET_KEYS) {
     try {
-      const geoVec = Astronomy.GeoVector(body, date, true);
-      const ecl = Astronomy.Ecliptic(geoVec);
-      const lon_deg = normalizeEcliptic(ecl.elon);
-      const info = eclipticToSign(lon_deg);
-      results.push({ planet: name, ...info, house: getHousePlacidus(lon_deg, cusps) });
+      const body = horoscope.CelestialBodies[key];
+      const decDeg = body.ChartPosition.Ecliptic.DecimalDegrees;
+      const deg = Math.floor(decDeg % 30);
+      const min = Math.floor(((decDeg % 30) - deg) * 60);
+      results.push({
+        planet:    name,
+        sign:      body.Sign.label,
+        signGlyph: getSignGlyph(body.Sign.label),
+        degrees:   deg,
+        minutes:   min,
+        house:     body.House.id,
+      });
     } catch(e) {
       results.push({ planet: name, sign: "?", signGlyph: "?", degrees: 0, minutes: 0, house: 0 });
     }

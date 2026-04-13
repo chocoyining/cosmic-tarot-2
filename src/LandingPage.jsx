@@ -1,0 +1,361 @@
+import { useEffect, useRef } from "react";
+
+const HERO_CARDS = [
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/6_-_The_Lovers_copy_jg6jio.png",   w: 110, rotate: -18, x: "2%",  y: "8%",  z: 1 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/18_-_The_Moon_copy_m3xziw.png",    w: 130, rotate: -7,  x: "16%", y: "2%",  z: 3 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/19_-_The_Sun_copy_b2enqm.png",     w: 155, rotate: 2,   x: "36%", y: "0%",  z: 5 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/7_of_cups_l2yseq.png",             w: 128, rotate: 10,  x: "57%", y: "3%",  z: 3 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901833/WhatsApp_Image_2026-04-11_at_17.58.10_ivi5hm.jpg", w: 108, rotate: 20, x: "73%", y: "10%", z: 1 },
+];
+
+const STEPS = [
+  {
+    num: "01",
+    title: "Enter your details",
+    desc: "Share your name, date of birth, and the question or intention you're carrying into the reading.",
+  },
+  {
+    num: "02",
+    title: "Draw your cards or calculate your blueprint",
+    desc: "Let the cards find you through a meditative drawing ritual — or discover where the planets fell at the moment of your birth.",
+  },
+  {
+    num: "03",
+    title: "Send to Coco & save for yourself",
+    desc: "Hit 'Send to Coco' and your reading lands with me. Save a beautiful image for yourself to keep.",
+  },
+  {
+    num: "04",
+    title: "Receive a message from Coco",
+    desc: "I'll reach out personally to book your reading session — choose a meeting or a text — and guide you through what the cards and stars reveal.",
+  },
+];
+
+const Stars = () => {
+  const positions = Array.from({ length: 80 }, (_, i) => ({
+    x: ((i * 73.7) % 100),
+    y: ((i * 43.3) % 100),
+    r: i % 7 === 0 ? 1.8 : i % 3 === 0 ? 1.2 : 0.8,
+    o: 0.2 + (i % 5) * 0.12,
+    d: (i % 4) * 0.8,
+  }));
+  return (
+    <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+      {positions.map((s, i) => (
+        <div key={i} style={{
+          position: "absolute",
+          left: `${s.x}%`, top: `${s.y}%`,
+          width: s.r * 2, height: s.r * 2,
+          borderRadius: "50%",
+          background: "#fff",
+          opacity: s.o,
+          animation: `twinkle ${3 + s.d}s ease-in-out infinite`,
+          animationDelay: `${s.d}s`,
+        }} />
+      ))}
+    </div>
+  );
+};
+
+export default function LandingPage({ onBeginReading, onBeginChart }) {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add("visible");
+      }),
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  const isMobile = window.innerWidth < 600;
+
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: "linear-gradient(170deg, #060014 0%, #0d0221 30%, #1a0545 60%, #0d0221 100%)",
+      fontFamily: "'Georgia', serif",
+      color: "#e8d5b7",
+      position: "relative",
+      overflowX: "hidden",
+    }}>
+      <style>{`
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.2; transform: scale(1); }
+          50% { opacity: 0.8; transform: scale(1.3); }
+        }
+        @keyframes float-0 { 0%,100%{transform:rotate(-18deg) translateY(0px)} 50%{transform:rotate(-18deg) translateY(-10px)} }
+        @keyframes float-1 { 0%,100%{transform:rotate(-7deg) translateY(0px)} 50%{transform:rotate(-7deg) translateY(-14px)} }
+        @keyframes float-2 { 0%,100%{transform:rotate(2deg) translateY(0px)} 50%{transform:rotate(2deg) translateY(-8px)} }
+        @keyframes float-3 { 0%,100%{transform:rotate(10deg) translateY(0px)} 50%{transform:rotate(10deg) translateY(-12px)} }
+        @keyframes float-4 { 0%,100%{transform:rotate(20deg) translateY(0px)} 50%{transform:rotate(20deg) translateY(-10px)} }
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(40px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        @keyframes cardReveal {
+          from { opacity: 0; transform: rotate(var(--r)) translateY(40px); }
+          to { opacity: 1; transform: rotate(var(--r)) translateY(0); }
+        }
+        .reveal {
+          opacity: 0;
+          transform: translateY(30px);
+          transition: opacity 0.9s ease, transform 0.9s ease;
+        }
+        .reveal.visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .cta-btn {
+          background: transparent;
+          border: 1px solid #c9a84c;
+          border-radius: 40px;
+          color: #c9a84c;
+          font-family: 'Georgia', serif;
+          font-size: 14px;
+          letter-spacing: 2px;
+          padding: 14px 36px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        .cta-btn:hover {
+          background: #c9a84c18;
+          box-shadow: 0 0 30px #c9a84c44;
+          transform: translateY(-2px);
+        }
+        .cta-btn-primary {
+          background: linear-gradient(135deg, #c9a84c, #e8c96d, #c9a84c);
+          background-size: 200% auto;
+          border: none;
+          color: #0d0221;
+          font-weight: bold;
+          animation: shimmer 3s linear infinite;
+        }
+        .cta-btn-primary:hover {
+          box-shadow: 0 0 40px #c9a84c66;
+          transform: translateY(-3px);
+          color: #0d0221;
+        }
+        .step-card:hover { transform: translateY(-4px); }
+        .step-card { transition: transform 0.3s ease; }
+        .card-img {
+          border-radius: 10px;
+          border: 2px solid #c9a84c88;
+          box-shadow: 0 12px 40px #00000088;
+          object-fit: cover;
+          display: block;
+        }
+      `}</style>
+
+      <Stars />
+
+      {/* ── HERO ── */}
+      <section style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        textAlign: "center",
+        padding: "0 24px 80px",
+        position: "relative",
+        zIndex: 1,
+      }}>
+
+        {/* Card spread */}
+        <div style={{
+          position: "absolute",
+          top: 0, left: 0, right: 0,
+          height: isMobile ? 260 : 340,
+          pointerEvents: "none",
+        }}>
+          {HERO_CARDS.map((card, i) => {
+            const mobileW = Math.round(card.w * 0.72);
+            const w = isMobile ? mobileW : card.w;
+            const h = Math.round(w * 1.6);
+            return (
+              <img
+                key={i}
+                src={card.url}
+                alt={`card ${i + 1}`}
+                className="card-img"
+                style={{
+                  position: "absolute",
+                  left: card.x,
+                  top: card.y,
+                  width: w,
+                  height: h,
+                  zIndex: card.z,
+                  animation: `float-${i} ${5 + i * 0.4}s ease-in-out infinite`,
+                  animationDelay: `${i * 0.3}s`,
+                  "--r": `${card.rotate}deg`,
+                  transform: `rotate(${card.rotate}deg)`,
+                }}
+              />
+            );
+          })}
+          {/* Gradient fade at bottom of card spread */}
+          <div style={{
+            position: "absolute",
+            bottom: 0, left: 0, right: 0,
+            height: 120,
+            background: "linear-gradient(to bottom, transparent, #0d0221)",
+          }} />
+        </div>
+
+        {/* Text content */}
+        <div style={{ position: "relative", zIndex: 2, animation: "fadeUp 1s ease-out 0.4s both" }}>
+          <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 5, marginBottom: 16 }}>
+            ✦ WELCOME TO COCO'S COSMIC WORLD ✦
+          </div>
+
+          <h1 style={{
+            fontSize: "clamp(40px, 9vw, 80px)",
+            letterSpacing: 4,
+            marginBottom: 6,
+            lineHeight: 1.05,
+            background: "linear-gradient(135deg, #c9a84c, #f0d882, #c9a84c)",
+            backgroundSize: "200% auto",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            animation: "shimmer 4s linear infinite",
+          }}>
+            Coco
+          </h1>
+
+          <div style={{ fontSize: 14, color: "#a07840", letterSpacing: 5, marginBottom: 28 }}>
+            The Cartomancer
+          </div>
+
+          {/* Descriptors */}
+          <div style={{ display: "flex", gap: 20, justifyContent: "center", flexWrap: "wrap", marginBottom: 24 }}>
+            {["Gentle", "Honest", "Intuitive", "Spiritual"].map((d, i) => (
+              <span key={i} style={{
+                fontSize: 11, color: "#c9a84c88", letterSpacing: 3,
+                borderBottom: "1px solid #c9a84c33", paddingBottom: 2,
+              }}>{d}</span>
+            ))}
+          </div>
+
+          {/* Tagline */}
+          <p style={{
+            fontSize: "clamp(13px, 2vw, 16px)",
+            color: "#a07840",
+            maxWidth: 540,
+            margin: "0 auto 40px",
+            lineHeight: 1.9,
+            letterSpacing: 0.5,
+          }}>
+            Through tarot and the stars, let me guide you to find clarity
+            in life's uncertainties, illuminate the path ahead, and discover
+            who you truly are.
+          </p>
+
+          {/* CTAs */}
+          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+            <button className="cta-btn cta-btn-primary" onClick={onBeginReading}>
+              🎴 Begin Your Tarot Reading
+            </button>
+            <button className="cta-btn" onClick={onBeginChart}>
+              ✦ Calculate My Cosmic Blueprint
+            </button>
+          </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div style={{
+          position: "absolute", bottom: 20, left: "50%", transform: "translateX(-50%)",
+          display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
+          zIndex: 2, opacity: 0.5,
+        }}>
+          <div style={{ fontSize: 9, color: "#a07840", letterSpacing: 3 }}>SCROLL</div>
+          <div style={{ width: 1, height: 28, background: "linear-gradient(to bottom, #c9a84c66, transparent)" }} />
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ── */}
+      <section style={{
+        padding: "100px 24px",
+        maxWidth: 860,
+        margin: "0 auto",
+        position: "relative",
+        zIndex: 1,
+      }}>
+        {/* Section header */}
+        <div className="reveal" style={{ textAlign: "center", marginBottom: 72 }}>
+          <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 5, marginBottom: 16 }}>✦ THE JOURNEY ✦</div>
+          <h2 style={{ fontSize: "clamp(26px, 5vw, 42px)", color: "#c9a84c", letterSpacing: 2, marginBottom: 16, fontWeight: "normal" }}>
+            How it works
+          </h2>
+          <div style={{ width: 60, height: 1, background: "#c9a84c44", margin: "0 auto" }} />
+        </div>
+
+        {/* Steps */}
+        <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
+          {/* Vertical line */}
+          {!isMobile && (
+            <div style={{
+              position: "absolute", left: 48, top: 0, bottom: 0, width: 1,
+              background: "linear-gradient(to bottom, transparent, #c9a84c44, transparent)",
+            }} />
+          )}
+
+          {STEPS.map((step, i) => (
+            <div key={i} className="reveal step-card" style={{
+              display: "flex",
+              gap: isMobile ? 20 : 32,
+              padding: "32px 0",
+              borderBottom: i < STEPS.length - 1 ? "1px solid #7c5c2e22" : "none",
+              transitionDelay: `${i * 0.1}s`,
+            }}>
+              {/* Number circle */}
+              <div style={{ width: 96, flexShrink: 0, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 4 }}>
+                <div style={{
+                  width: 48, height: 48, borderRadius: "50%",
+                  border: "1px solid #c9a84c",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  background: "#0d0221", flexShrink: 0, position: "relative", zIndex: 1,
+                }}>
+                  <span style={{ fontSize: 12, color: "#c9a84c", letterSpacing: 1 }}>{step.num}</span>
+                </div>
+              </div>
+              {/* Text */}
+              <div style={{ flex: 1, paddingTop: 8 }}>
+                <h3 style={{ fontSize: isMobile ? 15 : 19, color: "#e8d5b7", letterSpacing: 1, marginBottom: 10, fontWeight: "normal" }}>
+                  {step.title}
+                </h3>
+                <p style={{ fontSize: 14, color: "#a07840", lineHeight: 1.8, margin: 0, maxWidth: 540 }}>
+                  {step.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="reveal" style={{ textAlign: "center", marginTop: 80 }}>
+          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 3, marginBottom: 24 }}>✦ READY TO BEGIN? ✦</div>
+          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+            <button className="cta-btn cta-btn-primary" onClick={onBeginReading}>
+              🎴 Begin Your Tarot Reading
+            </button>
+            <button className="cta-btn" onClick={onBeginChart}>
+              ✦ Calculate My Cosmic Blueprint
+            </button>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{ textAlign: "center", marginTop: 80, paddingTop: 40, borderTop: "1px solid #7c5c2e22" }}>
+          <div style={{ fontSize: 18, color: "#c9a84c", letterSpacing: 3, marginBottom: 8 }}>✦ Coco · The Cartomancer ✦</div>
+          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2 }}>Gentle · Honest · Intuitive · Spiritual</div>
+        </div>
+      </section>
+    </div>
+  );
+}

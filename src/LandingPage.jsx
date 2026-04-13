@@ -1,11 +1,21 @@
 import { useEffect, useRef } from "react";
 
-const HERO_CARDS = [
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/6_-_The_Lovers_copy_jg6jio.png",   w: 110, rotate: -18, x: "2%",  y: "8%",  z: 1 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/18_-_The_Moon_copy_m3xziw.png",    w: 130, rotate: -7,  x: "16%", y: "2%",  z: 3 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/19_-_The_Sun_copy_b2enqm.png",     w: 155, rotate: 2,   x: "36%", y: "0%",  z: 5 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/7_of_cups_l2yseq.png",             w: 128, rotate: 10,  x: "57%", y: "3%",  z: 3 },
-  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901833/WhatsApp_Image_2026-04-11_at_17.58.10_ivi5hm.jpg", w: 108, rotate: 20, x: "73%", y: "10%", z: 1 },
+const HERO_CARDS_MOBILE = [
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/6_-_The_Lovers_copy_jg6jio.png",   w: 110, rotate: -18, x: "-2%",  y: "5%",  z: 1 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/18_-_The_Moon_copy_m3xziw.png",    w: 130, rotate: -7,  x: "13%",  y: "0%",  z: 3 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/19_-_The_Sun_copy_b2enqm.png",     w: 155, rotate: 2,   x: "33%",  y: "-2%", z: 5 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/7_of_cups_l2yseq.png",             w: 128, rotate: 10,  x: "54%",  y: "1%",  z: 3 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901833/WhatsApp_Image_2026-04-11_at_17.58.10_ivi5hm.jpg", w: 108, rotate: 20, x: "72%", y: "6%", z: 1 },
+];
+
+const HERO_CARDS_DESKTOP = [
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829850/0_The_Fool_copy_befech.png",       w: 105, rotate: -24, x: "-3%",  y: "12%", z: 1 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/6_-_The_Lovers_copy_jg6jio.png",  w: 118, rotate: -13, x: "8%",   y: "3%",  z: 2 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/18_-_The_Moon_copy_m3xziw.png",   w: 132, rotate: -5,  x: "21%",  y: "0%",  z: 3 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/19_-_The_Sun_copy_b2enqm.png",    w: 152, rotate: 2,   x: "36%",  y: "-3%", z: 5 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/7_of_cups_l2yseq.png",            w: 130, rotate: 9,   x: "52%",  y: "1%",  z: 3 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829855/21_-_The_World_copy_qy9oah.png",  w: 116, rotate: 16,  x: "65%",  y: "4%",  z: 2 },
+  { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901833/WhatsApp_Image_2026-04-11_at_17.58.10_ivi5hm.jpg", w: 104, rotate: 24, x: "77%", y: "10%", z: 1 },
 ];
 
 const STEPS = [
@@ -171,10 +181,11 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
         <div style={{
           position: "absolute",
           top: 0, left: 0, right: 0,
-          height: isMobile ? 260 : 340,
+          height: isMobile ? 260 : 360,
           pointerEvents: "none",
+          overflow: "hidden",
         }}>
-          {HERO_CARDS.map((card, i) => {
+          {(isMobile ? HERO_CARDS_MOBILE : HERO_CARDS_DESKTOP).map((card, i) => {
             const mobileW = Math.round(card.w * 0.72);
             const w = isMobile ? mobileW : card.w;
             const h = Math.round(w * 1.6);
@@ -191,9 +202,8 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
                   width: w,
                   height: h,
                   zIndex: card.z,
-                  animation: `float-${i} ${5 + i * 0.4}s ease-in-out infinite`,
+                  animation: `float-${i % 5} ${5 + i * 0.4}s ease-in-out infinite`,
                   animationDelay: `${i * 0.3}s`,
-                  "--r": `${card.rotate}deg`,
                   transform: `rotate(${card.rotate}deg)`,
                 }}
               />

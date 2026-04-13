@@ -303,15 +303,6 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div style={{
-          position: "absolute", bottom: 20, left: "50%", transform: "translateX(-50%)",
-          display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
-          zIndex: 2, opacity: 0.5,
-        }}>
-          <div style={{ fontSize: 9, color: "#a07840", letterSpacing: 3 }}>SCROLL</div>
-          <div style={{ width: 1, height: 28, background: "linear-gradient(to bottom, #c9a84c66, transparent)" }} />
-        </div>
       </section>
 
       {/* ── HOW IT WORKS ── */}

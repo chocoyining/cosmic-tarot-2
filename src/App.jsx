@@ -12,11 +12,11 @@ const CLOUDINARY_PRESET   = "coco_readings";
 
 const SPREADS = [
   {
-    id: "single", name: "Single Card Draw", desc: "One card for guidance", icon: "✧",
+    id: "single", name: "Single Card Draw", desc: "For simple, direct questions. Best for yes-or-no answers when you need a quick nudge from the universe.", icon: "✧", chips: ["Should I attend the dinner this Saturday? Yes or No", "Does the person I like feel the same way? Yes or No"],
     cards: [{ label: "Card", x: 0, y: 0 }], cols: 1, rows: 1,
   },
   {
-    id: "three", name: "Basic 3-Card Spread", desc: "Three cards · Open reading", icon: "✦",
+    id: "three", name: "Basic 3-Card Spread", desc: "Suitable for most situations — understand the full picture, uncover what's blocking you, and see where things are heading.", icon: "✦", chips: ["What is my overall luck this month?", "Is there a third party in my relationship?", "Will this project succeed in 3 months?", "Are there hidden enemies at work?"],
     cards: [
       { label: "Card 1", x: 0, y: 0 },
       { label: "Card 2", x: 1, y: 0 },
@@ -24,7 +24,7 @@ const SPREADS = [
     ], cols: 3, rows: 1,
   },
   {
-    id: "career", name: "Career Spread", desc: "7-Card Career Square", icon: "◈",
+    id: "career", name: "Career Spread", desc: "Explore your career luck, uncover blind spots, and discover opportunities you may have missed.", icon: "◈", chips: ["Is this job suitable for me?", "What are my chances of a promotion in 3 months?", "How will my side business develop?", "What is my career luck in the next 3 months?"],
     cards: [
       { label: "1 · Current",     x: 0, y: 0 },
       { label: "2 · Improvement", x: 0, y: 1 },
@@ -36,7 +36,7 @@ const SPREADS = [
     ], cols: 3, rows: 3,
   },
   {
-    id: "relationship", name: "Relationship Spread", desc: "7-Card Love Spread", icon: "❧",
+    id: "relationship", name: "Relationship Spread", desc: "Uncover the connection between you and another — past influences, future potential, and guidance on your next move.", icon: "❧", chips: ["What is the current state of my relationship?", "Is getting back together possible?", "Will this relationship last?"],
     cards: [
       { label: "1 · Past",        x: 0, y: 0 },
       { label: "2 · Present",     x: 0, y: 1 },
@@ -48,7 +48,7 @@ const SPREADS = [
     ], cols: 3, rows: 3,
   },
   {
-    id: "optionab", name: "Option A/B Spread", desc: "5-Card Decision", icon: "⟁",
+    id: "optionab", name: "Option A/B Spread", desc: "Torn between two choices in love, study, or career? Let the cards show you the clearer path.", icon: "⟁", chips: ["Should I move from Company A to Company B?", "Between Person A and Person B, who is more suitable for me?"],
     cards: [
       { label: "Situation", x: 1, y: 0 },
       { label: "Option A",  x: 0, y: 1 },
@@ -272,6 +272,15 @@ export default function App() {
   useEffect(() => {
     const onResize = () => setWinW(window.innerWidth);
     window.addEventListener("resize", onResize);
+
+    // Global button hover glow
+    const style = document.createElement("style");
+    style.innerHTML = `
+      button:hover { box-shadow: 0 0 18px #c9a84c88, 0 0 36px #c9a84c44 !important; }
+      button { transition: box-shadow 0.3s ease !important; }
+    `;
+    document.head.appendChild(style);
+
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
@@ -582,6 +591,8 @@ export default function App() {
     <LandingPage
       onBeginReading={() => { startBgm(); setScreen("info"); }}
       onBeginChart={() => setScreen("chart")}
+      bgmOn={bgmOn}
+      onToggleBgm={toggleBgm}
     />
   );
 
@@ -669,10 +680,37 @@ export default function App() {
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div>
-            <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>YOUR QUESTION OR INTENTION</label>
+            <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 10 }}>YOUR QUESTION OR INTENTION</label>
+            {/* Example question chips */}
+            {spread.chips && (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+                {spread.chips.map((chip, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setClientQuestion(chip)}
+                    style={{
+                      background: clientQuestion === chip ? "#3b1f6e" : "#ffffff0d",
+                      border: `1px solid ${clientQuestion === chip ? "#c9a84c" : "#7c5c2e"}`,
+                      borderRadius: 20,
+                      color: clientQuestion === chip ? "#c9a84c" : "#a07840",
+                      fontSize: 11,
+                      padding: "6px 14px",
+                      cursor: "pointer",
+                      fontFamily: "'Georgia', serif",
+                      letterSpacing: 0.3,
+                      lineHeight: 1.5,
+                      textAlign: "left",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    {chip}
+                  </button>
+                ))}
+              </div>
+            )}
             <textarea
               style={{ ...inputStyle, minHeight: desktop ? 120 : 100, resize: "vertical", lineHeight: 1.7, fontSize: desktop ? 16 : 14 }}
-              placeholder="e.g. What should I focus on in my career right now?"
+              placeholder="Or type your own question here..."
               value={clientQuestion}
               onChange={(e) => setClientQuestion(e.target.value)}
             />
@@ -908,8 +946,8 @@ export default function App() {
               "{clientQuestion}"
             </div>
           )}
-          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginTop: 4, marginBottom: 2 }}>{spread.desc.toUpperCase()}</div>
-          <div style={{ fontSize: 15, color: "#c9a84c", letterSpacing: 2 }}>{spread.name}</div>
+          <div style={{ fontSize: 15, color: "#c9a84c", letterSpacing: 2, marginBottom: 6 }}>{spread.name}</div>
+          <div style={{ fontSize: 11, color: "#7a5a3a", lineHeight: 1.6, maxWidth: 260, margin: "0 auto" }}>{spread.desc}</div>
         </div>
         <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
           {renderGrid(true)}
@@ -936,8 +974,8 @@ export default function App() {
               "{clientQuestion}"
             </div>
           )}
-          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginTop: 4, marginBottom: 2 }}>{spread.desc.toUpperCase()}</div>
-          <div style={{ fontSize: desktop ? 20 : 15, color: "#c9a84c", letterSpacing: 2 }}>{spread.name}</div>
+          <div style={{ fontSize: desktop ? 20 : 15, color: "#c9a84c", letterSpacing: 2, marginBottom: 6 }}>{spread.name}</div>
+          <div style={{ fontSize: 11, color: "#7a5a3a", lineHeight: 1.6, maxWidth: 300, margin: "0 auto" }}>{spread.desc}</div>
         </div>
         <div style={{ overflowX: "auto", width: "100%", display: "flex", justifyContent: "center" }}>
           {renderGrid(false)}

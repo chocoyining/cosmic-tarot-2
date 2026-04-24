@@ -58,7 +58,7 @@ function AboutCoco({ isMobile }) {
   const [expanded, setExpanded] = useState(false);
 
   const hook    = "'The darkest chapter can be the greatest gift.'";
-  const para1   = "2020 was the darkest time of my life. I lost my business, lost in love, and the pandemic locked me far away from everyone I loved. Waking up to despair was an agony; I was being pulled into a black hole, deeper and deeper as days passed.";
+  const para1   = "2020 was the darkest time of my life. I lost my business, lost in love, and the pandemic kept me away from everyone I loved. Waking up to despair was an agony; I was being pulled into a black hole, deeper and deeper as days passed.";
   const para2   = "Before I completely lost faith, I had my first tarot reading. In my spread, I saw 'The Sun' card for the first time. At that moment, I felt a light shining through the thick grey clouds, gently telling me it is not the end of the world. I found clarity, direction, and a quiet sense of hope when I needed it most.";
   const para3   = "What began as a personal practice became something I couldn't keep to myself...";
   const para4   = "As I shared readings with close friends, the feedback was humbling. It helped people lighten their paths, find what they truly want, and gently heal what quietly ached inside. Today, I offer personal readings in both English and Mandarin, from a deck I illustrated with my own Pomeranian — a little soul who makes every reading feel a little warmer.";
@@ -84,7 +84,7 @@ function AboutCoco({ isMobile }) {
   return (
     <section id="about-coco" style={{
       padding: isMobile ? "32px 20px" : "60px 48px",
-      maxWidth: 900,
+      maxWidth: 1000,
       margin: "0 auto",
       position: "relative",
       zIndex: 1,
@@ -103,7 +103,7 @@ function AboutCoco({ isMobile }) {
       <div style={{
         display: "flex",
         flexDirection: isMobile ? "column" : "row",
-        gap: isMobile ? 16 : 52,
+        gap: isMobile ? 16 : 64,
         alignItems: isMobile ? "center" : "flex-start",
       }}>
         {/* Avatar */}
@@ -112,8 +112,8 @@ function AboutCoco({ isMobile }) {
             src="https://res.cloudinary.com/da1asg0hq/image/upload/v1776685972/Gemini_Generated_Image_4cldof4cldof4cld_1_xjl6nl.png"
             alt="Coco Chen"
             style={{
-              width: isMobile ? 160 : 220,
-              height: isMobile ? 160 : 220,
+              width: isMobile ? 160 : 260,
+              height: isMobile ? 160 : 260,
               borderRadius: "50%",
               border: "2px solid #c9a84c88",
               objectFit: "cover",
@@ -138,7 +138,7 @@ function AboutCoco({ isMobile }) {
         </div>
 
         {/* Text */}
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, maxWidth: isMobile ? "100%" : 560 }}>
           {/* Hook */}
           <p style={{ ...pStyle, color: "#c9a84c", fontWeight: "bold", fontStyle: "italic", fontSize: isMobile ? 16 : 18, marginBottom: 16 }}>{hook}</p>
 
@@ -431,8 +431,8 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
 
       {/* ── HOW IT WORKS ── */}
       <section id="how-it-works" style={{
-        padding: "24px 20px 24px",
-        maxWidth: 860,
+        padding: "40px 48px 80px",
+        maxWidth: 720,
         margin: "0 auto",
         position: "relative",
         zIndex: 1,
@@ -440,7 +440,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
         {/* Section header */}
         <div className="reveal" style={{ textAlign: "center", marginBottom: 16 }}>
           <div style={{ fontSize: isMobile ? 10 : 11, color: "#a07840", letterSpacing: 4, marginBottom: 6 }}>✦ THE JOURNEY ✦</div>
-          <h2 style={{ fontSize: isMobile ? "22px" : "clamp(26px, 5vw, 42px)", color: "#c9a84c", letterSpacing: 2, marginBottom: 16, fontWeight: "normal" }}>
+          <h2 style={{ fontSize: isMobile ? "22px" : "36px", color: "#c9a84c", letterSpacing: 2, marginBottom: 16, fontWeight: "normal" }}>
             How it works
           </h2>
           <div style={{ width: 60, height: 1, background: "#c9a84c44", margin: "0 auto" }} />
@@ -451,7 +451,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
           {/* Vertical line */}
           {!isMobile && (
             <div style={{
-              position: "absolute", left: 48, top: 0, bottom: 0, width: 1,
+              position: "absolute", left: 39, top: 0, bottom: 0, width: 1,
               background: "linear-gradient(to bottom, transparent, #c9a84c44, transparent)",
             }} />
           )}
@@ -460,7 +460,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
             <div key={i} className="reveal step-card" style={{
               display: "flex",
               gap: isMobile ? 20 : 32,
-              padding: isMobile ? "8px 0" : "14px 0",
+              padding: isMobile ? "8px 0" : "10px 0",
               borderBottom: i < STEPS.length - 1 ? "1px solid #7c5c2e22" : "none",
               transitionDelay: `${i * 0.1}s`,
             }}>
@@ -477,7 +477,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
               </div>
               {/* Text */}
               <div style={{ flex: 1, paddingTop: 8 }}>
-                <p style={{ fontSize: isMobile ? 14 : 15, color: step.isBold ? "#e8d5b7" : "#c9a880", lineHeight: 1.7, margin: 0, maxWidth: 540, fontWeight: step.isBold ? "bold" : "normal" }}>
+                <p style={{ fontSize: isMobile ? 14 : 16, color: step.isBold ? "#e8d5b7" : "#c9a880", lineHeight: 1.7, margin: 0, maxWidth: 540, fontWeight: step.isBold ? "bold" : "normal" }}>
                   {step.desc}
                 </p>
               </div>

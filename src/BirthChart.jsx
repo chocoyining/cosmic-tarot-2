@@ -599,7 +599,7 @@ export default function BirthChart({ onHome }) {
           <div style={{fontSize:13,color:"#c9a84c",letterSpacing:3,marginBottom:8}}>✦ Coco's Cosmic Tarot ✦</div>
           <div style={{fontSize:11,color:"#7a5a3a",letterSpacing:2,marginBottom:2}}>COSMIC BLUEPRINT FOR</div>
           <div style={{fontSize:17,color:"#c9a84c",letterSpacing:2,marginBottom:2}}>{name||"My Chart"}</div>
-          <div style={{fontSize:10,color:"#7a5a3a",marginBottom:14}}>{day}/{month}/{year} · {city.label}, {country}</div>
+          <div style={{fontSize:10,color:"#7a5a3a",marginBottom:14}}>{day}/{month}/{year} · {String(hour).padStart(2,"0")}:{String(minute).padStart(2,"0")} · {city.label}, {country}</div>
           <div style={{width:"100%",borderTop:"1px solid #7c5c2e44",marginBottom:8}}/>
           <div style={{display:"grid",gridTemplateColumns:"1.4fr 1.8fr 0.8fr",width:"100%",marginBottom:6}}>
             {["PLANET","SIGN","HOUSE"].map(h=>(

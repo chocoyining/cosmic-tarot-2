@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const HERO_CARDS_MOBILE = [
   { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/6_-_The_Lovers_copy_jg6jio.png",   w: 90,  rotate: -18, cx: -175, y: "12%", z: 1 },
@@ -19,26 +19,12 @@ const HERO_CARDS_DESKTOP = [
 ];
 
 const STEPS = [
-  {
-    num: "01",
-    title: "Enter your details",
-    desc: "Share your name, date of birth, and the question or intention you're carrying into the reading.",
-  },
-  {
-    num: "02",
-    title: "Draw your cards or calculate your blueprint",
-    desc: "Let the cards find you through a meditative drawing ritual — or discover where the planets fell at the moment of your birth.",
-  },
-  {
-    num: "03",
-    title: "Send to Coco & save for yourself",
-    desc: "Hit 'Send to Coco' and your reading lands with me. Save a beautiful image for yourself to keep.",
-  },
-  {
-    num: "04",
-    title: "Receive a message from Coco",
-    desc: "I'll reach out personally to book your reading session — choose a meeting or a text — and guide you through what the cards and stars reveal.",
-  },
+  { num: "01", desc: "Fill in your name, date of birth, and your question." },
+  { num: "02", desc: "Draw your cards or calculate your cosmic blueprint." },
+  { num: "03", desc: "Hit 'Send to Coco' — your reading lands with Coco." },
+  { num: "04", desc: "Coco reaches out with session details and payment." },
+  { num: "05", desc: "Coco reviews your reading once payment is confirmed." },
+  { num: "06", desc: "Your 1:1 — 60 / 90 mins reading session with Coco!" },
 ];
 
 const Stars = () => {
@@ -67,7 +53,137 @@ const Stars = () => {
   );
 };
 
-export default function LandingPage({ onBeginReading, onBeginChart }) {
+
+function AboutCoco({ isMobile }) {
+  const [expanded, setExpanded] = useState(false);
+
+  const hook    = "'The darkest chapter can be the greatest gift.'";
+  const para1   = "2020 was the darkest time of my life. I lost my business, lost in love, and the pandemic locked me far away from everyone I loved. Waking up to despair was an agony; I was being pulled into a black hole, deeper and deeper as days passed.";
+  const para2   = "Before I completely lost faith, I had my first tarot reading. In my spread, I saw 'The Sun' card for the first time. At that moment, I felt a light shining through the thick grey clouds, gently telling me it is not the end of the world. I found clarity, direction, and a quiet sense of hope when I needed it most.";
+  const para3   = "What began as a personal practice became something I couldn't keep to myself...";
+  const para4   = "As I shared readings with close friends, the feedback was humbling. It helped people lighten their paths, find what they truly want, and gently heal what quietly ached inside. Today, I offer personal readings in both English and Mandarin, from a deck I illustrated with my own Pomeranian — a little soul who makes every reading feel a little warmer.";
+  const para5   = "I don't claim to predict the future. What I offer is clarity, a space to understand yourself better, and the courage to take your next step.";
+  const closing = "\"If tarot found me in my darkest hour, perhaps it can find you too.\"";
+
+  const pStyle = {
+    fontSize: isMobile ? 14 : 15,
+    color: "#a07840",
+    lineHeight: 1.85,
+    margin: "0 0 12px 0",
+    textAlign: isMobile ? "center" : "left",
+  };
+
+  const closingStyle = {
+    ...pStyle,
+    color: "#c9a84c",
+    fontStyle: "italic",
+    fontSize: isMobile ? 14 : 16,
+    margin: 0,
+  };
+
+  return (
+    <section id="about-coco" style={{
+      padding: isMobile ? "32px 20px" : "60px 48px",
+      maxWidth: 900,
+      margin: "0 auto",
+      position: "relative",
+      zIndex: 1,
+      borderTop: "1px solid #7c5c2e22",
+    }}>
+      {/* Section header */}
+      <div style={{ textAlign: "center", marginBottom: isMobile ? 16 : 32 }}>
+        <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 5, marginBottom: 12 }}>✦ THE CARTOMANCER ✦</div>
+        <h2 style={{ fontSize: isMobile ? 22 : 32, color: "#c9a84c", letterSpacing: 2, marginBottom: 16, fontWeight: "normal", fontFamily: "'IM Fell English', serif" }}>
+          About Coco
+        </h2>
+        <div style={{ width: 60, height: 1, background: "#c9a84c44", margin: "0 auto" }} />
+      </div>
+
+      {/* Content */}
+      <div style={{
+        display: "flex",
+        flexDirection: isMobile ? "column" : "row",
+        gap: isMobile ? 16 : 52,
+        alignItems: isMobile ? "center" : "flex-start",
+      }}>
+        {/* Avatar */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, flexShrink: 0, width: isMobile ? "100%" : "auto" }}>
+          <img
+            src="https://res.cloudinary.com/da1asg0hq/image/upload/v1776685972/Gemini_Generated_Image_4cldof4cldof4cld_1_xjl6nl.png"
+            alt="Coco Chen"
+            style={{
+              width: isMobile ? 160 : 220,
+              height: isMobile ? 160 : 220,
+              borderRadius: "50%",
+              border: "2px solid #c9a84c88",
+              objectFit: "cover",
+              display: "block",
+              margin: isMobile ? "0 auto" : 0,
+            }}
+          />
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: isMobile ? 16 : 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 4 }}>Coco Chen</div>
+            <div style={{ fontSize: 12, color: "#a07840", letterSpacing: 3, marginBottom: 10 }}>The Cartomancer</div>
+            <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginBottom: 6 }}>
+              {["Tarot", "Birth Chart", "Astrology"].map(t => (
+                <span key={t} style={{ fontSize: 11, color: "#c9a84c88", letterSpacing: 2, borderBottom: "1px solid #c9a84c33", paddingBottom: 2 }}>{t}</span>
+              ))}
+            </div>
+            <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+              {["English", "Mandarin"].map(t => (
+                <span key={t} style={{ fontSize: 11, color: "#c9a84c88", letterSpacing: 2, borderBottom: "1px solid #c9a84c33", paddingBottom: 2 }}>{t}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Text */}
+        <div style={{ flex: 1 }}>
+          {/* Hook */}
+          <p style={{ ...pStyle, color: "#c9a84c", fontWeight: "bold", fontStyle: "italic", fontSize: isMobile ? 16 : 18, marginBottom: 16 }}>{hook}</p>
+
+          <p style={pStyle}>{para1}</p>
+          <p style={pStyle}>{para2}</p>
+
+          {/* Mobile: read more toggle */}
+          {isMobile && !expanded ? (
+            <>
+              <p style={pStyle}>{para3}</p>
+              <button onClick={() => setExpanded(true)} style={{
+                background: "transparent", border: "none", color: "#c9a84c",
+                fontSize: 12, letterSpacing: 2, cursor: "pointer",
+                fontFamily: "'Georgia', serif", display: "block",
+                margin: "4px auto 0", padding: "4px 0",
+                textDecoration: "underline", textUnderlineOffset: 4,
+              }}>
+                Read more ↓
+              </button>
+            </>
+          ) : (
+            <>
+              <p style={pStyle}>{para3}</p>
+              <p style={pStyle}>{para4}</p>
+              <p style={pStyle}>{para5}</p>
+              <p style={{ ...closingStyle, fontWeight: "bold" }}>{closing}</p>
+              {isMobile && expanded && (
+                <button onClick={() => setExpanded(false)} style={{
+                  background: "transparent", border: "none", color: "#c9a84c88",
+                  fontSize: 11, letterSpacing: 2, cursor: "pointer",
+                  fontFamily: "'Georgia', serif", display: "block",
+                  margin: "12px auto 0", padding: "4px 0",
+                }}>
+                  Show less ↑
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onToggleBgm }) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => entries.forEach(e => {
@@ -122,37 +238,55 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           transform: translateY(0);
         }
         .cta-btn {
-          background: transparent;
-          border: 1px solid #c9a84c;
+          background: #c9a84c;
+          border: none;
           border-radius: 40px;
-          color: #c9a84c;
+          color: #0d0221;
           font-family: 'Georgia', serif;
-          font-size: 14px;
-          letter-spacing: 2px;
-          padding: 14px 40px;
+          font-size: 13px;
+          font-weight: bold;
+          letter-spacing: 1px;
+          padding: 11px 22px;
           cursor: pointer;
-          transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+          transition: all 0.3s ease;
         }
         .cta-btn:hover {
           background: linear-gradient(135deg, #c9a84c, #e8c96d, #c9a84c);
           background-size: 200% auto;
-          color: #0d0221;
-          font-weight: bold;
-          animation: shimmer 2s linear infinite;
-          border-color: transparent;
+          box-shadow: 0 0 24px #c9a84c88, 0 0 48px #c9a84c44;
+          animation: shimmer 1.5s linear infinite;
         }
         .cta-btn-primary {
-          background: transparent;
-          border: 1px solid #c9a84c;
-          color: #c9a84c;
+          background: #c9a84c;
+          border: none;
+          color: #0d0221;
+          font-weight: bold;
+        }
+        .rose-btn {
+          background: #c4a0a0 !important;
+          color: #2a1212 !important;
+        }
+        .rose-btn:hover {
+          background: linear-gradient(135deg, #c4a0a0, #ddbfbf, #c4a0a0) !important;
+          background-size: 200% auto !important;
+          animation: shimmer 1.5s linear infinite !important;
+          box-shadow: 0 0 24px #c4a0a088, 0 0 48px #c4a0a044 !important;
+        }
+        .lavender-btn {
+          background: #b0a0c4 !important;
+          color: #1a122a !important;
+        }
+        .lavender-btn:hover {
+          background: linear-gradient(135deg, #b0a0c4, #cbbfdd, #b0a0c4) !important;
+          background-size: 200% auto !important;
+          animation: shimmer 1.5s linear infinite !important;
+          box-shadow: 0 0 24px #b0a0c488, 0 0 48px #b0a0c444 !important;
         }
         .cta-btn-primary:hover {
           background: linear-gradient(135deg, #c9a84c, #e8c96d, #c9a84c);
           background-size: 200% auto;
-          color: #0d0221;
-          font-weight: bold;
-          animation: shimmer 2s linear infinite;
-          border-color: transparent;
+          box-shadow: 0 0 24px #c9a84c88, 0 0 48px #c9a84c44;
+          animation: shimmer 1.5s linear infinite;
         }
         .step-card:hover { transform: translateY(-4px); }
         .step-card { transition: transform 0.3s ease; }
@@ -224,47 +358,34 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
 
         {/* Text content */}
         <div style={{ position: "relative", zIndex: 2, animation: "fadeUp 1s ease-out 0.4s both", width: "100%", maxWidth: isMobile ? 500 : 860, margin: "0 auto" }}>
-          <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 5, marginBottom: isMobile ? 12 : 10 }}>
+          <div style={{ fontSize: isMobile ? 10 : 11, color: "#a07840", letterSpacing: isMobile ? 3 : 5, marginBottom: isMobile ? 10 : 10 }}>
             {isMobile ? (<>WELCOME TO<br/>✦ COCO'S COSMIC WORLD ✦</>) : "✦ WELCOME TO COCO'S COSMIC WORLD ✦"}
           </div>
 
+          {/* Power statement */}
           <h1 style={{
-            fontSize: isMobile ? "40px" : "clamp(40px, 5vw, 52px)",
-            letterSpacing: 4,
-            marginBottom: 6,
-            lineHeight: 1.05,
+            fontSize: isMobile ? "clamp(20px, 5.5vw, 26px)" : "clamp(28px, 4vw, 42px)",
+            letterSpacing: isMobile ? 0.5 : 1,
+            marginBottom: isMobile ? 16 : 24,
+            lineHeight: 1.4,
             fontFamily: "'IM Fell English', serif",
-            background: "linear-gradient(135deg, #c9a84c, #f0d882, #c9a84c)",
-            backgroundSize: "200% auto",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            animation: "shimmer 4s linear infinite",
+            color: "#e8d5b7",
+            fontWeight: "normal",
+            maxWidth: isMobile ? 340 : 680,
+            margin: isMobile ? "0 auto 16px" : "0 auto 24px",
           }}>
-            Coco Chen
+            To stay or go?<br />To fight or let go?<br />To trust or walk away...
           </h1>
 
-          <div style={{ fontSize: isMobile ? 13 : 16, color: "#a07840", letterSpacing: 5, marginBottom: isMobile ? 12 : 16 }}>
-            The Cartomancer
-          </div>
-
-          {/* Descriptors */}
-          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", marginBottom: isMobile ? 12 : 16 }}>
-            {["Tarot", "Birth Chart", "Astrology"].map((d, i) => (
-              <span key={i} style={{
-                fontSize: isMobile ? 10 : 13, color: "#c9a84c88", letterSpacing: 3,
-                borderBottom: "1px solid #c9a84c33", paddingBottom: 2,
-              }}>{d}</span>
-            ))}
-          </div>
-
-          {/* Tagline */}
+          {/* Sub-tagline */}
           <p style={{
-            fontSize: isMobile ? "13px" : "16px",
+            fontSize: isMobile ? "14px" : "16px",
             color: "#a07840",
-            maxWidth: isMobile ? 500 : 700,
-            margin: isMobile ? "0 auto 12px" : "0 auto 16px",
+            maxWidth: isMobile ? 500 : 620,
+            margin: isMobile ? "0 auto 20px" : "0 auto 20px",
             lineHeight: 1.9,
             letterSpacing: 0.5,
+            fontStyle: "italic",
           }}>
             {isMobile ? (
               <>Through tarot and the stars, I will guide you<br />to find clarity, illuminate the path ahead,<br />and discover who you truly are.</>
@@ -273,27 +394,29 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
             )}
           </p>
 
-          {/* Deck story */}
-          <p style={{
-            fontSize: isMobile ? "12px" : "15px",
-            color: "#7a5a3a",
-            maxWidth: isMobile ? 460 : 680,
-            margin: isMobile ? "0 auto 16px" : "0 auto 20px",
-            lineHeight: 1.9,
-            letterSpacing: 0.3,
-            fontStyle: "italic",
-            borderTop: "1px solid #7c5c2e33",
-            paddingTop: isMobile ? 12 : 20,
-          }}>
-            "Every card in this deck is illustrated with my own Pomeranian — a little soul who brings warmth, curiosity and love into every reading. Drawing from this deck not only creates an extra layer of connection between us, but I hope it also brings extra positivity and strength to whatever you're going through."
-          </p>
-
-          {/* CTAs */}
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: isMobile ? 10 : 16 }}>
-            <div style={{ fontSize: 13, color: "#c9a84c", letterSpacing: 3, marginBottom: 12 }}>✦ Every reading is personally done by Coco ✦</div>
+          {/* Main CTAs */}
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: 10 }}>
+            <button className="cta-btn" onClick={onBeginReading}>
+              🌙 Begin Your Tarot Reading
+            </button>
+            <button className="cta-btn" onClick={onBeginChart}>
+              🌌 Calculate My Cosmic Blueprint
+            </button>
           </div>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: isMobile ? 10 : 16 }}>
-            <button className="cta-btn" onClick={() => {
+
+          {/* Personal line */}
+          <div style={{ fontSize: isMobile ? 12 : 13, color: "#c9a84c", letterSpacing: isMobile ? 1 : 2, marginBottom: isMobile ? 12 : 16, fontStyle: "italic" }}>
+            ✦ Every reading is personally done by Coco Chen ✦
+          </div>
+
+          {/* Secondary nav */}
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <button className="cta-btn rose-btn" onClick={() => {
+              document.getElementById("about-coco").scrollIntoView({ behavior: "smooth" });
+            }}>
+              ✨ About Coco
+            </button>
+            <button className="cta-btn lavender-btn" onClick={() => {
               document.getElementById("how-it-works").scrollIntoView({ behavior: "smooth" });
             }}>
               🔮 See how it works
@@ -303,18 +426,21 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
 
       </section>
 
+      {/* ── ABOUT COCO ── */}
+      <AboutCoco isMobile={isMobile} />
+
       {/* ── HOW IT WORKS ── */}
       <section id="how-it-works" style={{
-        padding: "100px 24px",
+        padding: "24px 20px 24px",
         maxWidth: 860,
         margin: "0 auto",
         position: "relative",
         zIndex: 1,
       }}>
         {/* Section header */}
-        <div className="reveal" style={{ textAlign: "center", marginBottom: 72 }}>
-          <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 5, marginBottom: 16 }}>✦ THE JOURNEY ✦</div>
-          <h2 style={{ fontSize: "clamp(26px, 5vw, 42px)", color: "#c9a84c", letterSpacing: 2, marginBottom: 16, fontWeight: "normal" }}>
+        <div className="reveal" style={{ textAlign: "center", marginBottom: 16 }}>
+          <div style={{ fontSize: isMobile ? 10 : 11, color: "#a07840", letterSpacing: 4, marginBottom: 6 }}>✦ THE JOURNEY ✦</div>
+          <h2 style={{ fontSize: isMobile ? "22px" : "clamp(26px, 5vw, 42px)", color: "#c9a84c", letterSpacing: 2, marginBottom: 16, fontWeight: "normal" }}>
             How it works
           </h2>
           <div style={{ width: 60, height: 1, background: "#c9a84c44", margin: "0 auto" }} />
@@ -334,27 +460,24 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
             <div key={i} className="reveal step-card" style={{
               display: "flex",
               gap: isMobile ? 20 : 32,
-              padding: "32px 0",
+              padding: isMobile ? "8px 0" : "14px 0",
               borderBottom: i < STEPS.length - 1 ? "1px solid #7c5c2e22" : "none",
               transitionDelay: `${i * 0.1}s`,
             }}>
               {/* Number circle */}
               <div style={{ width: 96, flexShrink: 0, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 4 }}>
                 <div style={{
-                  width: 48, height: 48, borderRadius: "50%",
+                  width: isMobile ? 40 : 48, height: isMobile ? 40 : 48, borderRadius: "50%",
                   border: "1px solid #c9a84c",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   background: "#0d0221", flexShrink: 0, position: "relative", zIndex: 1,
                 }}>
-                  <span style={{ fontSize: 12, color: "#c9a84c", letterSpacing: 1 }}>{step.num}</span>
+                  <span style={{ fontSize: isMobile ? 12 : 13, color: "#c9a84c", letterSpacing: 1 }}>{step.num}</span>
                 </div>
               </div>
               {/* Text */}
               <div style={{ flex: 1, paddingTop: 8 }}>
-                <h3 style={{ fontSize: isMobile ? 15 : 19, color: "#e8d5b7", letterSpacing: 1, marginBottom: 10, fontWeight: "normal" }}>
-                  {step.title}
-                </h3>
-                <p style={{ fontSize: 14, color: "#a07840", lineHeight: 1.8, margin: 0, maxWidth: 540 }}>
+                <p style={{ fontSize: isMobile ? 14 : 15, color: step.isBold ? "#e8d5b7" : "#c9a880", lineHeight: 1.7, margin: 0, maxWidth: 540, fontWeight: step.isBold ? "bold" : "normal" }}>
                   {step.desc}
                 </p>
               </div>
@@ -362,11 +485,18 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           ))}
         </div>
 
+        {/* Payment note */}
+        <div style={{ textAlign: "center", marginTop: 12, marginBottom: 4 }}>
+          <span style={{ fontSize: isMobile ? 12 : 13, color: "#c9a84c", letterSpacing: 2, fontWeight: "bold" }}>
+            ✦ Please allow 18 hours for Coco to conduct a deep analysis of your cosmic blueprint ✦
+          </span>
+        </div>
+
         {/* Bottom CTA */}
-        <div className="reveal" style={{ textAlign: "center", marginTop: 80 }}>
-          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 3, marginBottom: 24 }}>✦ READY TO BEGIN? ✦</div>
+        <div className="reveal" style={{ textAlign: "center", marginTop: 10 }}>
+          <div style={{ fontSize: 10, color: "#7a5a3a", letterSpacing: 3, marginBottom: 10 }}>✦ READY TO BEGIN? ✦</div>
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <button className="cta-btn cta-btn-primary" onClick={onBeginReading}>
+            <button className="cta-btn" onClick={onBeginReading}>
               🌙 Begin Your Tarot Reading
             </button>
             <button className="cta-btn" onClick={onBeginChart}>
@@ -375,12 +505,49 @@ export default function LandingPage({ onBeginReading, onBeginChart }) {
           </div>
         </div>
 
-        {/* Footer */}
-        <div style={{ textAlign: "center", marginTop: 80, paddingTop: 40, borderTop: "1px solid #7c5c2e22" }}>
-          <div style={{ fontSize: 18, color: "#c9a84c", letterSpacing: 3, marginBottom: 8 }}>✦ Coco · The Cartomancer ✦</div>
-          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2 }}>Tarot · Birth Chart · Astrology</div>
-        </div>
+
       </section>
+
+      {/* ── FOOTER ── */}
+      <div style={{
+        textAlign: "center",
+        padding: "32px 24px",
+        borderTop: "1px solid #7c5c2e22",
+        position: "relative",
+        zIndex: 1,
+      }}>
+        <div style={{ fontSize: 14, color: "#c9a84c", letterSpacing: 4, marginBottom: 8 }}>✦ COCO'S COSMIC WORLD ✦</div>
+        <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 3 }}>Tarot · Birth Chart · Astrology</div>
+      </div>
+
+    {/* Floating music toggle - top right */}
+      {onToggleBgm && (
+        <button
+          onClick={onToggleBgm}
+          style={{
+            position: "fixed",
+            top: 20,
+            right: 20,
+            width: 44,
+            height: 44,
+            borderRadius: "50%",
+            background: bgmOn ? "#1f3a1f" : "#1a0545",
+            border: "1px solid #c9a84c",
+            color: "#c9a84c",
+            fontSize: 18,
+            cursor: "pointer",
+            zIndex: 999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: bgmOn ? "0 0 12px #c9a84c44" : "none",
+            transition: "all 0.3s ease",
+          }}
+          title={bgmOn ? "Music ON" : "Music OFF"}
+        >
+          {bgmOn ? "🔊" : "🔇"}
+        </button>
+      )}
     </div>
   );
 }

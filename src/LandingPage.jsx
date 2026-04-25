@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 const HERO_CARDS_MOBILE = [
   { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/6_-_The_Lovers_copy_jg6jio.png",   w: 90,  rotate: -18, cx: -175, y: "12%", z: 1 },
@@ -186,6 +186,21 @@ function AboutCoco({ isMobile }) {
 }
 
 export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onToggleBgm }) {
+  const PHRASES = ["To stay or go?", "To fight or let go?", "To trust or walk away..."];
+  const [phraseIdx, setPhraseIdx] = useState(0);
+  const [fadeIn, setFadeIn] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFadeIn(false);
+      setTimeout(() => {
+        setPhraseIdx(i => (i + 1) % 3);
+        setFadeIn(true);
+      }, 600);
+    }, 2800);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => entries.forEach(e => {
@@ -363,27 +378,36 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
             {isMobile ? (<>WELCOME TO<br/>✦ COCO'S COSMIC WORLD ✦</>) : "✦ WELCOME TO COCO'S COSMIC WORLD ✦"}
           </div>
 
-          {/* Power statement */}
-          <h1 style={{
-            fontSize: isMobile ? "clamp(20px, 5.5vw, 26px)" : "clamp(28px, 4vw, 42px)",
-            letterSpacing: isMobile ? 0.5 : 1,
-            marginBottom: isMobile ? 16 : 24,
-            lineHeight: 1.4,
-            fontFamily: "'IM Fell English', serif",
-            color: "#e8d5b7",
-            fontWeight: "normal",
-            maxWidth: isMobile ? 340 : 680,
-            margin: isMobile ? "0 auto 16px" : "0 auto 24px",
+          {/* Cycling power statement */}
+          <div style={{
+            height: isMobile ? 80 : 100,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: isMobile ? 8 : 12,
           }}>
-            To stay or go?<br />To fight or let go?<br />To trust or walk away...
-          </h1>
+            <h1 style={{
+              fontSize: isMobile ? "clamp(22px, 6vw, 28px)" : "clamp(28px, 4vw, 42px)",
+              letterSpacing: isMobile ? 0.5 : 1,
+              lineHeight: 1.3,
+              fontFamily: "'IM Fell English', serif",
+              color: "#e8d5b7",
+              fontWeight: "normal",
+              margin: 0,
+              opacity: fadeIn ? 1 : 0,
+              transition: "opacity 0.6s ease",
+              textAlign: "center",
+            }}>
+              {PHRASES[phraseIdx]}
+            </h1>
+          </div>
 
-          {/* Sub-tagline */}
+          {/* Fixed anchor line */}
           <p style={{
-            fontSize: isMobile ? "14px" : "16px",
+            fontSize: isMobile ? "14px" : "17px",
             color: "#a07840",
             maxWidth: isMobile ? 500 : 620,
-            margin: isMobile ? "0 auto 20px" : "0 auto 20px",
+            margin: isMobile ? "0 auto 20px" : "0 auto 24px",
             lineHeight: 1.9,
             letterSpacing: 0.5,
             fontStyle: "italic",

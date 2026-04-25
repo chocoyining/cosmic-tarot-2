@@ -57,8 +57,9 @@ const Stars = () => {
 function AboutCoco({ isMobile }) {
   const [expanded, setExpanded] = useState(false);
 
-  const hook    = "'The darkest chapter can be the greatest gift.'";
-  const para1   = "2020 was the darkest time of my life. I lost my business, lost in love, and the pandemic kept me away from everyone I loved. Waking up to despair was an agony; I was being pulled into a black hole, deeper and deeper as days passed.";
+  const hook1   = "'The darkest chapter can be the'";
+  const hook2   = "'greatest gift.'";
+  const para1   = "2020 was the darkest time of my life. I lost my business, lost in love, and the pandemic locked me away from everyone I loved. Waking up to despair was an agony; I was being pulled into a black hole, deeper as days passed.";
   const para2   = "Before I completely lost faith, I had my first tarot reading. In my spread, I saw 'The Sun' card for the first time. At that moment, I felt a light shining through the thick grey clouds, gently telling me it is not the end of the world. I found clarity, direction, and a quiet sense of hope when I needed it most.";
   const para3   = "What began as a personal practice became something I couldn't keep to myself...";
   const para4   = "As I shared readings with close friends, the feedback was humbling. It helped people lighten their paths, find what they truly want, and gently heal what quietly ached inside. Today, I offer personal readings in both English and Mandarin, from a deck I illustrated with my own Pomeranian — a little soul who makes every reading feel a little warmer.";
@@ -123,7 +124,6 @@ function AboutCoco({ isMobile }) {
           />
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: isMobile ? 16 : 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 4 }}>Coco Chen</div>
-            <div style={{ fontSize: 12, color: "#a07840", letterSpacing: 3, marginBottom: 10 }}>The Cartomancer</div>
             <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginBottom: 6 }}>
               {["Tarot", "Birth Chart", "Astrology"].map(t => (
                 <span key={t} style={{ fontSize: 11, color: "#c9a84c88", letterSpacing: 2, borderBottom: "1px solid #c9a84c33", paddingBottom: 2 }}>{t}</span>

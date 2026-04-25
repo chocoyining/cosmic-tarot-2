@@ -184,89 +184,141 @@ const LOCATION_DB = {
   "United States": {
     dst: true,
     cities: [
-      // Eastern Time (UTC-5)
-      { label: "New York, NY",           lat: 40.7128,  lon: -74.0060,   tz: -5 },
-      { label: "Boston, MA",             lat: 42.3601,  lon: -71.0589,   tz: -5 },
-      { label: "Philadelphia, PA",       lat: 39.9526,  lon: -75.1652,   tz: -5 },
+      // AK - Alaska
+      { label: "Anchorage, AK",          lat: 61.2181,  lon: -149.9003,  tz: -9 },
+      { label: "Fairbanks, AK",          lat: 64.8378,  lon: -147.7164,  tz: -9 },
+      // AL - Alabama
+      { label: "Birmingham, AL",         lat: 33.5186,  lon: -86.8104,   tz: -6 },
+      { label: "Huntsville, AL",         lat: 34.7304,  lon: -86.5861,   tz: -6 },
+      { label: "Mobile, AL",             lat: 30.6954,  lon: -88.0399,   tz: -6 },
+      { label: "Montgomery, AL",         lat: 32.3668,  lon: -86.2999,   tz: -6 },
+      // AR - Arkansas
+      { label: "Fayetteville, AR",       lat: 36.0822,  lon: -94.1719,   tz: -6 },
+      { label: "Little Rock, AR",        lat: 34.7465,  lon: -92.2896,   tz: -6 },
+      // AZ - Arizona
+      { label: "Phoenix, AZ",            lat: 33.4484,  lon: -112.0740,  tz: -7 },
+      { label: "Scottsdale, AZ",         lat: 33.4942,  lon: -111.9261,  tz: -7 },
+      { label: "Tucson, AZ",             lat: 32.2226,  lon: -110.9747,  tz: -7 },
+      // CA - California
+      { label: "Bakersfield, CA",        lat: 35.3733,  lon: -119.0187,  tz: -8 },
+      { label: "Fresno, CA",             lat: 36.7378,  lon: -119.7871,  tz: -8 },
+      { label: "Long Beach, CA",         lat: 33.7701,  lon: -118.1937,  tz: -8 },
+      { label: "Los Angeles, CA",        lat: 34.0522,  lon: -118.2437,  tz: -8 },
+      { label: "Oakland, CA",            lat: 37.8044,  lon: -122.2712,  tz: -8 },
+      { label: "Sacramento, CA",         lat: 38.5816,  lon: -121.4944,  tz: -8 },
+      { label: "San Diego, CA",          lat: 32.7157,  lon: -117.1611,  tz: -8 },
+      { label: "San Francisco, CA",      lat: 37.7749,  lon: -122.4194,  tz: -8 },
+      { label: "San Jose, CA",           lat: 37.3382,  lon: -121.8863,  tz: -8 },
+      { label: "Santa Barbara, CA",      lat: 34.4208,  lon: -119.6982,  tz: -8 },
+      { label: "Santa Monica, CA",       lat: 34.0195,  lon: -118.4912,  tz: -8 },
+      // CO - Colorado
+      { label: "Colorado Springs, CO",   lat: 38.8339,  lon: -104.8214,  tz: -7 },
+      { label: "Denver, CO",             lat: 39.7392,  lon: -104.9903,  tz: -7 },
+      // CT - Connecticut
+      { label: "Hartford, CT",           lat: 41.7658,  lon: -72.6851,   tz: -5 },
+      { label: "New Haven, CT",          lat: 41.3083,  lon: -72.9279,   tz: -5 },
+      // DC
       { label: "Washington DC",          lat: 38.9072,  lon: -77.0369,   tz: -5 },
-      { label: "Baltimore, MD",          lat: 39.2904,  lon: -76.6122,   tz: -5 },
-      { label: "Pittsburgh, PA",         lat: 40.4406,  lon: -79.9959,   tz: -5 },
+      // FL - Florida
+      { label: "Jacksonville, FL",       lat: 30.3322,  lon: -81.6557,   tz: -5 },
       { label: "Miami, FL",              lat: 25.7617,  lon: -80.1918,   tz: -5 },
       { label: "Orlando, FL",            lat: 28.5383,  lon: -81.3792,   tz: -5 },
       { label: "Tampa, FL",              lat: 27.9506,  lon: -82.4572,   tz: -5 },
-      { label: "Jacksonville, FL",       lat: 30.3322,  lon: -81.6557,   tz: -5 },
+      // GA - Georgia
       { label: "Atlanta, GA",            lat: 33.7490,  lon: -84.3880,   tz: -5 },
-      { label: "Charlotte, NC",          lat: 35.2271,  lon: -80.8431,   tz: -5 },
-      { label: "Raleigh, NC",            lat: 35.7796,  lon: -78.6382,   tz: -5 },
-      { label: "Richmond, VA",           lat: 37.5407,  lon: -77.4360,   tz: -5 },
-      { label: "Virginia Beach, VA",     lat: 36.8529,  lon: -75.9780,   tz: -5 },
-      { label: "Detroit, MI",            lat: 42.3314,  lon: -83.0458,   tz: -5 },
-      { label: "Columbus, OH",           lat: 39.9612,  lon: -82.9988,   tz: -5 },
-      { label: "Cleveland, OH",          lat: 41.4993,  lon: -81.6944,   tz: -5 },
-      { label: "Cincinnati, OH",         lat: 39.1031,  lon: -84.5120,   tz: -5 },
-      { label: "Indianapolis, IN",       lat: 39.7684,  lon: -86.1581,   tz: -5 },
-      { label: "Louisville, KY",         lat: 38.2527,  lon: -85.7585,   tz: -5 },
-      { label: "Buffalo, NY",            lat: 42.8864,  lon: -78.8784,   tz: -5 },
-      { label: "Hartford, CT",           lat: 41.7658,  lon: -72.6851,   tz: -5 },
-      { label: "Providence, RI",         lat: 41.8240,  lon: -71.4128,   tz: -5 },
-      { label: "Newark, NJ",             lat: 40.7357,  lon: -74.1724,   tz: -5 },
-      { label: "Rochester, NY",          lat: 43.1566,  lon: -77.6088,   tz: -5 },
-      { label: "Albany, NY",             lat: 42.6526,  lon: -73.7562,   tz: -5 },
       { label: "Savannah, GA",           lat: 32.0835,  lon: -81.0998,   tz: -5 },
-      { label: "Columbia, SC",           lat: 34.0007,  lon: -81.0348,   tz: -5 },
-      { label: "Charleston, SC",         lat: 32.7765,  lon: -79.9311,   tz: -5 },
-      // Central Time (UTC-6)
+      // HI - Hawaii
+      { label: "Honolulu, HI",           lat: 21.3069,  lon: -157.8583,  tz: -10 },
+      // IA - Iowa
+      { label: "Des Moines, IA",         lat: 41.5868,  lon: -93.6250,   tz: -6 },
+      // ID - Idaho
+      { label: "Boise, ID",              lat: 43.6150,  lon: -116.2023,  tz: -7 },
+      // IL - Illinois
       { label: "Chicago, IL",            lat: 41.8781,  lon: -87.6298,   tz: -6 },
-      { label: "Houston, TX",            lat: 29.7604,  lon: -95.3698,   tz: -6 },
-      { label: "Dallas, TX",             lat: 32.7767,  lon: -96.7970,   tz: -6 },
-      { label: "San Antonio, TX",        lat: 29.4241,  lon: -98.4936,   tz: -6 },
-      { label: "Austin, TX",             lat: 30.2672,  lon: -97.7431,   tz: -6 },
-      { label: "Fort Worth, TX",         lat: 32.7555,  lon: -97.3308,   tz: -6 },
-      { label: "Minneapolis, MN",        lat: 44.9778,  lon: -93.2650,   tz: -6 },
-      { label: "Nashville, TN",          lat: 36.1627,  lon: -86.7816,   tz: -6 },
-      { label: "Memphis, TN",            lat: 35.1495,  lon: -90.0490,   tz: -6 },
+      { label: "Springfield, IL",        lat: 39.7817,  lon: -89.6501,   tz: -6 },
+      // IN - Indiana
+      { label: "Indianapolis, IN",       lat: 39.7684,  lon: -86.1581,   tz: -5 },
+      // KS - Kansas
+      { label: "Wichita, KS",            lat: 37.6872,  lon: -97.3301,   tz: -6 },
+      // KY - Kentucky
+      { label: "Louisville, KY",         lat: 38.2527,  lon: -85.7585,   tz: -5 },
+      { label: "Lexington, KY",          lat: 38.0406,  lon: -84.5037,   tz: -5 },
+      // LA - Louisiana
+      { label: "Baton Rouge, LA",        lat: 30.4515,  lon: -91.1871,   tz: -6 },
       { label: "New Orleans, LA",        lat: 29.9511,  lon: -90.0715,   tz: -6 },
-      { label: "Milwaukee, WI",          lat: 43.0389,  lon: -87.9065,   tz: -6 },
+      // MA - Massachusetts
+      { label: "Boston, MA",             lat: 42.3601,  lon: -71.0589,   tz: -5 },
+      // MD - Maryland
+      { label: "Baltimore, MD",          lat: 39.2904,  lon: -76.6122,   tz: -5 },
+      // MI - Michigan
+      { label: "Detroit, MI",            lat: 42.3314,  lon: -83.0458,   tz: -5 },
+      { label: "Grand Rapids, MI",       lat: 42.9634,  lon: -85.6681,   tz: -5 },
+      // MN - Minnesota
+      { label: "Minneapolis, MN",        lat: 44.9778,  lon: -93.2650,   tz: -6 },
+      // MO - Missouri
       { label: "Kansas City, MO",        lat: 39.0997,  lon: -94.5786,   tz: -6 },
       { label: "St. Louis, MO",          lat: 38.6270,  lon: -90.1994,   tz: -6 },
+      // MS - Mississippi
+      { label: "Jackson, MS",            lat: 32.2988,  lon: -90.1848,   tz: -6 },
+      // MT - Montana
+      { label: "Billings, MT",           lat: 45.7833,  lon: -108.5007,  tz: -7 },
+      // NC - North Carolina
+      { label: "Charlotte, NC",          lat: 35.2271,  lon: -80.8431,   tz: -5 },
+      { label: "Raleigh, NC",            lat: 35.7796,  lon: -78.6382,   tz: -5 },
+      // NE - Nebraska
+      { label: "Omaha, NE",              lat: 41.2565,  lon: -95.9345,   tz: -6 },
+      // NJ - New Jersey
+      { label: "Newark, NJ",             lat: 40.7357,  lon: -74.1724,   tz: -5 },
+      // NM - New Mexico
+      { label: "Albuquerque, NM",        lat: 35.0853,  lon: -106.6056,  tz: -7 },
+      // NV - Nevada
+      { label: "Las Vegas, NV",          lat: 36.1699,  lon: -115.1398,  tz: -8 },
+      { label: "Reno, NV",               lat: 39.5296,  lon: -119.8138,  tz: -8 },
+      // NY - New York
+      { label: "Albany, NY",             lat: 42.6526,  lon: -73.7562,   tz: -5 },
+      { label: "Buffalo, NY",            lat: 42.8864,  lon: -78.8784,   tz: -5 },
+      { label: "New York, NY",           lat: 40.7128,  lon: -74.0060,   tz: -5 },
+      { label: "Rochester, NY",          lat: 43.1566,  lon: -77.6088,   tz: -5 },
+      // OH - Ohio
+      { label: "Cincinnati, OH",         lat: 39.1031,  lon: -84.5120,   tz: -5 },
+      { label: "Cleveland, OH",          lat: 41.4993,  lon: -81.6944,   tz: -5 },
+      { label: "Columbus, OH",           lat: 39.9612,  lon: -82.9988,   tz: -5 },
+      // OK - Oklahoma
       { label: "Oklahoma City, OK",      lat: 35.4676,  lon: -97.5164,   tz: -6 },
       { label: "Tulsa, OK",              lat: 36.1540,  lon: -95.9928,   tz: -6 },
-      { label: "Omaha, NE",              lat: 41.2565,  lon: -95.9345,   tz: -6 },
-      { label: "Des Moines, IA",         lat: 41.5868,  lon: -93.6250,   tz: -6 },
-      { label: "Wichita, KS",            lat: 37.6872,  lon: -97.3301,   tz: -6 },
-      { label: "Little Rock, AR",        lat: 34.7465,  lon: -92.2896,   tz: -6 },
-      { label: "Birmingham, AL",         lat: 33.5186,  lon: -86.8104,   tz: -6 },
-      { label: "Jackson, MS",            lat: 32.2988,  lon: -90.1848,   tz: -6 },
-      { label: "Lubbock, TX",            lat: 33.5779,  lon: -101.8552,  tz: -6 },
-      // Mountain Time (UTC-7)
-      { label: "Phoenix, AZ",            lat: 33.4484,  lon: -112.0740,  tz: -7 },
-      { label: "Denver, CO",             lat: 39.7392,  lon: -104.9903,  tz: -7 },
-      { label: "Salt Lake City, UT",     lat: 40.7608,  lon: -111.8910,  tz: -7 },
-      { label: "Albuquerque, NM",        lat: 35.0853,  lon: -106.6056,  tz: -7 },
-      { label: "Tucson, AZ",             lat: 32.2226,  lon: -110.9747,  tz: -7 },
-      { label: "Colorado Springs, CO",   lat: 38.8339,  lon: -104.8214,  tz: -7 },
-      { label: "Boise, ID",              lat: 43.6150,  lon: -116.2023,  tz: -7 },
-      { label: "El Paso, TX",            lat: 31.7619,  lon: -106.4850,  tz: -7 },
-      { label: "Billings, MT",           lat: 45.7833,  lon: -108.5007,  tz: -7 },
-      { label: "Cheyenne, WY",           lat: 41.1400,  lon: -104.8202,  tz: -7 },
-      // Pacific Time (UTC-8)
-      { label: "Los Angeles, CA",        lat: 34.0522,  lon: -118.2437,  tz: -8 },
-      { label: "San Francisco, CA",      lat: 37.7749,  lon: -122.4194,  tz: -8 },
-      { label: "San Diego, CA",          lat: 32.7157,  lon: -117.1611,  tz: -8 },
-      { label: "Seattle, WA",            lat: 47.6062,  lon: -122.3321,  tz: -8 },
+      // OR - Oregon
       { label: "Portland, OR",           lat: 45.5051,  lon: -122.6750,  tz: -8 },
-      { label: "Las Vegas, NV",          lat: 36.1699,  lon: -115.1398,  tz: -8 },
-      { label: "Sacramento, CA",         lat: 38.5816,  lon: -121.4944,  tz: -8 },
-      { label: "San Jose, CA",           lat: 37.3382,  lon: -121.8863,  tz: -8 },
-      { label: "Fresno, CA",             lat: 36.7378,  lon: -119.7871,  tz: -8 },
-      { label: "Oakland, CA",            lat: 37.8044,  lon: -122.2712,  tz: -8 },
-      { label: "Bakersfield, CA",        lat: 35.3733,  lon: -119.0187,  tz: -8 },
+      // PA - Pennsylvania
+      { label: "Philadelphia, PA",       lat: 39.9526,  lon: -75.1652,   tz: -5 },
+      { label: "Pittsburgh, PA",         lat: 40.4406,  lon: -79.9959,   tz: -5 },
+      // RI - Rhode Island
+      { label: "Providence, RI",         lat: 41.8240,  lon: -71.4128,   tz: -5 },
+      // SC - South Carolina
+      { label: "Charleston, SC",         lat: 32.7765,  lon: -79.9311,   tz: -5 },
+      { label: "Columbia, SC",           lat: 34.0007,  lon: -81.0348,   tz: -5 },
+      // TN - Tennessee
+      { label: "Memphis, TN",            lat: 35.1495,  lon: -90.0490,   tz: -6 },
+      { label: "Nashville, TN",          lat: 36.1627,  lon: -86.7816,   tz: -6 },
+      // TX - Texas
+      { label: "Austin, TX",             lat: 30.2672,  lon: -97.7431,   tz: -6 },
+      { label: "Dallas, TX",             lat: 32.7767,  lon: -96.7970,   tz: -6 },
+      { label: "El Paso, TX",            lat: 31.7619,  lon: -106.4850,  tz: -7 },
+      { label: "Fort Worth, TX",         lat: 32.7555,  lon: -97.3308,   tz: -6 },
+      { label: "Houston, TX",            lat: 29.7604,  lon: -95.3698,   tz: -6 },
+      { label: "Lubbock, TX",            lat: 33.5779,  lon: -101.8552,  tz: -6 },
+      { label: "San Antonio, TX",        lat: 29.4241,  lon: -98.4936,   tz: -6 },
+      // UT - Utah
+      { label: "Salt Lake City, UT",     lat: 40.7608,  lon: -111.8910,  tz: -7 },
+      // VA - Virginia
+      { label: "Richmond, VA",           lat: 37.5407,  lon: -77.4360,   tz: -5 },
+      { label: "Virginia Beach, VA",     lat: 36.8529,  lon: -75.9780,   tz: -5 },
+      // WA - Washington
+      { label: "Seattle, WA",            lat: 47.6062,  lon: -122.3321,  tz: -8 },
       { label: "Spokane, WA",            lat: 47.6588,  lon: -117.4260,  tz: -8 },
-      { label: "Reno, NV",               lat: 39.5296,  lon: -119.8138,  tz: -8 },
-      // Alaska & Hawaii
-      { label: "Anchorage, AK",          lat: 61.2181,  lon: -149.9003,  tz: -9 },
-      { label: "Fairbanks, AK",          lat: 64.8378,  lon: -147.7164,  tz: -9 },
-      { label: "Honolulu, HI",           lat: 21.3069,  lon: -157.8583,  tz: -10 },
+      // WI - Wisconsin
+      { label: "Milwaukee, WI",          lat: 43.0389,  lon: -87.9065,   tz: -6 },
+      // WY - Wyoming
+      { label: "Cheyenne, WY",           lat: 41.1400,  lon: -104.8202,  tz: -7 },
     ],
   },
   "Canada": {
@@ -488,8 +540,48 @@ export default function BirthChart({ onHome }) {
   const [toast, setToast]       = useState(false);
   const [clientContact, setClientContact] = useState("");
   const [contactError, setContactError]   = useState(false);
+  const [customCity, setCustomCity]         = useState("");
+  const [customLoading, setCustomLoading]   = useState(false);
+  const [customError, setCustomError]       = useState("");
   const captureRef            = useRef(null);
   const desktop               = window.innerWidth > 600;
+
+  async function geocodeCity() {
+    if (!customCity.trim()) return;
+    setCustomLoading(true);
+    setCustomError("");
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(customCity)}&format=json&limit=1`,
+        { headers: { "Accept-Language": "en" } }
+      );
+      const data = await res.json();
+      if (!data || data.length === 0) {
+        setCustomError("City not found. Please try a different spelling.");
+        setCustomLoading(false);
+        return;
+      }
+      const result = data[0];
+      const lat = parseFloat(result.lat);
+      const lon = parseFloat(result.lon);
+      // Estimate timezone from longitude
+      const tzRaw = Math.round(lon / 15);
+      const tz = Math.max(-12, Math.min(14, tzRaw));
+      // Override city/country with custom
+      setCountry("Custom");
+      setCityIdx(0);
+      // Store custom coords in a special slot
+      LOCATION_DB["Custom"] = {
+        dst: false,
+        cities: [{ label: customCity, lat, lon, tz }]
+      };
+      setCustomError("");
+      setCustomLoading(false);
+    } catch(e) {
+      setCustomError("Could not look up city. Please check your connection.");
+      setCustomLoading(false);
+    }
+  }
 
   useEffect(() => {
     if (window.emailjs) return;
@@ -816,12 +908,44 @@ export default function BirthChart({ onHome }) {
 
             <div>
               <Label>CITY OF BIRTH</Label>
-              <select style={selectStyle} value={cityIdx} onChange={e=>{setCityIdx(parseInt(e.target.value));setChart(null);}}>
+              <select style={selectStyle} value={cityIdx} onChange={e=>{setCityIdx(parseInt(e.target.value));setChart(null);setCustomCity("");}}>
                 {cities.map((c,i)=>(<option key={i} value={i} style={{background:"#1a0545"}}>{c.label}</option>))}
               </select>
               <div style={{fontSize:11,color:"#7a5a3a",marginTop:6}}>
                 Timezone: UTC{effectiveTz>=0?"+":""}{effectiveTz} · auto-applied
               </div>
+            </div>
+
+            {/* Custom city lookup */}
+            <div style={{background:"#ffffff08",border:"1px solid #7c5c2e44",borderRadius:10,padding:"14px 16px"}}>
+              <div style={{fontSize:11,color:"#a07840",letterSpacing:2,marginBottom:8}}>CAN'T FIND YOUR CITY?</div>
+              <div style={{display:"flex",gap:10}}>
+                <input
+                  style={{...inputStyle,flex:1}}
+                  type="text"
+                  placeholder="e.g. Brentwood, CA, USA"
+                  value={customCity}
+                  onChange={e=>setCustomCity(e.target.value)}
+                  onKeyDown={e=>e.key==="Enter" && geocodeCity()}
+                />
+                <button
+                  onClick={geocodeCity}
+                  disabled={customLoading}
+                  style={{
+                    background:"#3b1f6e",border:"1px solid #7c5c2e",borderRadius:8,
+                    color:"#e8d5b7",padding:"10px 16px",fontSize:13,cursor:"pointer",
+                    fontFamily:"'Georgia',serif",whiteSpace:"nowrap",flexShrink:0,
+                  }}
+                >
+                  {customLoading ? "..." : "Search"}
+                </button>
+              </div>
+              {customError && <div style={{color:"#c94c4c",fontSize:11,marginTop:6}}>{customError}</div>}
+              {country === "Custom" && !customError && customCity && (
+                <div style={{color:"#a8d8a8",fontSize:11,marginTop:6}}>
+                  ✓ {city.label} found!
+                </div>
+              )}
             </div>
 
             {showDst && (

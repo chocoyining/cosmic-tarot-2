@@ -967,7 +967,6 @@ export default function App() {
             </div>
           )}
           <div style={{ fontSize: 15, color: "#c9a84c", letterSpacing: 2, marginBottom: 6 }}>{spread.name}</div>
-          <div style={{ fontSize: 11, color: "#7a5a3a", lineHeight: 1.6, maxWidth: 260, margin: "0 auto" }}>{spread.desc}</div>
         </div>
         <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
           {renderGrid(true)}
@@ -995,7 +994,6 @@ export default function App() {
             </div>
           )}
           <div style={{ fontSize: desktop ? 20 : 15, color: "#c9a84c", letterSpacing: 2, marginBottom: 6 }}>{spread.name}</div>
-          <div style={{ fontSize: 11, color: "#7a5a3a", lineHeight: 1.6, maxWidth: 300, margin: "0 auto" }}>{spread.desc}</div>
         </div>
         <div style={{ overflowX: "auto", width: "100%", display: "flex", justifyContent: "center" }}>
           {renderGrid(false)}

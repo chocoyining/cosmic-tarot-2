@@ -57,8 +57,7 @@ const Stars = () => {
 function AboutCoco({ isMobile }) {
   const [expanded, setExpanded] = useState(false);
 
-  const hook1   = "'The darkest chapter can be the'";
-  const hook2   = "'greatest gift.'";
+  const hook    = "'The darkest chapter can be\nthe greatest gift.'";
   const para1   = "2020 was the darkest time of my life. I lost my business, lost in love, and the pandemic locked me away from everyone I loved. Waking up to despair was an agony; I was being pulled into a black hole, deeper as days passed.";
   const para2   = "Before I completely lost faith, I had my first tarot reading. In my spread, I saw 'The Sun' card for the first time. At that moment, I felt a light shining through the thick grey clouds, gently telling me it is not the end of the world. I found clarity, direction, and a quiet sense of hope when I needed it most.";
   const para3   = "What began as a personal practice became something I couldn't keep to myself...";
@@ -123,7 +122,7 @@ function AboutCoco({ isMobile }) {
             }}
           />
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: isMobile ? 16 : 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 4 }}>Coco Chen</div>
+            <div style={{ fontSize: isMobile ? 16 : 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 10 }}>Coco Chen</div>
             <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginBottom: 6 }}>
               {["Tarot", "Birth Chart", "Astrology"].map(t => (
                 <span key={t} style={{ fontSize: 11, color: "#c9a84c88", letterSpacing: 2, borderBottom: "1px solid #c9a84c33", paddingBottom: 2 }}>{t}</span>
@@ -140,7 +139,7 @@ function AboutCoco({ isMobile }) {
         {/* Text */}
         <div style={{ flex: 1, maxWidth: isMobile ? "100%" : 560 }}>
           {/* Hook */}
-          <p style={{ ...pStyle, color: "#c9a84c", fontWeight: "bold", fontStyle: "italic", fontSize: isMobile ? 16 : 18, marginBottom: 16 }}>{hook}</p>
+          <p style={{ ...pStyle, color: "#c9a84c", fontWeight: "bold", fontStyle: "italic", fontSize: isMobile ? 16 : 18, marginBottom: 16 }}>"The darkest chapter can be<br />the greatest gift."</p>
 
           <p style={pStyle}>{para1}</p>
           <p style={pStyle}>{para2}</p>
@@ -211,7 +210,6 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
           0%, 100% { opacity: 0.2; transform: scale(1); }
           50% { opacity: 0.8; transform: scale(1.3); }
         }
-        @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap');
         @keyframes float-y0 { 0%,100%{margin-top:0px} 50%{margin-top:-10px} }
         @keyframes float-y1 { 0%,100%{margin-top:0px} 50%{margin-top:-14px} }
         @keyframes float-y2 { 0%,100%{margin-top:0px} 50%{margin-top:-8px} }
@@ -494,7 +492,6 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
 
         {/* Bottom CTA */}
         <div className="reveal" style={{ textAlign: "center", marginTop: 10 }}>
-          <div style={{ fontSize: 10, color: "#7a5a3a", letterSpacing: 3, marginBottom: 10 }}>✦ READY TO BEGIN? ✦</div>
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
             <button className="cta-btn" onClick={onBeginReading}>
               🌙 Begin Your Tarot Reading

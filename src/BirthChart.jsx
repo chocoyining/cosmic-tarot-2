@@ -593,7 +593,7 @@ export default function BirthChart({ onHome }) {
 
 
 
-  const countryData = LOCATION_DB[country];
+  const countryData = LOCATION_DB[country] || { dst: false, cities: [{ label: "—", lat: 0, lon: 0, tz: 0 }] };
   const cities      = countryData.cities;
   const city        = cities[Math.min(cityIdx, cities.length - 1)];
   const showDst     = countryData.dst;

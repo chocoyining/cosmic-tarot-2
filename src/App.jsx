@@ -311,6 +311,26 @@ export default function App() {
     bgmAudio.current.play().then(() => setBgmOn(true)).catch(() => {});
   }
 
+  // Auto-start BGM on first user interaction
+  useEffect(() => {
+    const startOnInteraction = () => {
+      if (!BGM_URL || bgmAudio.current) return;
+      const audio = new Audio(BGM_URL);
+      audio.loop = true;
+      audio.volume = 0.5;
+      bgmAudio.current = audio;
+      audio.play().then(() => setBgmOn(true)).catch(() => {});
+      window.removeEventListener("click", startOnInteraction);
+      window.removeEventListener("touchstart", startOnInteraction);
+    };
+    window.addEventListener("click", startOnInteraction);
+    window.addEventListener("touchstart", startOnInteraction);
+    return () => {
+      window.removeEventListener("click", startOnInteraction);
+      window.removeEventListener("touchstart", startOnInteraction);
+    };
+  }, []);
+
   function toggleBgm() {
     if (!BGM_URL) return;
     if (!bgmAudio.current) {

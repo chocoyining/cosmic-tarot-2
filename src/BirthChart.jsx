@@ -531,7 +531,7 @@ export default function BirthChart({ onHome }) {
   const [day, setDay]         = useState("");
   const [hour, setHour]       = useState("12");
   const [minute, setMinute]   = useState("0");
-  const [country, setCountry] = useState("Malaysia");
+  const [country, setCountry] = useState("");
   const [cityIdx, setCityIdx] = useState(0);
   const [dst, setDst]         = useState(false);
   const [screen, setScreen]   = useState("form");
@@ -902,7 +902,8 @@ export default function BirthChart({ onHome }) {
             <div>
               <Label>COUNTRY OF BIRTH</Label>
               <select style={selectStyle} value={country} onChange={handleCountryChange}>
-                {COUNTRIES.map(c=>(<option key={c} value={c} style={{background:"#1a0545"}}>{c}</option>))}
+                <option value="" style={{background:"#1a0545"}}>— Please select —</option>
+              {COUNTRIES.map(c=>(<option key={c} value={c} style={{background:"#1a0545"}}>{c}</option>))}
               </select>
             </div>
 
@@ -943,7 +944,7 @@ export default function BirthChart({ onHome }) {
               {customError && <div style={{color:"#c94c4c",fontSize:11,marginTop:6}}>{customError}</div>}
               {country === "Custom" && !customError && customCity && (
                 <div style={{color:"#a8d8a8",fontSize:11,marginTop:6}}>
-                  ✓ {city.label} found!
+                  ✓ Found: {city.label} (lat: {city.lat.toFixed(2)}, lon: {city.lon.toFixed(2)}, UTC{city.tz>=0?"+":""}{city.tz})
                 </div>
               )}
             </div>

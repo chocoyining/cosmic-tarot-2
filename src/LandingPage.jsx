@@ -77,7 +77,8 @@ function AboutCoco({ isMobile }) {
     ...pStyle,
     color: "#c9a84c",
     fontStyle: "italic",
-    fontSize: isMobile ? 14 : 16,
+    fontSize: isMobile ? 14 : 15,
+    whiteSpace: isMobile ? "normal" : "nowrap",
     margin: 0,
   };
 
@@ -137,9 +138,11 @@ function AboutCoco({ isMobile }) {
         </div>
 
         {/* Text */}
-        <div style={{ flex: 1, maxWidth: isMobile ? "100%" : 560 }}>
+        <div style={{ flex: 1, maxWidth: isMobile ? "100%" : 620 }}>
           {/* Hook */}
-          <p style={{ ...pStyle, color: "#c9a84c", fontWeight: "bold", fontStyle: "italic", fontSize: isMobile ? 16 : 18, marginBottom: 16 }}>"The darkest chapter can be<br />the greatest gift."</p>
+          <p style={{ ...pStyle, color: "#c9a84c", fontWeight: "bold", fontStyle: "italic", fontSize: isMobile ? 16 : 18, marginBottom: 16 }}>
+            {isMobile ? <>"The darkest chapter can be<br />the greatest gift."</> : '"The darkest chapter can be the greatest gift."'}
+          </p>
 
           <p style={pStyle}>{para1}</p>
           <p style={pStyle}>{para2}</p>

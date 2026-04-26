@@ -416,9 +416,9 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
             fontStyle: "italic",
           }}>
             {isMobile ? (
-              <>Through tarot and the stars, I will guide you<br />to find clarity, illuminate the path ahead,<br />and discover who you truly are.</>
+              {t ? t.landing.subtagline_mobile : <>Through tarot and the stars, I will guide you<br />to find clarity, illuminate the path ahead,<br />and discover who you truly are.</>}
             ) : (
-              <>Through tarot and the stars, I will guide you to find clarity,<br />illuminate the path ahead, and discover who you truly are.</>
+              {t ? t.landing.subtagline_desktop : <>Through tarot and the stars, I will guide you to find clarity,<br />illuminate the path ahead, and discover who you truly are.</>}
             )}
           </p>
 
@@ -428,7 +428,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
               {t ? t.landing.btn_reading : "🌙 Begin Your Tarot Reading"}
             </button>
             <button className="cta-btn" onClick={onBeginChart}>
-              🌌 Calculate My Cosmic Blueprint
+              {t ? t.landing.btn_chart : "🌌 Calculate My Cosmic Blueprint"}
             </button>
           </div>
 
@@ -467,9 +467,9 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
       }}>
         {/* Section header */}
         <div className="reveal" style={{ textAlign: "center", marginBottom: 16 }}>
-          <div style={{ fontSize: isMobile ? 10 : 11, color: "#a07840", letterSpacing: 4, marginBottom: 6 }}>✦ THE JOURNEY ✦</div>
+          <div style={{ fontSize: isMobile ? 10 : 11, color: "#a07840", letterSpacing: 4, marginBottom: 6 }}>{t ? t.landing.journey_label : "✦ THE JOURNEY ✦"}</div>
           <h2 style={{ fontSize: isMobile ? "22px" : "36px", color: "#c9a84c", letterSpacing: 2, marginBottom: 16, fontWeight: "normal" }}>
-            How it works
+            {t ? t.landing.how_title : "How it works"}
           </h2>
           <div style={{ width: 60, height: 1, background: "#c9a84c44", margin: "0 auto" }} />
         </div>
@@ -527,7 +527,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
               {t ? t.landing.btn_reading : "🌙 Begin Your Tarot Reading"}
             </button>
             <button className="cta-btn" onClick={onBeginChart}>
-              🌌 Calculate My Cosmic Blueprint
+              {t ? t.landing.btn_chart : "🌌 Calculate My Cosmic Blueprint"}
             </button>
           </div>
         </div>

@@ -238,7 +238,7 @@ const clamp = (min, val, max) => Math.max(min, Math.min(max, val));
 const INTENTION_MESSAGES = [
   "Close your eyes for a moment...",
   "Take a deep breath...",
-  "Hold your question in your heart...",
+  t ? "将你的问题放在心中..." : "Hold your question in your heart...",
   "The cards are listening...",
   "Trust your intuition...",
 ];
@@ -609,7 +609,7 @@ export default function App() {
 
   const BgmBtn = () => BGM_URL ? (
     <button onClick={toggleBgm} style={{ ...btn(bgmOn ? "#1f3a1f" : "#2a1a40"), fontSize: 12 }}>
-      {bgmOn ? "🔊 Music ON" : "🔇 Music OFF"}
+      {bgmOn ? (t ? "🔊 音乐开" : "🔊 Music ON") : (t ? "🔇 音乐关" : "🔇 Music OFF")}
     </button>
   ) : null;
 
@@ -633,12 +633,12 @@ export default function App() {
       <Stars />
       <div style={{ width: "100%", maxWidth: maxW, position: "relative", zIndex: 1, marginTop: desktop ? 60 : 40 }}>
         <div style={{ textAlign: "center", marginBottom: 36 }}>
-          <div style={{ fontSize: desktop ? 28 : 20, color: "#c9a84c", letterSpacing: 2, marginBottom: 8 }}>✦ Your Reading ✦</div>
-          <div style={{ fontSize: 12, color: "#a07840", letterSpacing: 2 }}>TELL US A LITTLE ABOUT YOURSELF</div>
+          <div style={{ fontSize: desktop ? 28 : 20, color: "#c9a84c", letterSpacing: 2, marginBottom: 8 }}>{t ? "✦ 你的塔罗解读 ✦" : "✦ Your Reading ✦"}</div>
+          <div style={{ fontSize: 12, color: "#a07840", letterSpacing: 2 }}>{t ? "关于你" : "TELL US A LITTLE ABOUT YOURSELF"}</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div>
-            <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>YOUR NAME *</label>
+            <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>{t ? t.info.name_label : "YOUR NAME *"}</label>
             <input style={{ ...inputStyle, fontSize: desktop ? 16 : 14, borderColor: nameError ? "#c94c4c" : "#7c5c2e" }}
               type="text" placeholder="Enter your name" value={clientName}
               onChange={(e) => { setClientName(e.target.value); setNameError(false); }} />
@@ -658,10 +658,10 @@ export default function App() {
           </div>
           <button onClick={handleInfoSubmit}
             style={{ ...btn("#3b1f6e"), fontSize: desktop ? 16 : 14, padding: "13px 0", width: "100%", letterSpacing: 2 }}>
-            Choose My Spread →
+            {t ? t.info.btn_next : "Choose My Spread →"}
           </button>
           <div style={{ textAlign: "center" }}><BgmBtn /></div>
-          <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
+          <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>{t ? "⌂ 主页" : "⌂ Home"}</button>
         </div>
       </div>
     </div>
@@ -672,8 +672,8 @@ export default function App() {
     <div style={bgStyle}>
       <Stars />
       <div style={{ textAlign: "center", marginBottom: 28, position: "relative", zIndex: 1 }}>
-        <div style={{ fontSize: desktop ? 14 : 13, color: "#a07840", letterSpacing: 2, marginBottom: 6 }}>Welcome, {clientName}</div>
-        <div style={{ fontSize: desktop ? 28 : 20, color: "#c9a84c", letterSpacing: 3, marginBottom: 8 }}>✦ Choose Your Spread ✦</div>
+        <div style={{ fontSize: desktop ? 14 : 13, color: "#a07840", letterSpacing: 2, marginBottom: 6 }}>{t ? `欢迎，${clientName}` : `Welcome, ${clientName}`}</div>
+        <div style={{ fontSize: desktop ? 28 : 20, color: "#c9a84c", letterSpacing: 3, marginBottom: 8 }}>{t ? "✦ 选择你的牌阵 ✦" : "✦ Choose Your Spread ✦"}</div>
         <BgmBtn />
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", maxWidth: maxW, position: "relative", zIndex: 1 }}>
@@ -691,8 +691,8 @@ export default function App() {
             </div>
           </button>
         ))}
-        <button onClick={() => setScreen("info")} style={{ ...btn("#2a1a1a"), fontSize: 12, marginTop: 4 }}>← Back</button>
-        <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
+        <button onClick={() => setScreen("info")} style={{ ...btn("#2a1a1a"), fontSize: 12, marginTop: 4 }}>{t ? "← 返回" : "← Back"}</button>
+        <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>{t ? "⌂ 主页" : "⌂ Home"}</button>
       </div>
     </div>
   );
@@ -704,8 +704,8 @@ export default function App() {
       <div style={{ width: "100%", maxWidth: maxW, position: "relative", zIndex: 1, marginTop: desktop ? 60 : 40 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <div style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, marginBottom: 6 }}>{spread.name.toUpperCase()}</div>
-          <div style={{ fontSize: desktop ? 28 : 20, color: "#c9a84c", letterSpacing: 2, marginBottom: 8 }}>✦ Set Your Intention ✦</div>
-          <div style={{ fontSize: desktop ? 14 : 12, color: "#a07840", letterSpacing: 1 }}>What would you like the cards to guide you on?</div>
+          <div style={{ fontSize: desktop ? 28 : 20, color: "#c9a84c", letterSpacing: 2, marginBottom: 8 }}>{t ? "✦ 设定你的意图 ✦" : "✦ Set Your Intention ✦"}</div>
+          <div style={{ fontSize: desktop ? 14 : 12, color: "#a07840", letterSpacing: 1 }}>{t ? "你希望牌阵为你指引什么？" : "What would you like the cards to guide you on?"}</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div>
@@ -746,10 +746,10 @@ export default function App() {
           </div>
           <button onClick={handleQuestionSubmit}
             style={{ ...btn("#3b1f6e"), fontSize: desktop ? 16 : 14, padding: "13px 0", width: "100%", letterSpacing: 2 }}>
-            Continue →
+            {t ? "继续 →" : "Continue →"}
           </button>
-          <button onClick={() => setScreen("spreads")} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>← Back</button>
-          <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
+          <button onClick={() => setScreen("spreads")} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>{t ? "← 返回" : "← Back"}</button>
+          <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>{t ? "⌂ 主页" : "⌂ Home"}</button>
         </div>
       </div>
     </div>
@@ -799,9 +799,9 @@ export default function App() {
 
         <button onClick={handleIntentionReady}
           style={{ ...btn("#3b1f6e"), fontSize: desktop ? 16 : 14, padding: desktop ? "14px 48px" : "12px 32px", letterSpacing: 2, marginTop: 8 }}>
-          I'm Ready · Draw My Cards
+          {t ? "我准备好了 · 开始抽牌" : "I'm Ready · Draw My Cards"}
         </button>
-        <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
+        <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>{t ? "⌂ 主页" : "⌂ Home"}</button>
       </div>
     </div>
   );
@@ -855,7 +855,7 @@ export default function App() {
             {spread.name.toUpperCase()}
           </div>
           <div style={{ fontSize: desktop ? 22 : 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 4 }}>
-            {isComplete ? "Your cards are ready..." : `Card ${picked + 1} of ${needed}`}
+            {isComplete ? t ? "牌阵已就绪..." : "Your cards are ready..." : t ? `第 ${picked + 1} 张，共 ${needed} 张` : `Card ${picked + 1} of ${needed}`}
           </div>
           <div style={{ display: "flex", justifyContent: "center", gap: 10, marginTop: 8 }}>
             {Array.from({ length: needed }).map((_, i) => (
@@ -929,7 +929,7 @@ export default function App() {
           {!isComplete && (
             <>
               <div style={{ fontSize: 12, color: "#7a5a3a", marginBottom: 4 }}>
-                Focus on your question · tap when you feel it
+                {t ? "专注于你的问题 · 感受后点击" : "Focus on your question · tap when you feel it"}
               </div>
               <button onClick={stopCard} style={{
                 ...btn("#7c1f1f"),
@@ -939,11 +939,11 @@ export default function App() {
                 border: "2px solid #c94c4c",
                 animation: "slot-flash 1.2s ease-in-out infinite",
               }}>
-                ✦ Select
+                {t ? "✦ 选择" : "✦ Select"}
               </button>
             </>
           )}
-          <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12, marginTop: 8 }}>⌂ Home</button>
+          <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12, marginTop: 8 }}>{t ? "⌂ 主页" : "⌂ Home"}</button>
         </div>
       </div>
     );
@@ -963,7 +963,7 @@ export default function App() {
       }}>
         <div style={{ fontSize: 13, color: "#c9a84c", letterSpacing: 3, marginBottom: 10 }}>✦ Coco's Cosmic Tarot ✦</div>
         <div style={{ textAlign: "center", marginBottom: 12 }}>
-          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginBottom: 2 }}>READING FOR</div>
+          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginBottom: 2 }}>{t ? "解读对象" : "READING FOR"}</div>
           <div style={{ fontSize: 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 2 }}>{clientName}</div>
           {clientDob && (
             <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 1, marginBottom: 4 }}>
@@ -990,7 +990,7 @@ export default function App() {
       }}>
         <div style={{ fontSize: 13, color: "#c9a84c", letterSpacing: 3, marginBottom: 10 }}>✦ Coco's Cosmic Tarot ✦</div>
         <div style={{ textAlign: "center", marginBottom: 12 }}>
-          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginBottom: 2 }}>READING FOR</div>
+          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginBottom: 2 }}>{t ? "解读对象" : "READING FOR"}</div>
           <div style={{ fontSize: desktop ? 26 : 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 2 }}>{clientName}</div>
           {clientDob && (
             <div style={{ fontSize: desktop ? 13 : 11, color: "#a07840", letterSpacing: 1, marginBottom: 4 }}>
@@ -1014,16 +1014,16 @@ export default function App() {
         {flipped.every((f) => f) && (
           <>
             <button onClick={sendAndSave} style={btn("#5a0e3a")} disabled={saving}>
-              {saving ? "Sending..." : "✦ Send My Spread to Coco"}
+              {saving ? "Sending..." : {t ? t.draw.btn_send : "✦ Send My Spread to Coco"}}
             </button>
             <button onClick={saveSpread} style={btn("#5a2e0e")} disabled={saving}>
-              {saving ? "Saving..." : "📸 Save My Spread"}
+              {saving ? "Saving..." : {t ? t.draw.btn_save : "📸 Save My Spread"}}
             </button>
           </>
         )}
         <button onClick={() => { handleIntentionReady(); }} style={btn("#1f3a1f")}>Draw Again</button>
         <button onClick={() => setScreen("spreads")} style={btn("#2a1a2a")}>← Spreads</button>
-        <button onClick={resetHome} style={btn("#2a1a1a")}>⌂ Home</button>
+        <button onClick={resetHome} style={btn("#2a1a1a")}>{t ? "⌂ 主页" : "⌂ Home"}</button>
         <BgmBtn />
         <button onClick={() => setLang(l => l === "en" ? "zh" : "en")} style={{
           ...btn("#2a1a40"), width: "auto", padding: "8px 16px", fontSize: 12, letterSpacing: 1,

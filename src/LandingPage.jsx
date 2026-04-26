@@ -56,15 +56,18 @@ const Stars = () => {
 };
 
 
-function AboutCoco({ isMobile }) {
+function AboutCoco({ isMobile, t, lang }) {
   const [expanded, setExpanded] = useState(false);
 
-  const hook    = "'The darkest chapter can be\nthe greatest gift.'";
-  const para1   = t ? t.landing.para1 : "2020 was the darkest time of my life. I lost my business, lost in love, and the pandemic locked me away from everyone I loved. Waking up to despair was an agony; I was being pulled into a black hole, deeper as days passed.";
-  const para2   = "Before I completely lost faith, I had my first tarot reading. In my spread, I saw 'The Sun' card for the first time. At that moment, I felt a light shining through the thick grey clouds, gently telling me it is not the end of the world. I found clarity, direction, and a quiet sense of hope when I needed it most.";
-  const para3   = "What began as a personal practice became something I couldn't keep to myself...";
-  const para4   = "As I shared readings with close friends, the feedback was humbling. It helped people lighten their paths, find what they truly want, and gently heal what quietly ached inside. Today, I offer personal readings in both English and Mandarin, from a deck I illustrated with my own Pomeranian — a little soul who makes every reading feel a little warmer.";
-  const para5   = "I don't claim to predict the future. What I offer is clarity, a space to understand yourself better, and the courage to take your next step.";
+  const hook  = t ? t.landing.hook : '"The darkest chapter can be the greatest gift."';
+  const para1 = t ? t.landing.para1 : "2020 was the darkest time of my life. I lost my business, lost in love, and the pandemic locked me away from everyone I loved. Waking up to despair was an agony; I was being pulled into a black hole, deeper and deeper as days passed.";
+  const para2 = t ? t.landing.para2 : "Before I completely lost faith, I had my first tarot reading. In my spread, I saw 'The Sun' card for the first time. At that moment, I felt a light shining through the thick grey clouds, gently telling me it is not the end of the world. I found clarity, direction, and a quiet sense of hope when I needed it most.";
+  const para3 = t ? t.landing.para3 : "What began as a personal practice became something I couldn't keep to myself...";
+  const para4 = t ? t.landing.para4 : "As I shared readings with close friends, the feedback was humbling. It helped people lighten their paths, find what they truly want, and gently heal what quietly ached inside. Today, I offer personal readings in both English and Mandarin, from a deck I illustrated with my own Pomeranian — a little soul who makes every reading feel a little warmer.";
+  const para5 = t ? t.landing.para5 : "I don't claim to predict the future. What I offer is clarity, a space to understand yourself better, and the courage to take your next step.";
+  const closing = t ? t.landing.closing : '"If tarot found me in my darkest hour, perhaps it can find you too."';
+  const readMore = t ? t.landing.read_more : "Read more ↓";
+  const showLess = t ? t.landing.show_less : "Show less ↑";
 
 
   const pStyle = {
@@ -221,11 +224,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
     <div style={{
       minHeight: "100vh",
       background: "linear-gradient(170deg, #060014 0%, #0d0221 30%, #1a0545 60%, #0d0221 100%)",
-      fontFamily: "'Georgia', serif",
-      color: "#e8d5b7",
-      position: "relative",
-      overflowX: "hidden",
-    }}>
+      fontFamily: lang === "zh" ? "'Noto Serif SC', 'Georgia', serif" : "'Georgia', serif",
       <style>{`
         @keyframes twinkle {
           0%, 100% { opacity: 0.2; transform: scale(1); }
@@ -455,7 +454,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
       </section>
 
       {/* ── ABOUT COCO ── */}
-      <AboutCoco isMobile={isMobile} />
+      <AboutCoco isMobile={isMobile} t={t} lang={lang} />
 
       {/* ── HOW IT WORKS ── */}
       <section id="how-it-works" style={{

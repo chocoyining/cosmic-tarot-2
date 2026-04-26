@@ -745,7 +745,7 @@ export default function BirthChart({ onHome, lang, onToggleLang }) {
           display:"flex",flexDirection:"column",alignItems:"center",
         }}>
           <div style={{fontSize:13,color:"#c9a84c",letterSpacing:3,marginBottom:8}}>✦ Coco's Cosmic Tarot ✦</div>
-          <div style={{fontSize:11,color:"#7a5a3a",letterSpacing:2,marginBottom:2}}>COSMIC BLUEPRINT FOR</div>
+          <div style={{fontSize:11,color:"#7a5a3a",letterSpacing:2,marginBottom:2}}>{t ? t.chart.result_for : "COSMIC BLUEPRINT FOR"}</div>
           <div style={{fontSize:17,color:"#c9a84c",letterSpacing:2,marginBottom:2}}>{name||"My Chart"}</div>
           <div style={{fontSize:10,color:"#7a5a3a",marginBottom:14}}>{day}/{month}/{year} · {String(hour).padStart(2,"0")}:{String(minute).padStart(2,"0")} · {city.label}, {country}</div>
           <div style={{width:"100%",borderTop:"1px solid #7c5c2e44",marginBottom:8}}/>
@@ -771,7 +771,7 @@ export default function BirthChart({ onHome, lang, onToggleLang }) {
         {/* Visible table */}
         <div style={{maxWidth:560,margin:"0 auto",position:"relative",zIndex:1}}>
           <div style={{textAlign:"center",marginBottom:24,animation:"fadeInUp 0.5s ease-out"}}>
-            <div style={{fontSize:11,color:"#7a5a3a",letterSpacing:2,marginBottom:4}}>COSMIC BLUEPRINT FOR</div>
+            <div style={{fontSize:11,color:"#7a5a3a",letterSpacing:2,marginBottom:4}}>{t ? t.chart.result_for : "COSMIC BLUEPRINT FOR"}</div>
             <div style={{fontSize:desktop?26:20,color:"#c9a84c",letterSpacing:2,marginBottom:4}}>{name||"My Chart"}</div>
             <div style={{fontSize:11,color:"#7a5a3a"}}>{day}/{month}/{year} · {String(hour).padStart(2,"0")}:{String(minute).padStart(2,"0")} · {city.label}, {country}</div>
           </div>
@@ -806,14 +806,14 @@ export default function BirthChart({ onHome, lang, onToggleLang }) {
 
           <div style={{display:"flex",gap:12,flexWrap:"wrap",justifyContent:"center",marginBottom:16}}>
             <button onClick={sendAndSaveChart} style={{...btn("#5a0e3a"),width:"auto",padding:"11px 28px",fontSize:13}}>
-              ✦ Send My Chart to Coco
+              {t ? t.chart.btn_send : "✦ Send My Chart to Coco"}
             </button>
             <button onClick={saveChart} style={{...btn("#5a2e0e"),width:"auto",padding:"11px 28px",fontSize:13}}>
-              📸 Save My Chart
+              {t ? t.chart.btn_save : "📸 Save My Chart"}
             </button>
             <button onClick={()=>{setScreen("form");setChart(null);window.scrollTo(0,0);}}
               style={{...btn("#2a1a2a"),width:"auto",padding:"11px 28px",fontSize:13}}>
-              ← Recalculate
+              {t ? t.chart.btn_recalculate : "← Recalculate"}
             </button>
             <button onClick={onHome} style={{...btn("#2a1a1a"),width:"auto",padding:"11px 28px",fontSize:13}}>
               {t ? t.chart.btn_home : "⌂ Home"}
@@ -855,18 +855,28 @@ export default function BirthChart({ onHome, lang, onToggleLang }) {
 
         <div style={{textAlign:"center",marginBottom:32}}>
           <div style={{fontSize:desktop?28:22,color:"#c9a84c",letterSpacing:3,marginBottom:14}}>
-            ✦ Your Cosmic Blueprint ✦
+            {t ? "✦ 你的星座命盘 ✦" : "✦ Your Cosmic Blueprint ✦"}
           </div>
           <div style={{fontSize:13,color:"#a07840",lineHeight:1.9,maxWidth:500,margin:"0 auto"}}>
-            Every person is born at a unique moment in time, when the planets were arranged in a specific
-            pattern across the sky. This arrangement — your natal chart — is like a cosmic fingerprint,
-            a map of the energies and themes that shape who you are.
-            <br/><br/>
-            By understanding where each planet falls in your chart, you gain deeper insight into your
-            personality, the obstacles you're likely to face in life, how you instinctively react to
-            situations, what drives you, what you fear, what you love, how you attract, and so much more.
-            <br/><br/>
-            <em style={{color:"#c9a84c88"}}>Think of it as a mirror, one that reflects your truest self.</em>
+            {t ? (
+              <>
+                每个人都诞生于一个独特的时刻。那一刻，行星以特定的方式排列于天空之中。这个排列，你的星盘，就像一枚宇宙指纹，是塑造你的能量与主题的地图。透过了解每颗行星在星盘中的位置，你将更深入地认识自己的个性、人生中可能面临的挑战、你对事物的本能反应、驱动你的力量、你的恐惧、你的爱，以及更多。
+                <br/><br/>
+                <em style={{color:"#c9a84c88"}}>把它想象成一面镜子，它将映照出最真实的你。</em>
+              </>
+            ) : (
+              <>
+                Every person is born at a unique moment in time, when the planets were arranged in a specific
+                pattern across the sky. This arrangement — your natal chart — is like a cosmic fingerprint,
+                a map of the energies and themes that shape who you are.
+                <br/><br/>
+                By understanding where each planet falls in your chart, you gain deeper insight into your
+                personality, the obstacles you're likely to face in life, how you instinctively react to
+                situations, what drives you, what you fear, what you love, how you attract, and so much more.
+                <br/><br/>
+                <em style={{color:"#c9a84c88"}}>Think of it as a mirror, one that reflects your truest self.</em>
+              </>
+            )}
           </div>
         </div>
 
@@ -901,13 +911,13 @@ export default function BirthChart({ onHome, lang, onToggleLang }) {
                   ))}
                 </select>
               </div>
-              <div style={{fontSize:11,color:"#7a5a3a",marginTop:6}}>Birth time affects your Rising sign and house placements.</div>
+              <div style={{fontSize:11,color:"#7a5a3a",marginTop:6}}>{t ? t.chart.time_hint : "Birth time affects your Rising sign and house placements."}</div>
             </div>
 
             <div>
               <Label>{t ? t.chart.country_label : "COUNTRY OF BIRTH"}</Label>
               <select style={selectStyle} value={country} onChange={handleCountryChange}>
-                <option value="" style={{background:"#1a0545"}}>— Please select —</option>
+                <option value="" style={{background:"#1a0545"}}>{t ? "— 请选择 —" : "— Please select —"}</option>
               {COUNTRIES.map(c=>(<option key={c} value={c} style={{background:"#1a0545"}}>{c}</option>))}
               </select>
             </div>
@@ -918,13 +928,13 @@ export default function BirthChart({ onHome, lang, onToggleLang }) {
                 {cities.map((c,i)=>(<option key={i} value={i} style={{background:"#1a0545"}}>{c.label}</option>))}
               </select>
               <div style={{fontSize:11,color:"#7a5a3a",marginTop:6}}>
-                Timezone: UTC{effectiveTz>=0?"+":""}{effectiveTz} · auto-applied
+                {t ? "时区：" : "Timezone: "}UTC{effectiveTz>=0?"+":""}{effectiveTz} · {t ? "自动套用" : "auto-applied"}
               </div>
             </div>
 
             {/* Custom city lookup */}
             <div style={{background:"#ffffff08",border:"1px solid #7c5c2e44",borderRadius:10,padding:"14px 16px"}}>
-              <div style={{fontSize:11,color:"#a07840",letterSpacing:2,marginBottom:8}}>CAN'T FIND YOUR CITY?</div>
+              <div style={{fontSize:11,color:"#a07840",letterSpacing:2,marginBottom:8}}>{t ? t.chart.custom_label : "CAN'T FIND YOUR CITY?"}</div>
               <div style={{display:"flex",gap:10}}>
                 <input
                   style={{...inputStyle,flex:1}}
@@ -956,7 +966,7 @@ export default function BirthChart({ onHome, lang, onToggleLang }) {
 
             {showDst && (
               <div style={{background:"#ffffff08",border:"1px solid #7c5c2e44",borderRadius:10,padding:"14px 16px"}}>
-                <div style={{fontSize:12,color:"#a07840",marginBottom:8}}>DAYLIGHT SAVING TIME (DST)</div>
+                <div style={{fontSize:12,color:"#a07840",marginBottom:8}}>{t ? t.chart.dst_label : "DAYLIGHT SAVING TIME (DST)"}</div>
                 <div style={{fontSize:12,color:"#7a5a3a",marginBottom:12,lineHeight:1.6}}>
                   {(country==="United States"||country==="Canada")
                     ? (t ? t.chart.dst_us : "US/Canada: DST runs March to November.")
@@ -990,7 +1000,7 @@ export default function BirthChart({ onHome, lang, onToggleLang }) {
               {contactError && <div style={{color:"#c94c4c", fontSize:11, marginTop:4}}>Please enter your email or WhatsApp to continue.</div>}
             </div>
 
-            <button onClick={calculate} style={btn("#3b1f6e")}>✦ Calculate My Chart</button>
+            <button onClick={calculate} style={btn("#3b1f6e")}>{t ? t.chart.btn_calculate : "✦ Calculate My Chart"}</button>
 
           </div>
         </div>

@@ -8,7 +8,6 @@ const HERO_CARDS_MOBILE = [
   { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/7_of_cups_l2yseq.png",             w: 105, rotate: 10,  cx: 90,   y: "7%",  z: 3 },
   { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901833/WhatsApp_Image_2026-04-11_at_17.58.10_ivi5hm.jpg", w: 90, rotate: 20, cx: 175, y: "13%", z: 1 },
 ];
-  const STEPS = t ? t.landing.steps.map((desc, i) => ({ num: String(i+1).padStart(2,"0"), desc, isBold: i === 4 })) : EN_STEPS;
 
 const HERO_CARDS_DESKTOP = [
   { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829850/0_The_Fool_copy_befech.png",       w: 105, rotate: -22, cx: -520, y: "10%", z: 1 },
@@ -146,7 +145,7 @@ function AboutCoco({ isMobile, t, lang }) {
         <div style={{ flex: 1, maxWidth: isMobile ? "100%" : 620 }}>
           {/* Hook */}
           <p style={{ ...pStyle, color: "#c9a84c", fontWeight: "bold", fontStyle: "italic", fontSize: isMobile ? 16 : 18, marginBottom: 16 }}>
-            {isMobile ? <>"The darkest chapter can be<br />the greatest gift."</> : '"The darkest chapter can be the greatest gift."'}
+            {isMobile ? <>{hook}</> : hook}
           </p>
 
           <p style={pStyle}>{para1}</p>
@@ -219,6 +218,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
   }, []);
 
   const isMobile = window.innerWidth < 600;
+  const STEPS = t ? t.landing.steps.map((desc, i) => ({ num: String(i+1).padStart(2,"0"), desc, isBold: i === 4 })) : EN_STEPS;
 
   return (
     <div style={{

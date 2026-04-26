@@ -59,8 +59,8 @@ function AboutCoco({ isMobile, t, lang }) {
   const [expanded, setExpanded] = useState(false);
 
   const hook  = t ? t.landing.hook : '"The darkest chapter can be the greatest gift."';
-  const para1 = t ? t.landing.para1 : "2020 was the darkest time of my life. I lost my business, lost in love, and the pandemic locked me away from everyone I loved. Waking up to despair was an agony; I was being pulled into a black hole, deeper and deeper as days passed.";
-  const para2 = t ? t.landing.para2 : "Before I completely lost faith, I had my first tarot reading. In my spread, I saw 'The Sun' card for the first time. At that moment, I felt a light shining through the thick grey clouds, gently telling me it is not the end of the world. I found clarity, direction, and a quiet sense of hope when I needed it most.";
+  const para1 = t ? t.landing.para1 : "2020 was the darkest time of my life. I lost my business, lost in love, and the pandemic locked me away from everyone I loved. Waking up to despair was an agony; I was being pulled into a black hole, deeper as days passed.";
+  const para2 = t ? t.landing.para2 : "Before I completely lost faith, I had my first tarot reading. In my spread, I saw 'The Sun' card for the first time. It felt like a light shining through the thick grey clouds, gently telling me it is not the end of the world. I found direction and a quiet sense of hope when I needed it most.";
   const para3 = t ? t.landing.para3 : "What began as a personal practice became something I couldn't keep to myself...";
   const para4 = t ? t.landing.para4 : "As I shared readings with close friends, the feedback was humbling. It helped people lighten their paths, find what they truly want, and gently heal what quietly ached inside. Today, I offer personal readings in both English and Mandarin, from a deck I illustrated with my own Pomeranian — a little soul who makes every reading feel a little warmer.";
   const para5 = t ? t.landing.para5 : "I don't claim to predict the future. What I offer is clarity, a space to understand yourself better, and the courage to take your next step.";
@@ -145,7 +145,7 @@ function AboutCoco({ isMobile, t, lang }) {
         <div style={{ flex: 1, maxWidth: isMobile ? "100%" : 620 }}>
           {/* Hook */}
           <p style={{ ...pStyle, color: "#c9a84c", fontWeight: "bold", fontStyle: "italic", fontSize: isMobile ? 16 : 18, marginBottom: 16 }}>
-            {isMobile ? <>{hook}</> : hook}
+            {isMobile ? <>"The darkest chapter can be<br />the greatest gift."</> : hook}
           </p>
 
           <p style={pStyle}>{para1}</p>
@@ -409,7 +409,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
           <p style={{
             fontSize: isMobile ? "14px" : "17px",
             color: "#a07840",
-            maxWidth: isMobile ? 500 : 620,
+            maxWidth: isMobile ? 500 : 800,
             margin: isMobile ? "0 auto 20px" : "0 auto 24px",
             lineHeight: 1.9,
             letterSpacing: 0.5,

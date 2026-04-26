@@ -1,120 +1,1062 @@
-const ZH = {
-  landing: {
-    subtagline_mobile: "透过塔罗与星象，让我引领你找到生命中的清明，照亮前方的道路，发现真实的自己。",
-    subtagline_desktop: "透过塔罗与星象，让我引领你找到生命中的清明，照亮前方的道路，发现真实的自己。",
-    descriptors: ["塔罗", "星座命盘", "占星"],
-    personal_line: "✦ 每一次解读，皆由Coco Chen亲自完成 ✦",
-    btn_reading: "🌙 开始我的塔罗占卜",
-    btn_chart: "🌌 计算我的星座命盘",
-    btn_about: "✨ 关于Coco",
-    btn_how: "🔮 了解流程",
-    about_label: "✦ THE CARTOMANCER ✦",
-    about_title: "关于Coco",
-    hook: "「让最黑暗的篇章，成为最珍贵的礼物。」",
-    para1: "2020年是我人生的至暗时刻。我失去了事业，失去了爱情，疫情将我和最亲近的家人朋友远远隔绝。每天在绝望中醒来，那时的我像是被卷进了一个黑洞里，一天比一天更加深沉，更加无力挣脱。",
-    para2: "在我几乎对生活失去信念之前，我在朋友的推荐下，完成了人生中的第一次塔罗占卜。在我的牌阵中，翻出了一张「太阳」牌。牌翻过来的那一刻，我感到一道光穿透厚厚的乌云，轻轻照在我最灰暗的心里，告诉我这不是世界的终点。我得到了一种宁静的力量，似乎眼前原本漆黑的路径被微微地点亮。我重新找到了方向，一小步、一小步地跟随塔罗的指引，走出了黑暗。",
-    para3: "一开始我本来是为了自己而学习的塔罗占卜，但当我开始为身边的朋友解读，反馈让我深受感动...",
-    para4: "很多朋友通过塔罗找到了内心真正的渴望，认清一些早该结束的关系，理解何为业力，接受并释然，轻柔地疗愈那些无声作痛的伤疤。今天，我以中文和英文为大众提供个人塔罗 · 星座命盘解读，使用的是一副以我家小博美犬为灵感，并由我亲手设计的牌卡，期待能为每次的解读注入更温柔纯粹的力量。",
-    para5: "最后，塔罗牌是否能预知未来？不，你的未来永远取决于你的行动。我所给予的，是将可能性清晰地展示在你的面前，一个安全的、让你更了解自己、并鼓起勇气迈出下一步的空间。",
-    closing: "「塔罗在我最黑暗的时刻找到了我，或许，它也能找到你。」",
-    read_more: "阅读更多 ↓",
-    show_less: "收起 ↑",
-    journey_label: "✦ 解读流程 ✦",
-    how_title: "了解流程",
-    steps: [
-      "填写你的姓名、出生日期，以及你的疑问。",
-      "选择「抽取塔罗牌」，或「计算你的星座命盘」。",
-      "点击「发送给Coco」——你的牌阵 · 星盘将直接发送给Coco。",
-      "Coco将通过你提供的联系方式，提供预约链接以及付款方式。",
-      "收到付款后，Coco将开始深入解读你的牌阵 · 星盘。",
-      "与Coco进行60 / 90分钟的一对一线上解读环节！",
-    ],
-    disclaimer: "✦ 星座命盘解读需要深度分析，请给予Coco至少18小时的剖析时间 ✦",
-    footer_sub: "塔罗 · 星座命盘 · 占星",
+import { useState, useRef, useEffect } from "react";
+import BirthChart from "./BirthChart";
+import LandingPage from "./LandingPage";
+import ZH from "./translations";
+// html2canvas loaded via CDN in index.html
+
+const EMAILJS_SERVICE_ID  = "service_fcfjy1t";
+const EMAILJS_TEMPLATE_ID = "template_lpj8t7s";
+const EMAILJS_PUBLIC_KEY  = "sy_V-u-yyGBno659d";
+
+const CLOUDINARY_CLOUD    = "da1asg0hq";
+const CLOUDINARY_PRESET   = "coco_readings";
+
+function getSpreads(t) {
+  return [
+  {
+    id: "single",
+    name: t ? t.spreads.single_name : "Single Card Draw",
+    desc: t ? t.spreads.single_desc : "For simple, direct questions. Best for yes-or-no answers when you need a quick nudge from the universe.",
+    chips: t ? t.spreads.single_chips : ["Should I attend the dinner this Saturday? Yes or No", "Does the person I like feel the same way? Yes or No"],
+    icon: "✧", cards: [{ label: "Card", x: 0, y: 0 }], cols: 1, rows: 1,
   },
-  info: {
-    name_label: "姓名",
-    dob_label: "出生日期",
-    contact_label: "你的电邮或WhatsApp号码 *",
-    contact_placeholder: "请填写以便Coco联系",
-    contact_error: "请填写你的电邮或WhatsApp号码以继续。",
-    btn_next: "选择牌阵 →",
+  {
+    id: "three",
+    name: t ? t.spreads.three_name : "Basic 3-Card Spread",
+    desc: t ? t.spreads.three_desc : "Suitable for most situations — understand the full picture, uncover what's blocking you, and see where things are heading.",
+    chips: t ? t.spreads.three_chips : ["What is my overall luck this month?", "Is there a third party in my relationship?", "Will this project succeed in 3 months?", "Are there hidden enemies at work?"],
+    icon: "✦", cards: [{ label: "Card 1", x: 0, y: 0 }, { label: "Card 2", x: 1, y: 0 }, { label: "Card 3", x: 2, y: 0 }], cols: 3, rows: 1,
   },
-  spreads: {
-    single_name: "单张牌占卜",
-    single_desc: "适合简单直接的问题，最适合需要明确 是/否 答案时使用。",
-    single_chips: ["我应该赴约这个周六的晚餐吗？是或否", "我喜欢的人也喜欢我吗？是或否"],
-    three_name: "三张牌阵",
-    three_desc: "适合大多数情况。了解全局，发现阻碍，看清事情的走向。",
-    three_chips: ["我这个月的整体运势如何？", "我的感情中有第三者吗？", "这个项目在三个月内会成功吗？", "工作上有没有小人？"],
-    career_name: "事业牌阵",
-    career_desc: "探索你的事业运势，发现盲点，找到你可能错过的机会。",
-    career_chips: ["这份工作适合我吗？", "我在三个月内升职的可能性有多大？", "我的副业发展前景如何？", "未来三个月的工作运势如何？"],
-    relationship_name: "感情牌阵",
-    relationship_desc: "揭示你与另一方的缘分——过去的影响、未来的可能，以及行动的指引。",
-    relationship_chips: ["我目前的感情状况如何？", "复合的可能性有多大？", "这段感情会长久吗？"],
-    optionab_name: "A/B选择牌阵",
-    optionab_desc: "在爱情、学业或事业上遇见了难以抉择的时刻？让牌阵为你指引更清晰的方向。",
-    optionab_chips: ["我应该从A公司跳槽到B公司吗？", "A和B之间，谁更适合我？"],
+  {
+    id: "career",
+    name: t ? t.spreads.career_name : "Career Spread",
+    desc: t ? t.spreads.career_desc : "Explore your career luck, uncover blind spots, and discover opportunities you may have missed.",
+    chips: t ? t.spreads.career_chips : ["Is this job suitable for me?", "What are my chances of a promotion in 3 months?", "How will my side business develop?", "What is my career luck in the next 3 months?"],
+    icon: "◈", cards: [
+      { label: "Card 1", x: 1, y: 0 },
+      { label: "Card 2", x: 0, y: 1 }, { label: "Card 3", x: 1, y: 1 }, { label: "Card 4", x: 2, y: 1 },
+      { label: "Card 5", x: 0, y: 2 }, { label: "Card 6", x: 1, y: 2 }, { label: "Card 7", x: 2, y: 2 },
+    ], cols: 3, rows: 3,
   },
-  question: {
-    label: "你的疑问",
-    placeholder: "或在此输入你的问题...",
+  {
+    id: "relationship",
+    name: t ? t.spreads.relationship_name : "Relationship Spread",
+    desc: t ? t.spreads.relationship_desc : "Uncover the connection between you and another — past influences, future potential, and guidance on your next move.",
+    chips: t ? t.spreads.relationship_chips : ["What is the current state of my relationship?", "Is getting back together possible?", "Will this relationship last?"],
+    icon: "❧", cards: [
+      { label: "Card 1", x: 1, y: 0 },
+      { label: "Card 2", x: 0, y: 1 }, { label: "Card 3", x: 1, y: 1 }, { label: "Card 4", x: 2, y: 1 },
+      { label: "Card 5", x: 0, y: 2 }, { label: "Card 6", x: 1, y: 2 }, { label: "Card 7", x: 2, y: 2 },
+    ], cols: 3, rows: 3,
   },
-  draw: {
-    btn_send: "✦ 发送牌阵给Coco",
-    btn_save: "📸 保存我的牌阵",
-    btn_reveal: "翻开所有牌",
-    btn_again: "重新抽牌",
-    btn_spreads: "← 返回牌阵",
-    btn_home: "⌂ 主页",
-    tap_hint: "点击牌面揭示",
-    toast: "✦ 已成功发送给Coco！Coco将尽快与你联系，为你提供专属解读 ✦",
+  {
+    id: "optionab",
+    name: t ? t.spreads.optionab_name : "Option A/B Spread",
+    desc: t ? t.spreads.optionab_desc : "Torn between two choices in love, study, or career? Let the cards show you the clearer path.",
+    chips: t ? t.spreads.optionab_chips : ["Should I move from Company A to Company B?", "Between Person A and Person B, who is more suitable for me?"],
+    icon: "⟁", cards: [
+      { label: "Card 1", x: 1, y: 0 },
+      { label: "If A",      x: 0, y: 1 }, { label: "Card 3", x: 1, y: 1 }, { label: "If B",      x: 2, y: 1 },
+      { label: "If A",      x: 0, y: 2 }, { label: "Card 5", x: 1, y: 2 }, { label: "If B",      x: 2, y: 2 },
+    ], cols: 3, rows: 3,
   },
-  chart: {
-    name_label: "姓名",
-    dob_label: "出生日期",
-    time_label: "出生时间",
-    time_hint: "出生时间会影响上升星座及宫位的计算。",
-    country_label: "出生国家",
-    city_label: "出生城市",
-    dst_label: "夏令时间 (DST)",
-    dst_us: "美国/加拿大：夏令时间为3月至11月。",
-    dst_au: "澳洲/新西兰：夏令时间为10月至4月。",
-    dst_other: "该国在夏季实行夏令时间。",
-    dst_question: "你是否在此期间出生？",
-    dst_no: "否（标准时间）",
-    dst_yes: "是（夏令时间）",
-    contact_label: "你的电邮或WhatsApp号码 *",
-    contact_placeholder: "请填写以便Coco联系",
-    custom_label: "找不到你的城市？",
-    custom_search: "搜索",
-    btn_calculate: "✦ 计算我的星座命盘",
-    result_for: "星座命盘",
-    planet_header: "行星",
-    sign_header: "星座",
-    house_header: "宫位",
-    btn_send: "✦ 发送星座命盘给Coco",
-    btn_save: "📸 保存我的星座命盘",
-    btn_recalculate: "← 重新计算",
-    btn_home: "⌂ 主页",
-    toast: "✦ 已成功发送给Coco！Coco将尽快与你联系，为你提供专属解读 ✦",
-    planets: {
-      Rising: "上升", Sun: "太阳", Moon: "月亮", Mercury: "水星",
-      Venus: "金星", Mars: "火星", Jupiter: "木星", Saturn: "土星",
-      Uranus: "天王星", Neptune: "海王星", Pluto: "冥王星",
-    },
-    signs: {
-      Aries: "白羊座", Taurus: "金牛座", Gemini: "双子座", Cancer: "巨蟹座",
-      Leo: "狮子座", Virgo: "处女座", Libra: "天秤座", Scorpio: "天蝎座",
-      Sagittarius: "射手座", Capricorn: "摩羯座", Aquarius: "水瓶座", Pisces: "双鱼座",
-    },
-    houses: {
-      1: "第一宫", 2: "第二宫", 3: "第三宫", 4: "第四宫",
-      5: "第五宫", 6: "第六宫", 7: "第七宫", 8: "第八宫",
-      9: "第九宫", 10: "第十宫", 11: "第十一宫", 12: "第十二宫",
-    },
-  },
+  ];
+}
+
+const CARD_IMAGES = [
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829895/Queen_of_cups_kfar29.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829894/Page_of_Wands_jf49cy.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829894/Page_of_cups_mtj7ig.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829894/Knight_of_cups_ev8xca.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829894/Knight_of_Wands_hkseti.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829894/10_of_wands_v7a1da.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829893/Ace_of_cups_eqqsdx.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829893/King_of_Cups_rnxe45.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829893/Ace_of_wands_ytpmim.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829893/9_of_wands_gmav7m.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829892/10_of_cups_oofjvr.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829892/7_of_wands_jwozn1.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829892/8_of_cups_fyixgr.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829892/9_of_cups_huppla.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829892/8_of_wands_br2ltf.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/7_of_cups_l2yseq.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/6_of_cups_v8zdrm.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/5_of_wands_g02hfd.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/6_of_wands_aom5nz.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829890/5_of_cups_rlguux.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829890/4_of_wands_xua7k4.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829890/4_of_cups_v8hu2r.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829889/3_of_wands_mls853.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829889/3_of_cups_olsmus.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829889/2_of_cups_zkger8.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829889/2_of_wands_c73kzf.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829856/20_-_Judgement_copy_mt5emc.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829855/21_-_The_World_copy_qy9oah.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/3_-_The_Empress_copy_kghejc.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/19_-_The_Sun_copy_b2enqm.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829854/18_-_The_Moon_copy_m3xziw.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829853/17_-_The_Star_copy_xehtx0.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829853/10_-_The_Wheel_of_Fortune_copy_psoobj.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829853/16_-_The_Tower_copy_xsn5sv.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829853/9_-_The_Hermit_copy_epaiad.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829853/15_-_The_Devil_copy_jr8tat.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829852/8_-_Strength_copy_gedckc.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829852/14_-_Temperance_copy_kfhhpf.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/4_-_The_Emperor_copy_t9btt1.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829850/0_The_Fool_copy_befech.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/13_-_Death_copy_a3srsv.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/6_-_The_Lovers_copy_jg6jio.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/7_-_The_Chariot_copy_vo4kpp.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/5_-_The_Hierophant_copy_otd8uu.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829850/2_-_The_High_Priestess_copy_pwumxy.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829850/12_-_The_Hanged_Man_copy_u8elku.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829850/1_-_The_Magician_copy_xqsqti.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829850/11_-_Justice_copy_v3qrwt.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901834/WhatsApp_Image_2026-04-11_at_17.58.11_lcfnmo.jpg",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901833/WhatsApp_Image_2026-04-11_at_17.58.10_ivi5hm.jpg",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901832/King_of_wands_rqzxte.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901832/WhatsApp_Image_2026-04-11_at_17.58.10_3_g0rzr5.jpg",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901831/WhatsApp_Image_2026-04-11_at_17.58.09_pjjodb.jpg",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901830/WhatsApp_Image_2026-04-11_at_17.58.10_1_oykbhi.jpg",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901828/WhatsApp_Image_2026-04-11_at_17.58.09_2_v2deri.jpg",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901827/Queen_of_wands_nxptka.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901827/WhatsApp_Image_2026-04-11_at_17.58.09_1_n6bhgm.jpg",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901826/knight_of_pentacles_clpebn.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901825/queen_of_pentacles_m3y1me.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901825/Page_of_pentacles_wczwth.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901823/king_of_pentacles_ikeyro.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901823/3_of_pentacles_ubxe3p.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901822/Ace_of_pentacles_uegvlb.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901818/9_of_pentacles_iqe9j0.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901817/8_of_pentacles_pd7sne.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901816/7_of_pentacles_ztw25z.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901816/5_of_pentacles_pod8ml.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901815/4_of_swords_to2yki.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901815/5_of_swords_l5fvka.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901813/3_of_swords_bl8h4x.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901814/4_of_pentacles_f6li5l.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901812/2_of_pentacles_ceebjp.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901811/2_of_swords_rr9uio.jpg",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775902495/WhatsApp_Image_2026-04-11_at_18.12.07_mvezpt.jpg",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901819/10_of_pentacles_x4b25p.png",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775903869/WhatsApp_Image_2026-04-11_at_18.36.18_pvciiw.jpg",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775903870/WhatsApp_Image_2026-04-11_at_18.37.12_qr1yei.jpg",
+  "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901832/WhatsApp_Image_2026-04-11_at_17.58.10_2_jiuuek.jpg",
+];
+
+const CARD_BACK = "";
+const BGM_URL  = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775831307/Silver_Leaf_Drift_jrf2xh.mp3";
+const FLIP_URL = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775905865/freesound_community-flipcard-91468_oiatib.mp3";
+
+// Colour palette for the breathing card — from the provided swatch image
+const PALETTE = [
+  ["#655D8A", "#9B8FBF"],  // deep purple → mid purple
+  ["#9B8FBF", "#C8BDEA"],  // mid purple → lavender
+  ["#7897AB", "#5A7A8E"],  // steel blue → slate
+  ["#2E5A6B", "#1A3D50"],  // deep teal → midnight teal
+  ["#D885A3", "#C87090"],  // blush pink → rose
+  ["#B85A78", "#7B2040"],  // rose → deep burgundy
+  ["#FDCEB9", "#F0A07A"],  // peach → soft coral
+  ["#E8845A", "#C85A3A"],  // coral → deep terracotta
+];
+
+// How many fan cards to show (more = denser fan)
+const FAN_COUNT = 21;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function btn(bg, extra = {}) {
+  return {
+    background: bg, border: "1px solid #7c5c2e", borderRadius: 8,
+    color: "#e8d5b7", padding: "8px 16px", fontSize: 13, cursor: "pointer",
+    letterSpacing: 0.5, fontFamily: "'Georgia', serif", ...extra,
+  };
+}
+
+function CardSlot({ label, img, flipped, onClick, cardBack, size }) {
+  const w = size, h = Math.round(size * 1.6);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+      <div onClick={!flipped ? onClick : undefined} style={{ width: w, height: h, perspective: 800, cursor: flipped ? "default" : "pointer" }}>
+        <div style={{
+          width: "100%", height: "100%", position: "relative",
+          transformStyle: "preserve-3d",
+          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+          transition: "transform 0.6s cubic-bezier(.4,0,.2,1)",
+        }}>
+          <div style={{
+            position: "absolute", inset: 0, backfaceVisibility: "hidden",
+            borderRadius: 10, overflow: "hidden",
+            boxShadow: "0 4px 18px #0006", border: "2px solid #7c5c2e", background: "#1a0545",
+          }}>
+            {cardBack
+              ? <img src={cardBack} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="back" />
+              : <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg,#0d0221,#2d0b6b,#0d0221)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, color: "#c9a84c" }}>✦</div>
+            }
+          </div>
+          <div style={{
+            position: "absolute", inset: 0, backfaceVisibility: "hidden",
+            transform: "rotateY(180deg)", borderRadius: 10, overflow: "hidden",
+            boxShadow: "0 4px 18px #0006", border: "2px solid #c9a84c", background: "#111",
+          }}>
+            {img
+              ? <img src={img} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt={label} />
+              : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#c9a84c", fontSize: 13, textAlign: "center", padding: 8, background: "linear-gradient(135deg,#1a0545,#0d0221)" }}>{label}</div>
+            }
+          </div>
+        </div>
+      </div>
+      <span style={{ color: "#c9a84c", fontSize: 11, letterSpacing: 1, textTransform: "uppercase", opacity: 0.85 }}>{label}</span>
+    </div>
+  );
+}
+
+const Stars = () => (
+  <svg style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0 }} xmlns="http://www.w3.org/2000/svg">
+    {Array.from({ length: 60 }, (_, i) => (
+      <circle key={i} cx={`${(i * 37.7) % 100}%`} cy={`${(i * 23.3) % 100}%`} r={i % 5 === 0 ? 1.5 : 1} fill="#fff" opacity={0.3 + (i % 5) * 0.1} />
+    ))}
+  </svg>
+);
+
+const inputStyle = {
+  background: "#ffffff0d", border: "1px solid #7c5c2e", borderRadius: 8,
+  color: "#e8d5b7", padding: "10px 14px", fontSize: 14, width: "100%",
+  fontFamily: "'Georgia', serif", outline: "none",
 };
 
-export default ZH;
+const clamp = (min, val, max) => Math.max(min, Math.min(max, val));
+
+// ── Intention screen messages ──
+const INTENTION_MESSAGES = [
+  "Close your eyes for a moment...",
+  "Take a deep breath...",
+  "Hold your question in your heart...",
+  "The cards are listening...",
+  "Trust your intuition...",
+];
+
+export default function App() {
+  const [screen, setScreen]                 = useState("home");
+  const [clientName, setClientName]         = useState("");
+  const [clientDob, setClientDob]           = useState("");
+  const [clientContact, setClientContact]   = useState("");
+  const [contactError, setContactError]     = useState(false);
+  const [clientQuestion, setClientQuestion] = useState("");
+  const [nameError, setNameError]           = useState(false);
+  const [spread, setSpread]                 = useState(null);
+  const [shuffledDeck, setShuffledDeck]     = useState([]);
+  const [pickedIndices, setPickedIndices]   = useState([]);
+  const [drawnCards, setDrawnCards]         = useState([]);
+  const [flipped, setFlipped]               = useState([]);
+  const [bgmOn, setBgmOn]                   = useState(false);
+  const [lang, setLang]                     = useState("en");
+  const t = lang === "zh" ? ZH : null;
+  const [winW, setWinW]                     = useState(window.innerWidth);
+  const [saving, setSaving]                 = useState(false);
+  const [toast, setToast]                   = useState(false);
+  const [intentionMsg, setIntentionMsg]     = useState(0);
+  const [hoveredFan, setHoveredFan]         = useState(null);
+  const [slotIndex, setSlotIndex]           = useState(0);
+  const [slotPicked, setSlotPicked]         = useState([]);
+  const [slotCurrent, setSlotCurrent]       = useState(0);
+  const [topColorIdx, setTopColorIdx]       = useState(0);  // index of front layer
+  const [backColorIdx, setBackColorIdx]     = useState(1);  // index of back layer
+  const [topOpacity, setTopOpacity]         = useState(1);  // front layer fading out
+  const bgmAudio  = useRef(null);
+  const captureRef = useRef(null);
+  const slotTimer  = useRef(null);
+  const colorTimer = useRef(null);
+
+  useEffect(() => {
+    const onResize = () => setWinW(window.innerWidth);
+    window.addEventListener("resize", onResize);
+
+    // Global button hover glow
+    const style = document.createElement("style");
+    style.innerHTML = `
+      button:hover { box-shadow: 0 0 18px #c9a84c88, 0 0 36px #c9a84c44 !important; }
+      button { transition: box-shadow 0.3s ease !important; }
+      :lang(zh), .zh { font-family: 'Noto Serif SC', 'Georgia', serif !important; }
+    `;
+    document.head.appendChild(style);
+
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    if (window.emailjs) return;
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
+    script.onload = () => window.emailjs.init(EMAILJS_PUBLIC_KEY);
+    document.head.appendChild(script);
+  }, []);
+
+  // Cycle intention messages
+  useEffect(() => {
+    if (screen !== "intention") return;
+    const id = setInterval(() => setIntentionMsg(m => (m + 1) % INTENTION_MESSAGES.length), 2000);
+    return () => clearInterval(id);
+  }, [screen]);
+
+  const desktop = winW > 600;
+
+  function startBgm() {
+    if (!BGM_URL || bgmOn) return;
+    if (!bgmAudio.current) {
+      const audio = new Audio(BGM_URL);
+      audio.loop = true; audio.volume = 0.5;
+      bgmAudio.current = audio;
+    }
+    bgmAudio.current.play().then(() => setBgmOn(true)).catch(() => {});
+  }
+
+  // Auto-start BGM on first user interaction
+  useEffect(() => {
+    const startOnInteraction = () => {
+      if (!BGM_URL || bgmAudio.current) return;
+      const audio = new Audio(BGM_URL);
+      audio.loop = true;
+      audio.volume = 0.5;
+      bgmAudio.current = audio;
+      audio.play().then(() => setBgmOn(true)).catch(() => {});
+      window.removeEventListener("click", startOnInteraction);
+      window.removeEventListener("touchstart", startOnInteraction);
+    };
+    window.addEventListener("click", startOnInteraction);
+    window.addEventListener("touchstart", startOnInteraction);
+    return () => {
+      window.removeEventListener("click", startOnInteraction);
+      window.removeEventListener("touchstart", startOnInteraction);
+    };
+  }, []);
+
+  function toggleBgm() {
+    if (!BGM_URL) return;
+    if (!bgmAudio.current) {
+      const audio = new Audio(BGM_URL);
+      audio.loop = true; audio.volume = 0.5;
+      bgmAudio.current = audio;
+    }
+    if (bgmOn) { bgmAudio.current.pause(); setBgmOn(false); }
+    else { bgmAudio.current.play().then(() => setBgmOn(true)).catch(() => {}); }
+  }
+
+  function playCardFlip() {
+    const audio = new Audio(FLIP_URL);
+    audio.volume = 0.8;
+    audio.play().catch(() => {});
+  }
+
+  function handleInfoSubmit() {
+    if (!clientName.trim()) { setNameError(true); return; }
+    if (!clientContact.trim()) { setContactError(true); return; }
+    setNameError(false); setContactError(false); startBgm(); setScreen("spreads");
+  }
+
+  function selectSpread(sp) {
+    setSpread(sp); setClientQuestion(""); setScreen("question");
+  }
+
+  function handleQuestionSubmit() {
+    setScreen("intention");
+    setIntentionMsg(0);
+  }
+
+  function startColorCycle() {
+    if (colorTimer.current) clearInterval(colorTimer.current);
+    let opacity = 1;
+    let front = 0;
+    let back = 1;
+    setTopColorIdx(front);
+    setBackColorIdx(back);
+    setTopOpacity(1);
+
+    // Fade out front layer over 0.5s (step every 50ms)
+    const FADE_DURATION = 500;
+    const HOLD_DURATION = 100;
+    const STEP = 50;
+    const fadeStep = STEP / FADE_DURATION;
+    let holding = false;
+    let holdCount = 0;
+    const holdSteps = HOLD_DURATION / STEP;
+
+    colorTimer.current = setInterval(() => {
+      if (holding) {
+        holdCount++;
+        if (holdCount >= holdSteps) {
+          holding = false;
+          holdCount = 0;
+        }
+        return;
+      }
+      opacity -= fadeStep;
+      if (opacity <= 0) {
+        opacity = 1;
+        front = back;
+        back = (back + 1) % PALETTE.length;
+        setTopColorIdx(front);
+        setBackColorIdx(back);
+        setTopOpacity(1);
+        holding = true;
+      } else {
+        setTopOpacity(opacity);
+      }
+    }, STEP);
+  }
+
+  function handleIntentionReady() {
+    const deck = shuffle(CARD_IMAGES);
+    setShuffledDeck(deck);
+    setSlotPicked([]);
+    setSlotIndex(0);
+    setSlotCurrent(0);
+    setTopColorIdx(0);
+    setBackColorIdx(1);
+    setTopOpacity(1);
+    startColorCycle();
+    setScreen("fan");
+  }
+
+  function pickFanCard(idx) {
+    if (pickedIndices.includes(idx)) return;
+    if (pickedIndices.length >= spread.cards.length) return;
+    playCardFlip();
+    const newPicked = [...pickedIndices, idx];
+    setPickedIndices(newPicked);
+    if (newPicked.length === spread.cards.length) {
+      setTimeout(() => {
+        setDrawnCards(newPicked.map(i => shuffledDeck[i]));
+        setFlipped(new Array(spread.cards.length).fill(false));
+        setScreen("draw");
+      }, 600);
+    }
+  }
+
+  function flipCard(i) {
+    playCardFlip();
+    setFlipped(prev => { const n = [...prev]; n[i] = true; return n; });
+  }
+
+  function flipAll() {
+    flipped.forEach((f, i) => { if (!f) setTimeout(() => playCardFlip(), i * 120); });
+    setFlipped(new Array(spread.cards.length).fill(true));
+  }
+
+  async function sendAndSave() {
+    if (!captureRef.current || saving) return;
+    setSaving(true);
+    try {
+      const canvas = await window.html2canvas(captureRef.current, {
+        useCORS: true, allowTaint: true,
+        backgroundColor: "#0d0221", scale: 2, width: 480, windowWidth: 480,
+      });
+      const filename = `${clientName.replace(/\s+/g, "_")}_tarot_reading.jpg`;
+      const jpgDataUrl = canvas.toDataURL("image/jpeg", 0.92);
+
+      // Upload to Cloudinary
+      let spreadImageUrl = "Image upload failed";
+      try {
+        const blob = await (await fetch(jpgDataUrl)).blob();
+        const formData = new FormData();
+        formData.append("file", blob, filename);
+        formData.append("upload_preset", CLOUDINARY_PRESET);
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
+          method: "POST", body: formData,
+        });
+        const data = await res.json();
+        if (data.secure_url) {
+          spreadImageUrl = data.secure_url;
+        } else {
+          spreadImageUrl = `Upload error: ${JSON.stringify(data.error || data)}`;
+        }
+      } catch(uploadErr) {
+        spreadImageUrl = `Upload exception: ${uploadErr.message}`;
+      }
+
+      // Send email via EmailJS
+      if (window.emailjs) {
+        await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          client_name:     clientName,
+          client_dob:      clientDob ? new Date(clientDob + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "Not provided",
+          client_contact:  clientContact,
+          spread_name:     spread.name,
+          client_question: clientQuestion || "No question provided",
+          sent_at:         new Date().toLocaleString("en-GB"),
+          spread_image:    spreadImageUrl,
+        });
+      }
+
+      // Save image — mobile share sheet or download
+      const isMobileDevice = navigator.maxTouchPoints > 0 && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+      if (isMobileDevice && navigator.share && navigator.canShare) {
+        try {
+          const blob = await (await fetch(jpgDataUrl)).blob();
+          const file = new File([blob], filename, { type: "image/jpeg" });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: `${clientName}'s Tarot Reading` });
+            setSaving(false);
+            showToast();
+            return;
+          }
+        } catch (shareErr) {}
+      }
+      const link = document.createElement("a");
+      link.download = filename;
+      link.href = jpgDataUrl;
+      link.click();
+      showToast();
+    } catch (e) {
+      alert("Something went wrong. Please try again.");
+    }
+    setSaving(false);
+  }
+
+  function showToast() {
+    setToast(true);
+    setTimeout(() => setToast(false), 5000);
+  }
+
+  async function saveSpread() {
+    if (!captureRef.current || saving) return;
+    setSaving(true);
+    try {
+      const canvas = await window.html2canvas(captureRef.current, {
+        useCORS: true, allowTaint: true,
+        backgroundColor: "#0d0221", scale: 2, width: 480, windowWidth: 480,
+      });
+      const filename = `${clientName.replace(/\s+/g, "_")}_tarot_reading.jpg`;
+      const jpgDataUrl = canvas.toDataURL("image/jpeg", 0.92);
+
+      // Try Web Share API on mobile only (touch devices)
+      const isMobileDevice = navigator.maxTouchPoints > 0 && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+      if (isMobileDevice && navigator.share && navigator.canShare) {
+        try {
+          const blob = await (await fetch(jpgDataUrl)).blob();
+          const file = new File([blob], filename, { type: "image/jpeg" });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: `${clientName}'s Tarot Reading` });
+            setSaving(false);
+            showToast();
+            return;
+          }
+        } catch (shareErr) {
+          // Share cancelled or failed — fall through to download
+        }
+      }
+
+      // Desktop or fallback: download as JPG
+      const link = document.createElement("a");
+      link.download = filename;
+      link.href = jpgDataUrl;
+      link.click();
+      showToast();
+    } catch (e) {
+      alert("Could not save image. Please take a screenshot instead.");
+    }
+    setSaving(false);
+  }
+
+  function getCardSize(cols, captureMode = false) {
+    if (captureMode) {
+      // Always fit within 480px for saved image
+      return clamp(50, Math.floor((480 - 48) / cols) - 12, 120);
+    }
+    const maxW = Math.min(winW - 48, 1000);
+    return clamp(70, Math.floor(maxW / cols) - 16, 180);
+  }
+
+  function renderGrid(captureMode = false) {
+    const { cards, cols, rows } = spread;
+    const size = getCardSize(cols, captureMode);
+    const gap = captureMode ? 10 : 14;
+    const cellW = size + gap;
+    const cellH = Math.round(size * 1.6) + gap + 28;
+    return (
+      <div style={{ position: "relative", width: cols * cellW, height: rows * cellH, margin: "0 auto" }}>
+        {cards.map((c, i) => (
+          <div key={i} style={{ position: "absolute", left: c.x * cellW, top: c.y * cellH }}>
+            <CardSlot label={c.label} img={drawnCards[i]} flipped={flipped[i]} onClick={() => !captureMode && flipCard(i)} cardBack={CARD_BACK} size={size} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  const bgStyle = {
+    minHeight: "100vh",
+    background: "linear-gradient(160deg,#0d0221 0%,#1a0545 40%,#2d0b6b 70%,#0d0221 100%)",
+    display: "flex", flexDirection: "column", alignItems: "center",
+    fontFamily: "'Georgia', serif", color: "#e8d5b7",
+    padding: desktop ? "40px 60px" : "24px 16px",
+    position: "relative", overflow: "hidden",
+  };
+
+  const maxW = desktop ? 600 : "100%";
+  const resetHome = () => {
+    if (slotTimer.current) { clearInterval(slotTimer.current); slotTimer.current = null; }
+    if (colorTimer.current) { clearInterval(colorTimer.current); colorTimer.current = null; }
+    setScreen("home"); setClientName(""); setClientDob(""); setClientQuestion("");
+    setSlotPicked([]); setSlotCurrent(0); setPickedIndices([]);
+  };
+
+  const BgmBtn = () => BGM_URL ? (
+    <button onClick={toggleBgm} style={{ ...btn(bgmOn ? "#1f3a1f" : "#2a1a40"), fontSize: 12 }}>
+      {bgmOn ? "🔊 Music ON" : "🔇 Music OFF"}
+    </button>
+  ) : null;
+
+  // ── HOME ──
+  if (screen === "home") return (
+    <LandingPage
+      onBeginReading={() => { startBgm(); setScreen("info"); }}
+      onBeginChart={() => setScreen("chart")}
+      bgmOn={bgmOn}
+      onToggleBgm={toggleBgm}
+      lang={lang}
+      onToggleLang={() => setLang(l => l === "en" ? "zh" : "en")}
+    />
+  );
+
+  // ── BIRTH CHART ──
+  if (screen === "chart") return <BirthChart onHome={() => setScreen("home")} lang={lang} onToggleLang={() => setLang(l => l === "en" ? "zh" : "en")} />;
+
+  if (screen === "info") return (
+    <div style={bgStyle}>
+      <Stars />
+      <div style={{ width: "100%", maxWidth: maxW, position: "relative", zIndex: 1, marginTop: desktop ? 60 : 40 }}>
+        <div style={{ textAlign: "center", marginBottom: 36 }}>
+          <div style={{ fontSize: desktop ? 28 : 20, color: "#c9a84c", letterSpacing: 2, marginBottom: 8 }}>✦ Your Reading ✦</div>
+          <div style={{ fontSize: 12, color: "#a07840", letterSpacing: 2 }}>TELL US A LITTLE ABOUT YOURSELF</div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <div>
+            <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>YOUR NAME *</label>
+            <input style={{ ...inputStyle, fontSize: desktop ? 16 : 14, borderColor: nameError ? "#c94c4c" : "#7c5c2e" }}
+              type="text" placeholder="Enter your name" value={clientName}
+              onChange={(e) => { setClientName(e.target.value); setNameError(false); }} />
+            {nameError && <div style={{ color: "#c94c4c", fontSize: 11, marginTop: 4 }}>Please enter your name to continue.</div>}
+          </div>
+          <div>
+            <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>{t ? t.info.dob_label : "DATE OF BIRTH"}</label>
+            <input style={{ ...inputStyle, fontSize: desktop ? 16 : 14 }} type="date" value={clientDob} onChange={(e) => setClientDob(e.target.value)} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>{t ? t.info.contact_label : "EMAIL OR WHATSAPP NUMBER *"}</label>
+            <input style={{ ...inputStyle, fontSize: desktop ? 16 : 14, borderColor: contactError ? "#c94c4c" : "#7c5c2e" }}
+              type="text" placeholder={t ? t.info.contact_placeholder : "Fill in to receive your reading from Coco"}
+              value={clientContact}
+              onChange={(e) => { setClientContact(e.target.value); setContactError(false); }} />
+            {contactError && <div style={{ color: "#c94c4c", fontSize: 11, marginTop: 4 }}>Please enter your email or WhatsApp to continue.</div>}
+          </div>
+          <button onClick={handleInfoSubmit}
+            style={{ ...btn("#3b1f6e"), fontSize: desktop ? 16 : 14, padding: "13px 0", width: "100%", letterSpacing: 2 }}>
+            Choose My Spread →
+          </button>
+          <div style={{ textAlign: "center" }}><BgmBtn /></div>
+          <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── SPREADS ──
+  if (screen === "spreads") return (
+    <div style={bgStyle}>
+      <Stars />
+      <div style={{ textAlign: "center", marginBottom: 28, position: "relative", zIndex: 1 }}>
+        <div style={{ fontSize: desktop ? 14 : 13, color: "#a07840", letterSpacing: 2, marginBottom: 6 }}>Welcome, {clientName}</div>
+        <div style={{ fontSize: desktop ? 28 : 20, color: "#c9a84c", letterSpacing: 3, marginBottom: 8 }}>✦ Choose Your Spread ✦</div>
+        <BgmBtn />
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", maxWidth: maxW, position: "relative", zIndex: 1 }}>
+        {getSpreads(t).map((sp) => (
+          <button key={sp.id} onClick={() => selectSpread(sp)} style={{
+            background: "#ffffff0d", border: "1px solid #7c5c2e", borderRadius: 12,
+            padding: desktop ? "20px 28px" : "16px 20px",
+            display: "flex", alignItems: "center", gap: 18,
+            cursor: "pointer", color: "#e8d5b7", textAlign: "left", width: "100%",
+          }}>
+            <span style={{ fontSize: desktop ? 36 : 28, width: 44, textAlign: "center" }}>{sp.icon}</span>
+            <div>
+              <div style={{ fontWeight: "bold", fontSize: desktop ? 18 : 15 }}>{sp.name}</div>
+              <div style={{ fontSize: desktop ? 13 : 12, color: "#a07840", marginTop: 3 }}>{sp.desc} · {sp.cards.length} cards</div>
+            </div>
+          </button>
+        ))}
+        <button onClick={() => setScreen("info")} style={{ ...btn("#2a1a1a"), fontSize: 12, marginTop: 4 }}>← Back</button>
+        <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
+      </div>
+    </div>
+  );
+
+  // ── QUESTION ──
+  if (screen === "question") return (
+    <div style={bgStyle}>
+      <Stars />
+      <div style={{ width: "100%", maxWidth: maxW, position: "relative", zIndex: 1, marginTop: desktop ? 60 : 40 }}>
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <div style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, marginBottom: 6 }}>{spread.name.toUpperCase()}</div>
+          <div style={{ fontSize: desktop ? 28 : 20, color: "#c9a84c", letterSpacing: 2, marginBottom: 8 }}>✦ Set Your Intention ✦</div>
+          <div style={{ fontSize: desktop ? 14 : 12, color: "#a07840", letterSpacing: 1 }}>What would you like the cards to guide you on?</div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <div>
+            <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 10 }}>YOUR QUESTION OR INTENTION</label>
+            {/* Example question chips */}
+            {spread.chips && (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+                {spread.chips.map((chip, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setClientQuestion(chip)}
+                    style={{
+                      background: clientQuestion === chip ? "#3b1f6e" : "#ffffff0d",
+                      border: `1px solid ${clientQuestion === chip ? "#c9a84c" : "#7c5c2e"}`,
+                      borderRadius: 20,
+                      color: clientQuestion === chip ? "#c9a84c" : "#a07840",
+                      fontSize: 11,
+                      padding: "6px 14px",
+                      cursor: "pointer",
+                      fontFamily: "'Georgia', serif",
+                      letterSpacing: 0.3,
+                      lineHeight: 1.5,
+                      textAlign: "left",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    {chip}
+                  </button>
+                ))}
+              </div>
+            )}
+            <textarea
+              style={{ ...inputStyle, minHeight: desktop ? 120 : 100, resize: "vertical", lineHeight: 1.7, fontSize: desktop ? 16 : 14 }}
+              placeholder="Or type your own question here..."
+              value={clientQuestion}
+              onChange={(e) => setClientQuestion(e.target.value)}
+            />
+          </div>
+          <button onClick={handleQuestionSubmit}
+            style={{ ...btn("#3b1f6e"), fontSize: desktop ? 16 : 14, padding: "13px 0", width: "100%", letterSpacing: 2 }}>
+            Continue →
+          </button>
+          <button onClick={() => setScreen("spreads")} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>← Back</button>
+          <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── INTENTION (Option D) ──
+  if (screen === "intention") return (
+    <div style={{ ...bgStyle, justifyContent: "center" }}>
+      <Stars />
+      <style>{`
+        @keyframes pulse-glow {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.12); }
+        }
+        @keyframes fade-msg {
+          0% { opacity: 0; transform: translateY(8px); }
+          20%, 80% { opacity: 1; transform: translateY(0); }
+          100% { opacity: 0; transform: translateY(-8px); }
+        }
+      `}</style>
+      <div style={{ textAlign: "center", position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 32 }}>
+        {/* Glowing orb */}
+        <div style={{
+          width: desktop ? 160 : 120, height: desktop ? 160 : 120,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, #c9a84c55 0%, #7c2d9e44 50%, transparent 70%)",
+          border: "1px solid #c9a84c44",
+          animation: "pulse-glow 3s ease-in-out infinite",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: desktop ? 52 : 40, color: "#c9a84c",
+        }}>✦</div>
+
+        {/* Cycling message */}
+        <div key={intentionMsg} style={{
+          fontSize: desktop ? 20 : 16, color: "#e8d5b7", letterSpacing: 2,
+          fontStyle: "italic", animation: "fade-msg 2s ease-in-out",
+          minHeight: 32,
+        }}>
+          {INTENTION_MESSAGES[intentionMsg]}
+        </div>
+
+        {clientQuestion && (
+          <div style={{ fontSize: desktop ? 14 : 12, color: "#c9a84c88", fontStyle: "italic", maxWidth: 360, lineHeight: 1.7 }}>
+            "{clientQuestion}"
+          </div>
+        )}
+
+        <button onClick={handleIntentionReady}
+          style={{ ...btn("#3b1f6e"), fontSize: desktop ? 16 : 14, padding: desktop ? "14px 48px" : "12px 32px", letterSpacing: 2, marginTop: 8 }}>
+          I'm Ready · Draw My Cards
+        </button>
+        <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12 }}>⌂ Home</button>
+      </div>
+    </div>
+  );
+
+  // ── SLOT MACHINE DRAW ──
+  if (screen === "fan") {
+    const needed = spread.cards.length;
+    const picked = slotPicked.length;
+    const isComplete = picked >= needed;
+    const cardW = desktop ? 160 : 120;
+    const cardH = Math.round(cardW * 1.6);
+
+    function stopCard() {
+      if (isComplete) return;
+      playCardFlip();
+      if (slotTimer.current) { clearInterval(slotTimer.current); slotTimer.current = null; }
+      const chosenImg = shuffledDeck[slotCurrent % shuffledDeck.length];
+      const newPicked = [...slotPicked, chosenImg];
+      setSlotPicked(newPicked);
+      if (newPicked.length >= needed) {
+        setTimeout(() => {
+          if (colorTimer.current) { clearInterval(colorTimer.current); colorTimer.current = null; }
+          if (slotTimer.current) { clearInterval(slotTimer.current); slotTimer.current = null; }
+          setDrawnCards(newPicked);
+          setFlipped(new Array(needed).fill(false));
+          setScreen("draw");
+        }, 800);
+      } else {
+        setTimeout(() => {
+          setSlotIndex(newPicked.length);
+          if (slotTimer.current) clearInterval(slotTimer.current);
+          slotTimer.current = setInterval(() => setSlotCurrent(c => c + 1), 80);
+        }, 500);
+      }
+    }
+
+    if (!slotTimer.current && !isComplete) {
+      slotTimer.current = setInterval(() => setSlotCurrent(c => c + 1), 80);
+    }
+
+    return (
+      <div style={{ ...bgStyle, justifyContent: "center" }}>
+        <Stars />
+        <style>{`
+          @keyframes card-lock { 0%{transform:scale(1.15);} 100%{transform:scale(1);} }
+        `}</style>
+
+        {/* Header */}
+        <div style={{ textAlign: "center", position: "relative", zIndex: 1, marginBottom: 24 }}>
+          <div style={{ fontSize: desktop ? 14 : 12, color: "#a07840", letterSpacing: 2, marginBottom: 6 }}>
+            {spread.name.toUpperCase()}
+          </div>
+          <div style={{ fontSize: desktop ? 22 : 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 4 }}>
+            {isComplete ? "Your cards are ready..." : `Card ${picked + 1} of ${needed}`}
+          </div>
+          <div style={{ display: "flex", justifyContent: "center", gap: 10, marginTop: 8 }}>
+            {Array.from({ length: needed }).map((_, i) => (
+              <div key={i} style={{
+                width: 10, height: 10, borderRadius: "50%",
+                background: i < picked ? "#c9a84c" : i === picked ? "#c9a84c66" : "#ffffff22",
+                border: `1px solid ${i <= picked ? "#c9a84c" : "#c9a84c33"}`,
+                transition: "all 0.3s",
+              }} />
+            ))}
+          </div>
+        </div>
+
+        {/* Flashing card */}
+        <div style={{ position: "relative", zIndex: 1, marginBottom: 32 }}>
+          <div
+            onClick={!isComplete ? stopCard : undefined}
+            style={{
+              width: cardW, height: cardH, borderRadius: 12, overflow: "hidden",
+              border: `2px solid ${isComplete ? "#c9a84c" : "#7c5c2e"}`,
+              boxShadow: isComplete ? "0 0 24px #c9a84c88" : "0 8px 32px #0009",
+              animation: isComplete ? "card-lock 0.4s ease-out" : "none",
+              cursor: isComplete ? "default" : "pointer",
+            }}
+          >
+            {CARD_BACK
+              ? <img src={CARD_BACK} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="card" />
+              : <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                  {/* Back layer — always opacity 1, next colour ready */}
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    background: `linear-gradient(135deg, ${PALETTE[backColorIdx][0]}, ${PALETTE[backColorIdx][1]})`,
+                  }} />
+                  {/* Front layer — fades out slowly */}
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    background: `linear-gradient(135deg, ${PALETTE[topColorIdx][0]}, ${PALETTE[topColorIdx][1]})`,
+                    opacity: topOpacity,
+                  }} />
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 56, color: "#ffffff22", zIndex: 10,
+                  }}>✦</div>
+                </div>
+            }
+          </div>
+        </div>
+
+        {/* Locked cards row */}
+        {picked > 0 && (
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center", marginBottom: 24, zIndex: 1, position: "relative" }}>
+            {slotPicked.map((_, i) => (
+              <div key={i} style={{
+                width: desktop ? 60 : 46, height: Math.round((desktop ? 60 : 46) * 1.6),
+                borderRadius: 6, overflow: "hidden",
+                border: "2px solid #c9a84c",
+                boxShadow: "0 0 10px #c9a84c44",
+              }}>
+                {CARD_BACK
+                  ? <img src={CARD_BACK} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="card back" />
+                  : <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg,#0d0221,#2d0b6b,#0d0221)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: "#c9a84c" }}>✦</div>
+                }
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Stop button */}
+        <div style={{ textAlign: "center", position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+          {!isComplete && (
+            <>
+              <div style={{ fontSize: 12, color: "#7a5a3a", marginBottom: 4 }}>
+                Focus on your question · tap when you feel it
+              </div>
+              <button onClick={stopCard} style={{
+                ...btn("#7c1f1f"),
+                fontSize: desktop ? 20 : 17,
+                padding: desktop ? "16px 60px" : "14px 44px",
+                letterSpacing: 3,
+                border: "2px solid #c94c4c",
+                animation: "slot-flash 1.2s ease-in-out infinite",
+              }}>
+                ✦ Select
+              </button>
+            </>
+          )}
+          <button onClick={resetHome} style={{ ...btn("#2a1a1a"), fontSize: 12, marginTop: 8 }}>⌂ Home</button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── DRAW ──
+  return (
+    <div style={bgStyle}>
+      <Stars />
+
+      {/* Hidden capture div — always 480px wide for consistent saved image */}
+      <div ref={captureRef} style={{
+        position: "fixed", left: -9999, top: 0,
+        background: "linear-gradient(160deg,#0d0221 0%,#1a0545 40%,#2d0b6b 70%,#0d0221 100%)",
+        padding: "24px 16px 28px", width: 480,
+        display: "flex", flexDirection: "column", alignItems: "center",
+      }}>
+        <div style={{ fontSize: 13, color: "#c9a84c", letterSpacing: 3, marginBottom: 10 }}>✦ Coco's Cosmic Tarot ✦</div>
+        <div style={{ textAlign: "center", marginBottom: 12 }}>
+          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginBottom: 2 }}>READING FOR</div>
+          <div style={{ fontSize: 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 2 }}>{clientName}</div>
+          {clientDob && (
+            <div style={{ fontSize: 11, color: "#a07840", letterSpacing: 1, marginBottom: 4 }}>
+              {new Date(clientDob + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+            </div>
+          )}
+          {clientQuestion && (
+            <div style={{ fontSize: 12, color: "#c9a84c99", fontStyle: "italic", maxWidth: 440, margin: "4px auto 8px", lineHeight: 1.6 }}>
+              "{clientQuestion}"
+            </div>
+          )}
+          <div style={{ fontSize: 15, color: "#c9a84c", letterSpacing: 2, marginBottom: 6 }}>{spread.name}</div>
+        </div>
+        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+          {renderGrid(true)}
+        </div>
+      </div>
+
+      {/* Visible display area */}
+      <div style={{
+        width: "100%", maxWidth: desktop ? 900 : "100%",
+        display: "flex", flexDirection: "column", alignItems: "center",
+        position: "relative", zIndex: 1,
+      }}>
+        <div style={{ fontSize: 13, color: "#c9a84c", letterSpacing: 3, marginBottom: 10 }}>✦ Coco's Cosmic Tarot ✦</div>
+        <div style={{ textAlign: "center", marginBottom: 12 }}>
+          <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 2, marginBottom: 2 }}>READING FOR</div>
+          <div style={{ fontSize: desktop ? 26 : 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 2 }}>{clientName}</div>
+          {clientDob && (
+            <div style={{ fontSize: desktop ? 13 : 11, color: "#a07840", letterSpacing: 1, marginBottom: 4 }}>
+              {new Date(clientDob + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+            </div>
+          )}
+          {clientQuestion && (
+            <div style={{ fontSize: desktop ? 14 : 12, color: "#c9a84c99", fontStyle: "italic", maxWidth: maxW, margin: "4px auto 8px", lineHeight: 1.6 }}>
+              "{clientQuestion}"
+            </div>
+          )}
+          <div style={{ fontSize: desktop ? 20 : 15, color: "#c9a84c", letterSpacing: 2, marginBottom: 6 }}>{spread.name}</div>
+        </div>
+        <div style={{ overflowX: "auto", width: "100%", display: "flex", justifyContent: "center" }}>
+          {renderGrid(false)}
+        </div>
+      </div>
+
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", position: "relative", zIndex: 1, marginTop: 20 }}>
+        {flipped.some((f) => !f) && <button onClick={flipAll} style={btn("#3b1f6e")}>Reveal All</button>}
+        {flipped.every((f) => f) && (
+          <>
+            <button onClick={sendAndSave} style={btn("#5a0e3a")} disabled={saving}>
+              {saving ? "Sending..." : "✦ Send My Spread to Coco"}
+            </button>
+            <button onClick={saveSpread} style={btn("#5a2e0e")} disabled={saving}>
+              {saving ? "Saving..." : "📸 Save My Spread"}
+            </button>
+          </>
+        )}
+        <button onClick={() => { handleIntentionReady(); }} style={btn("#1f3a1f")}>Draw Again</button>
+        <button onClick={() => setScreen("spreads")} style={btn("#2a1a2a")}>← Spreads</button>
+        <button onClick={resetHome} style={btn("#2a1a1a")}>⌂ Home</button>
+        <BgmBtn />
+        <button onClick={() => setLang(l => l === "en" ? "zh" : "en")} style={{
+          ...btn("#2a1a40"), width: "auto", padding: "8px 16px", fontSize: 12, letterSpacing: 1,
+        }}>
+          {lang === "en" ? "中文" : "EN"}
+        </button>
+      </div>
+
+      {flipped.every((f) => !f) && (
+        <div style={{ marginTop: 20, fontSize: 12, color: "#7a5a3a", position: "relative", zIndex: 1 }}>
+          Tap a card to reveal it
+        </div>
+      )}
+
+      {/* Toast notification */}
+      <style>{`
+        @keyframes toastIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+        @keyframes toastOut { from { opacity:1; } to { opacity:0; } }
+      `}</style>
+      {toast && (
+        <div style={{
+          position: "fixed", bottom: 40, left: "50%", transform: "translateX(-50%)",
+          background: "linear-gradient(135deg, #2d0b6b, #1a0545)",
+          border: "1px solid #c9a84c88", borderRadius: 32,
+          padding: "12px 24px", fontSize: 13, color: "#c9a84c",
+          letterSpacing: 0.5, textAlign: "center", zIndex: 999,
+          boxShadow: "0 4px 24px #0009",
+          animation: "toastIn 0.4s ease-out, toastOut 0.6s ease-in 4.3s forwards",
+          whiteSpace: "nowrap",
+        }}>
+          ✦ Successfully sent to Coco! You will be contacted soon for an exquisite reading ✦
+        </div>
+      )}
+    </div>
+  );
+}

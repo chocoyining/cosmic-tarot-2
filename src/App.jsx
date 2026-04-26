@@ -235,13 +235,21 @@ const inputStyle = {
 const clamp = (min, val, max) => Math.max(min, Math.min(max, val));
 
 // ── Intention screen messages ──
-const INTENTION_MESSAGES = [
-  "Close your eyes for a moment...",
-  "Take a deep breath...",
-  "Hold your question in your heart...",
-  "The cards are listening...",
-  "Trust your intuition...",
-];
+function getIntentionMessages(t) {
+  return t ? [
+    "闭上你的眼睛...",
+    "深呼吸...",
+    "将你的问题放在心中...",
+    "牌阵正在聆听...",
+    "相信你的直觉...",
+  ] : [
+    "Close your eyes for a moment...",
+    "Take a deep breath...",
+    "Hold your question in your heart...",
+    "The cards are listening...",
+    "Trust your intuition...",
+  ];
+}
 
 export default function App() {
   const [screen, setScreen]                 = useState("home");
@@ -302,7 +310,7 @@ export default function App() {
   // Cycle intention messages
   useEffect(() => {
     if (screen !== "intention") return;
-    const id = setInterval(() => setIntentionMsg(m => (m + 1) % INTENTION_MESSAGES.length), 2000);
+    const id = setInterval(() => setIntentionMsg(m => (m + 1) % getIntentionMessages(t).length), 2000);
     return () => clearInterval(id);
   }, [screen]);
 
@@ -634,13 +642,13 @@ export default function App() {
       <div style={{ width: "100%", maxWidth: maxW, position: "relative", zIndex: 1, marginTop: desktop ? 60 : 40 }}>
         <div style={{ textAlign: "center", marginBottom: 36 }}>
           <div style={{ fontSize: desktop ? 28 : 20, color: "#c9a84c", letterSpacing: 2, marginBottom: 8 }}>{t ? "✦ 你的塔罗解读 ✦" : "✦ Your Reading ✦"}</div>
-          <div style={{ fontSize: 12, color: "#a07840", letterSpacing: 2 }}>{t ? "关于你" : "TELL US A LITTLE ABOUT YOURSELF"}</div>
+          <div style={{ fontSize: 12, color: "#a07840", letterSpacing: 2 }}>{t ? "个人信息" : "TELL US A LITTLE ABOUT YOURSELF"}</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div>
             <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>{t ? t.info.name_label : "YOUR NAME *"}</label>
             <input style={{ ...inputStyle, fontSize: desktop ? 16 : 14, borderColor: nameError ? "#c94c4c" : "#7c5c2e" }}
-              type="text" placeholder="Enter your name" value={clientName}
+              type="text" placeholder={t ? "输入你的姓名" : "Enter your name"} value={clientName}
               onChange={(e) => { setClientName(e.target.value); setNameError(false); }} />
             {nameError && <div style={{ color: "#c94c4c", fontSize: 11, marginTop: 4 }}>Please enter your name to continue.</div>}
           </div>
@@ -788,7 +796,7 @@ export default function App() {
           fontStyle: "italic", animation: "fade-msg 2s ease-in-out",
           minHeight: 32,
         }}>
-          {intentionMsg === 2 && t ? "将你的问题放在心中..." : INTENTION_MESSAGES[intentionMsg]}
+          {getIntentionMessages(t)[intentionMsg]}
         </div>
 
         {clientQuestion && (
@@ -1010,7 +1018,7 @@ export default function App() {
       </div>
 
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", position: "relative", zIndex: 1, marginTop: 20 }}>
-        {flipped.some((f) => !f) && <button onClick={flipAll} style={btn("#3b1f6e")}>Reveal All</button>}
+        {flipped.some((f) => !f) && <button onClick={flipAll} style={btn("#3b1f6e")}>{t ? t.draw.btn_reveal : "Reveal All"}</button>}
         {flipped.every((f) => f) && (
           <>
             <button onClick={sendAndSave} style={btn("#5a0e3a")} disabled={saving}>
@@ -1021,8 +1029,8 @@ export default function App() {
             </button>
           </>
         )}
-        <button onClick={() => { handleIntentionReady(); }} style={btn("#1f3a1f")}>Draw Again</button>
-        <button onClick={() => setScreen("spreads")} style={btn("#2a1a2a")}>← Spreads</button>
+        <button onClick={() => { handleIntentionReady(); }} style={btn("#1f3a1f")}>{t ? t.draw.btn_again : "Draw Again"}</button>
+        <button onClick={() => setScreen("spreads")} style={btn("#2a1a2a")}>{t ? t.draw.btn_spreads : "← Spreads"}</button>
         <button onClick={resetHome} style={btn("#2a1a1a")}>{t ? "⌂ 主页" : "⌂ Home"}</button>
         <BgmBtn />
         <button onClick={() => setLang(l => l === "en" ? "zh" : "en")} style={{
@@ -1034,7 +1042,7 @@ export default function App() {
 
       {flipped.every((f) => !f) && (
         <div style={{ marginTop: 20, fontSize: 12, color: "#7a5a3a", position: "relative", zIndex: 1 }}>
-          Tap a card to reveal it
+          {t ? t.draw.tap_hint : "Tap a card to reveal it"}
         </div>
       )}
 

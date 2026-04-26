@@ -415,11 +415,10 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
             letterSpacing: 0.5,
             fontStyle: "italic",
           }}>
-            {isMobile ? (
-              {t ? t.landing.subtagline_mobile : <>Through tarot and the stars, I will guide you<br />to find clarity, illuminate the path ahead,<br />and discover who you truly are.</>}
-            ) : (
-              {t ? t.landing.subtagline_desktop : <>Through tarot and the stars, I will guide you to find clarity,<br />illuminate the path ahead, and discover who you truly are.</>}
-            )}
+            {isMobile
+              ? (t ? t.landing.subtagline_mobile : "Through tarot and the stars, I will guide you to find clarity, illuminate the path ahead, and discover who you truly are.")
+              : (t ? t.landing.subtagline_desktop : "Through tarot and the stars, I will guide you to find clarity, illuminate the path ahead, and discover who you truly are.")
+            }
           </p>
 
           {/* Main CTAs */}

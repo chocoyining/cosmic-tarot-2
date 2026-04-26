@@ -238,7 +238,7 @@ const clamp = (min, val, max) => Math.max(min, Math.min(max, val));
 const INTENTION_MESSAGES = [
   "Close your eyes for a moment...",
   "Take a deep breath...",
-  t ? "将你的问题放在心中..." : "Hold your question in your heart...",
+  "Hold your question in your heart...",
   "The cards are listening...",
   "Trust your intuition...",
 ];
@@ -788,7 +788,7 @@ export default function App() {
           fontStyle: "italic", animation: "fade-msg 2s ease-in-out",
           minHeight: 32,
         }}>
-          {INTENTION_MESSAGES[intentionMsg]}
+          {intentionMsg === 2 && t ? "将你的问题放在心中..." : INTENTION_MESSAGES[intentionMsg]}
         </div>
 
         {clientQuestion && (

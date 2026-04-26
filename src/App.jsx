@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import BirthChart from "./BirthChart";
 import LandingPage from "./LandingPage";
+import ZH from "./translations";
 // html2canvas loaded via CDN in index.html
 
 const EMAILJS_SERVICE_ID  = "service_fcfjy1t";
@@ -12,7 +13,7 @@ const CLOUDINARY_PRESET   = "coco_readings";
 
 const SPREADS = [
   {
-    id: "single", name: "Single Card Draw", desc: "For simple, direct questions. Best for yes-or-no answers when you need a quick nudge from the universe.", icon: "✧", chips: ["Should I attend the dinner this Saturday? Yes or No", "Does the person I like feel the same way? Yes or No"],
+    id: "single", name: t ? t.spreads.single_name : "Single Card Draw", desc: "For simple, direct questions. Best for yes-or-no answers when you need a quick nudge from the universe.", icon: "✧", chips: ["Should I attend the dinner this Saturday? Yes or No", "Does the person I like feel the same way? Yes or No"],
     cards: [{ label: "Card", x: 0, y: 0 }], cols: 1, rows: 1,
   },
   {
@@ -253,6 +254,8 @@ export default function App() {
   const [drawnCards, setDrawnCards]         = useState([]);
   const [flipped, setFlipped]               = useState([]);
   const [bgmOn, setBgmOn]                   = useState(false);
+  const [lang, setLang]                     = useState("en");
+  const t = lang === "zh" ? ZH : null;
   const [winW, setWinW]                     = useState(window.innerWidth);
   const [saving, setSaving]                 = useState(false);
   const [toast, setToast]                   = useState(false);
@@ -613,11 +616,13 @@ export default function App() {
       onBeginChart={() => setScreen("chart")}
       bgmOn={bgmOn}
       onToggleBgm={toggleBgm}
+      lang={lang}
+      onToggleLang={() => setLang(l => l === "en" ? "zh" : "en")}
     />
   );
 
   // ── BIRTH CHART ──
-  if (screen === "chart") return <BirthChart onHome={() => setScreen("home")} />;
+  if (screen === "chart") return <BirthChart onHome={() => setScreen("home")} lang={lang} onToggleLang={() => setLang(l => l === "en" ? "zh" : "en")} />;
 
   if (screen === "info") return (
     <div style={bgStyle}>
@@ -636,13 +641,13 @@ export default function App() {
             {nameError && <div style={{ color: "#c94c4c", fontSize: 11, marginTop: 4 }}>Please enter your name to continue.</div>}
           </div>
           <div>
-            <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>DATE OF BIRTH</label>
+            <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>{t ? t.info.dob_label : "DATE OF BIRTH"}</label>
             <input style={{ ...inputStyle, fontSize: desktop ? 16 : 14 }} type="date" value={clientDob} onChange={(e) => setClientDob(e.target.value)} />
           </div>
           <div>
-            <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>EMAIL OR WHATSAPP NUMBER *</label>
+            <label style={{ fontSize: 12, color: "#a07840", letterSpacing: 2, display: "block", marginBottom: 6 }}>{t ? t.info.contact_label : "EMAIL OR WHATSAPP NUMBER *"}</label>
             <input style={{ ...inputStyle, fontSize: desktop ? 16 : 14, borderColor: contactError ? "#c94c4c" : "#7c5c2e" }}
-              type="text" placeholder="Fill in to receive your reading from Coco"
+              type="text" placeholder={t ? t.info.contact_placeholder : "Fill in to receive your reading from Coco"}
               value={clientContact}
               onChange={(e) => { setClientContact(e.target.value); setContactError(false); }} />
             {contactError && <div style={{ color: "#c94c4c", fontSize: 11, marginTop: 4 }}>Please enter your email or WhatsApp to continue.</div>}
@@ -1016,6 +1021,11 @@ export default function App() {
         <button onClick={() => setScreen("spreads")} style={btn("#2a1a2a")}>← Spreads</button>
         <button onClick={resetHome} style={btn("#2a1a1a")}>⌂ Home</button>
         <BgmBtn />
+        <button onClick={() => setLang(l => l === "en" ? "zh" : "en")} style={{
+          ...btn("#2a1a40"), width: "auto", padding: "8px 16px", fontSize: 12, letterSpacing: 1,
+        }}>
+          {lang === "en" ? "中文" : "EN"}
+        </button>
       </div>
 
       {flipped.every((f) => !f) && (

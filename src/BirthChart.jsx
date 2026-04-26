@@ -966,7 +966,7 @@ export default function BirthChart({ onHome, lang, onToggleLang }) {
                   }{" "}{t ? t.chart.dst_question : "Were you born during this period?"}
                 </div>
                 <div style={{display:"flex",gap:10}}>
-                  {[{t ? t.chart.dst_no : "No (Standard Time)"},{t ? t.chart.dst_yes : "Yes (Daylight Saving)"}].map((label,i)=>(
+                  {[t ? t.chart.dst_no : "No (Standard Time)", t ? t.chart.dst_yes : "Yes (Daylight Saving)"].map((label,i)=>(
                     <button key={i} onClick={()=>setDst(i===1)} style={{
                       flex:1,padding:"8px 0",borderRadius:8,fontSize:12,cursor:"pointer",
                       fontFamily:"'Georgia', serif",

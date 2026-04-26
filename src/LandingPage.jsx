@@ -129,13 +129,13 @@ function AboutCoco({ isMobile, t, lang }) {
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: isMobile ? 16 : 18, color: "#c9a84c", letterSpacing: 2, marginBottom: 10 }}>Coco Chen</div>
             <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginBottom: 6 }}>
-              {["Tarot", "Birth Chart", "Astrology"].map(t => (
-                <span key={t} style={{ fontSize: 11, color: "#c9a84c88", letterSpacing: 2, borderBottom: "1px solid #c9a84c33", paddingBottom: 2 }}>{t}</span>
+              {["Tarot", "Birth Chart", "Astrology"].map(tag => (
+                <span key={tag} style={{ fontSize: 11, color: "#c9a84c88", letterSpacing: 2, borderBottom: "1px solid #c9a84c33", paddingBottom: 2 }}>{tag}</span>
               ))}
             </div>
             <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
-              {["English", "Mandarin"].map(t => (
-                <span key={t} style={{ fontSize: 11, color: "#c9a84c88", letterSpacing: 2, borderBottom: "1px solid #c9a84c33", paddingBottom: 2 }}>{t}</span>
+              {["English", "Mandarin"].map(tag => (
+                <span key={tag} style={{ fontSize: 11, color: "#c9a84c88", letterSpacing: 2, borderBottom: "1px solid #c9a84c33", paddingBottom: 2 }}>{tag}</span>
               ))}
             </div>
           </div>

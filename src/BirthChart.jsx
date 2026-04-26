@@ -885,7 +885,7 @@ export default function BirthChart({ onHome, lang, onToggleLang }) {
 
             <div>
               <Label>{t ? t.chart.name_label : "YOUR NAME"}</Label>
-              <input style={inputStyle} type="text" placeholder="Enter your name" value={name} onChange={e=>setName(e.target.value)}/>
+              <input style={inputStyle} type="text" placeholder={t ? "输入你的姓名" : "Enter your name"} value={name} onChange={e=>setName(e.target.value)}/>
             </div>
 
             <div>

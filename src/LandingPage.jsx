@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import ZH from "./translations";
 
 const HERO_CARDS_MOBILE = [
   { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829851/6_-_The_Lovers_copy_jg6jio.png",   w: 90,  rotate: -18, cx: -175, y: "12%", z: 1 },
@@ -7,6 +8,7 @@ const HERO_CARDS_MOBILE = [
   { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829891/7_of_cups_l2yseq.png",             w: 105, rotate: 10,  cx: 90,   y: "7%",  z: 3 },
   { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901833/WhatsApp_Image_2026-04-11_at_17.58.10_ivi5hm.jpg", w: 90, rotate: 20, cx: 175, y: "13%", z: 1 },
 ];
+  const STEPS = t ? t.landing.steps.map((desc, i) => ({ num: String(i+1).padStart(2,"0"), desc, isBold: i === 4 })) : EN_STEPS;
 
 const HERO_CARDS_DESKTOP = [
   { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775829850/0_The_Fool_copy_befech.png",       w: 105, rotate: -22, cx: -520, y: "10%", z: 1 },
@@ -18,7 +20,7 @@ const HERO_CARDS_DESKTOP = [
   { url: "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901833/WhatsApp_Image_2026-04-11_at_17.58.10_ivi5hm.jpg", w: 104, rotate: 22, cx: 500, y: "9%", z: 1 },
 ];
 
-const STEPS = [
+const EN_STEPS = [
   { num: "01", desc: "Fill in your name, date of birth, and your question." },
   { num: "02", desc: "Draw your cards or calculate your cosmic blueprint." },
   { num: "03", desc: "Hit 'Send to Coco' — your reading lands with Coco." },
@@ -58,12 +60,12 @@ function AboutCoco({ isMobile }) {
   const [expanded, setExpanded] = useState(false);
 
   const hook    = "'The darkest chapter can be\nthe greatest gift.'";
-  const para1   = "2020 was the darkest time of my life. I lost my business, lost in love, and the pandemic locked me away from everyone I loved. Waking up to despair was an agony; I was being pulled into a black hole, deeper as days passed.";
+  const para1   = t ? t.landing.para1 : "2020 was the darkest time of my life. I lost my business, lost in love, and the pandemic locked me away from everyone I loved. Waking up to despair was an agony; I was being pulled into a black hole, deeper as days passed.";
   const para2   = "Before I completely lost faith, I had my first tarot reading. In my spread, I saw 'The Sun' card for the first time. At that moment, I felt a light shining through the thick grey clouds, gently telling me it is not the end of the world. I found clarity, direction, and a quiet sense of hope when I needed it most.";
   const para3   = "What began as a personal practice became something I couldn't keep to myself...";
   const para4   = "As I shared readings with close friends, the feedback was humbling. It helped people lighten their paths, find what they truly want, and gently heal what quietly ached inside. Today, I offer personal readings in both English and Mandarin, from a deck I illustrated with my own Pomeranian — a little soul who makes every reading feel a little warmer.";
   const para5   = "I don't claim to predict the future. What I offer is clarity, a space to understand yourself better, and the courage to take your next step.";
-  const closing = "\"If tarot found me in my darkest hour, perhaps it can find you too.\"";
+
 
   const pStyle = {
     fontSize: isMobile ? 14 : 15,
@@ -185,7 +187,8 @@ function AboutCoco({ isMobile }) {
   );
 }
 
-export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onToggleBgm }) {
+export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onToggleBgm, lang, onToggleLang }) {
+  const t = lang === "zh" ? ZH : null;
   const PHRASES = ["To stay or go?", "To fight or let go?", "To trust or walk away..."];
   const [phraseIdx, setPhraseIdx] = useState(0);
   const [fadeIn, setFadeIn] = useState(true);
@@ -422,7 +425,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
           {/* Main CTAs */}
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: 10 }}>
             <button className="cta-btn" onClick={onBeginReading}>
-              🌙 Begin Your Tarot Reading
+              {t ? t.landing.btn_reading : "🌙 Begin Your Tarot Reading"}
             </button>
             <button className="cta-btn" onClick={onBeginChart}>
               🌌 Calculate My Cosmic Blueprint
@@ -431,7 +434,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
 
           {/* Personal line */}
           <div style={{ fontSize: isMobile ? 12 : 13, color: "#c9a84c", letterSpacing: isMobile ? 1 : 2, marginBottom: isMobile ? 12 : 16, fontStyle: "italic" }}>
-            ✦ Every reading is personally done by Coco Chen ✦
+            {t ? t.landing.personal_line : "✦ Every reading is personally done by Coco Chen ✦"}
           </div>
 
           {/* Secondary nav */}
@@ -439,12 +442,12 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
             <button className="cta-btn rose-btn" onClick={() => {
               document.getElementById("about-coco").scrollIntoView({ behavior: "smooth" });
             }}>
-              ✨ About Coco
+              {t ? t.landing.btn_about : "✨ About Coco"}
             </button>
             <button className="cta-btn lavender-btn" onClick={() => {
               document.getElementById("how-it-works").scrollIntoView({ behavior: "smooth" });
             }}>
-              🔮 See how it works
+              {t ? t.landing.btn_how : "🔮 See how it works"}
             </button>
           </div>
         </div>
@@ -513,7 +516,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
         {/* Payment note */}
         <div style={{ textAlign: "center", marginTop: 12, marginBottom: 4 }}>
           <span style={{ fontSize: isMobile ? 12 : 13, color: "#c9a84c", letterSpacing: 2, fontWeight: "bold" }}>
-            ✦ Please allow 18 hours for Coco to conduct a deep analysis of your cosmic blueprint ✦
+            {t ? t.landing.disclaimer : "✦ Please allow 18 hours for Coco to conduct a deep analysis of your cosmic blueprint ✦"}
           </span>
         </div>
 
@@ -521,7 +524,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
         <div className="reveal" style={{ textAlign: "center", marginTop: 10 }}>
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
             <button className="cta-btn" onClick={onBeginReading}>
-              🌙 Begin Your Tarot Reading
+              {t ? t.landing.btn_reading : "🌙 Begin Your Tarot Reading"}
             </button>
             <button className="cta-btn" onClick={onBeginChart}>
               🌌 Calculate My Cosmic Blueprint
@@ -541,8 +544,26 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
         zIndex: 1,
       }}>
         <div style={{ fontSize: 14, color: "#c9a84c", letterSpacing: 4, marginBottom: 8 }}>✦ COCO'S COSMIC WORLD ✦</div>
-        <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 3 }}>Tarot · Birth Chart · Astrology</div>
+        <div style={{ fontSize: 11, color: "#7a5a3a", letterSpacing: 3 }}>{t ? t.landing.footer_sub : "Tarot · Birth Chart · Astrology"}</div>
       </div>
+
+    {/* Lang toggle */}
+      {onToggleLang && (
+        <button onClick={onToggleLang} style={{
+          position: "fixed", top: 20, right: 72,
+          height: 44, borderRadius: 22,
+          padding: "0 16px",
+          background: "#1a0545",
+          border: "1px solid #c9a84c",
+          color: "#c9a84c", fontSize: 13,
+          cursor: "pointer", zIndex: 999,
+          fontFamily: "'Georgia', serif",
+          letterSpacing: 1,
+          transition: "all 0.3s ease",
+        }}>
+          {lang === "en" ? "中文" : "EN"}
+        </button>
+      )}
 
     {/* Floating music toggle - top right */}
       {onToggleBgm && (

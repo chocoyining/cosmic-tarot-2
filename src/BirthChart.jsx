@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Origin, Horoscope } from "circular-natal-horoscope-js";
+import ZH from "./translations";
 
 const EMAILJS_SERVICE_ID  = "service_fcfjy1t";
 const EMAILJS_TEMPLATE_ID = "template_lpj8t7s";
@@ -524,7 +525,8 @@ const Label = ({children}) => (
 );
 
 // ── Main Component ────────────────────────────────────────────────────────────
-export default function BirthChart({ onHome }) {
+export default function BirthChart({ onHome, lang, onToggleLang }) {
+  const t = lang === "zh" ? ZH : null;
   const [name, setName]       = useState("");
   const [year, setYear]       = useState("");
   const [month, setMonth]     = useState("");
@@ -748,7 +750,7 @@ export default function BirthChart({ onHome }) {
           <div style={{fontSize:10,color:"#7a5a3a",marginBottom:14}}>{day}/{month}/{year} · {String(hour).padStart(2,"0")}:{String(minute).padStart(2,"0")} · {city.label}, {country}</div>
           <div style={{width:"100%",borderTop:"1px solid #7c5c2e44",marginBottom:8}}/>
           <div style={{display:"grid",gridTemplateColumns:"1.4fr 1.8fr 0.8fr",width:"100%",marginBottom:6}}>
-            {["PLANET","SIGN","HOUSE"].map(h=>(
+            {[t ? t.chart.planet_header : "PLANET", t ? t.chart.sign_header : "SIGN", t ? t.chart.house_header : "HOUSE"].map(h=>(
               <div key={h} style={{fontSize:9,color:"#a07840",letterSpacing:2,textAlign:"center",padding:"4px 0"}}>{h}</div>
             ))}
           </div>
@@ -761,7 +763,7 @@ export default function BirthChart({ onHome }) {
               <div style={{textAlign:"center",fontSize:11,color:"#e8d5b7"}}>
                 {signGlyph} {sign} <span style={{color:"#a07840"}}>{degrees}°{String(minutes).padStart(2,"0")}'</span>
               </div>
-              <div style={{textAlign:"center",fontSize:11,color:"#a07840"}}>{ordinal(house)}</div>
+              <div style={{textAlign:"center",fontSize:11,color:"#a07840"}}>{t ? (t.chart.houses[house] || ordinal(house)) : ordinal(house)}</div>
             </div>
           ))}
         </div>
@@ -776,7 +778,7 @@ export default function BirthChart({ onHome }) {
 
           <div style={{background:"#ffffff08",border:"1px solid #7c5c2e44",borderRadius:16,overflow:"hidden",marginBottom:20,animation:"fadeInUp 0.5s ease-out"}}>
             <div style={{display:"grid",gridTemplateColumns:"1.4fr 1.8fr 0.8fr",background:"#ffffff0a",padding:"12px 20px",borderBottom:"1px solid #7c5c2e44"}}>
-              {["PLANET","SIGN","HOUSE"].map(h=>(
+              {[t ? t.chart.planet_header : "PLANET", t ? t.chart.sign_header : "SIGN", t ? t.chart.house_header : "HOUSE"].map(h=>(
                 <div key={h} style={{fontSize:11,color:"#a07840",letterSpacing:2,textAlign:"center"}}>{h}</div>
               ))}
             </div>
@@ -789,14 +791,14 @@ export default function BirthChart({ onHome }) {
               }}>
                 <div style={{display:"flex",alignItems:"center",gap:10}}>
                   <span style={{fontSize:20}}>{PLANET_GLYPHS[planet]}</span>
-                  <span style={{fontSize:desktop?14:13,color:PLANET_COLORS[planet]}}>{planet}</span>
+                  <span style={{fontSize:desktop?14:13,color:PLANET_COLORS[planet]}}>{t && t.chart.planets[planet] ? t.chart.planets[planet] : planet}</span>
                 </div>
                 <div style={{textAlign:"center",fontSize:desktop?14:13,color:"#e8d5b7"}}>
-                  {signGlyph} {sign}{" "}
+                  {signGlyph} {t && t.chart.signs[sign] ? t.chart.signs[sign] : sign}{" "}
                   <span style={{color:"#a07840",fontSize:12}}>{degrees}°{String(minutes).padStart(2,"0")}'</span>
                 </div>
                 <div style={{textAlign:"center",fontSize:desktop?13:12,color:"#a07840"}}>
-                  {ordinal(house)}
+                  {t ? (t.chart.houses[house] || ordinal(house)) : ordinal(house)}
                 </div>
               </div>
             ))}
@@ -814,8 +816,11 @@ export default function BirthChart({ onHome }) {
               ← Recalculate
             </button>
             <button onClick={onHome} style={{...btn("#2a1a1a"),width:"auto",padding:"11px 28px",fontSize:13}}>
-              ⌂ Home
+              {t ? t.chart.btn_home : "⌂ Home"}
             </button>
+            {onToggleLang && <button onClick={onToggleLang} style={{...btn("#2a1a40"),width:"auto",padding:"11px 20px",fontSize:12}}>
+              {lang === "en" ? "中文" : "EN"}
+            </button>}
           </div>
         </div>
 
@@ -869,12 +874,12 @@ export default function BirthChart({ onHome }) {
           <div style={{display:"flex",flexDirection:"column",gap:20}}>
 
             <div>
-              <Label>YOUR NAME</Label>
+              <Label>{t ? t.chart.name_label : "YOUR NAME"}</Label>
               <input style={inputStyle} type="text" placeholder="Enter your name" value={name} onChange={e=>setName(e.target.value)}/>
             </div>
 
             <div>
-              <Label>DATE OF BIRTH</Label>
+              <Label>{t ? t.chart.dob_label : "DATE OF BIRTH"}</Label>
               <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr",gap:10}}>
                 <input style={inputStyle} type="number" placeholder="Year (e.g. 1993)" value={year} onChange={e=>setYear(e.target.value)} min="1900" max="2099"/>
                 <input style={inputStyle} type="number" placeholder="Month" value={month} onChange={e=>setMonth(e.target.value)} min="1" max="12"/>
@@ -883,7 +888,7 @@ export default function BirthChart({ onHome }) {
             </div>
 
             <div>
-              <Label>BIRTH TIME</Label>
+              <Label>{t ? t.chart.time_label : "BIRTH TIME"}</Label>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
                 <select style={selectStyle} value={hour} onChange={e=>setHour(e.target.value)}>
                   {Array.from({length:24},(_,i)=>(
@@ -900,7 +905,7 @@ export default function BirthChart({ onHome }) {
             </div>
 
             <div>
-              <Label>COUNTRY OF BIRTH</Label>
+              <Label>{t ? t.chart.country_label : "COUNTRY OF BIRTH"}</Label>
               <select style={selectStyle} value={country} onChange={handleCountryChange}>
                 <option value="" style={{background:"#1a0545"}}>— Please select —</option>
               {COUNTRIES.map(c=>(<option key={c} value={c} style={{background:"#1a0545"}}>{c}</option>))}
@@ -908,7 +913,7 @@ export default function BirthChart({ onHome }) {
             </div>
 
             <div>
-              <Label>CITY OF BIRTH</Label>
+              <Label>{t ? t.chart.city_label : "CITY OF BIRTH"}</Label>
               <select style={selectStyle} value={cityIdx} onChange={e=>{setCityIdx(parseInt(e.target.value));setChart(null);setCustomCity("");}}>
                 {cities.map((c,i)=>(<option key={i} value={i} style={{background:"#1a0545"}}>{c.label}</option>))}
               </select>
@@ -938,7 +943,7 @@ export default function BirthChart({ onHome }) {
                     fontFamily:"'Georgia',serif",whiteSpace:"nowrap",flexShrink:0,
                   }}
                 >
-                  {customLoading ? "..." : "Search"}
+                  {customLoading ? "..." : (t ? t.chart.custom_search : "Search")}
                 </button>
               </div>
               {customError && <div style={{color:"#c94c4c",fontSize:11,marginTop:6}}>{customError}</div>}
@@ -954,14 +959,14 @@ export default function BirthChart({ onHome }) {
                 <div style={{fontSize:12,color:"#a07840",marginBottom:8}}>DAYLIGHT SAVING TIME (DST)</div>
                 <div style={{fontSize:12,color:"#7a5a3a",marginBottom:12,lineHeight:1.6}}>
                   {(country==="United States"||country==="Canada")
-                    ? "US/Canada: DST runs March to November."
+                    ? (t ? t.chart.dst_us : "US/Canada: DST runs March to November.")
                     : (country==="Australia"||country==="New Zealand")
-                    ? "AU/NZ: DST runs October to April."
-                    : "This country observes DST in summer months."
-                  }{" "}Were you born during this period?
+                    ? (t ? t.chart.dst_au : "AU/NZ: DST runs October to April.")
+                    : (t ? t.chart.dst_other : "This country observes DST in summer months.")
+                  }{" "}{t ? t.chart.dst_question : "Were you born during this period?"}
                 </div>
                 <div style={{display:"flex",gap:10}}>
-                  {["No (Standard Time)","Yes (Daylight Saving)"].map((label,i)=>(
+                  {[{t ? t.chart.dst_no : "No (Standard Time)"},{t ? t.chart.dst_yes : "Yes (Daylight Saving)"}].map((label,i)=>(
                     <button key={i} onClick={()=>setDst(i===1)} style={{
                       flex:1,padding:"8px 0",borderRadius:8,fontSize:12,cursor:"pointer",
                       fontFamily:"'Georgia', serif",
@@ -977,9 +982,9 @@ export default function BirthChart({ onHome }) {
             {error && <div style={{color:"#c94c4c",fontSize:12}}>{error}</div>}
 
             <div>
-              <Label>YOUR EMAIL OR WHATSAPP NUMBER *</Label>
+              <Label>{t ? t.chart.contact_label : "YOUR EMAIL OR WHATSAPP NUMBER *"}</Label>
               <input style={{...inputStyle, fontSize: desktop ? 16 : 14, borderColor: contactError ? "#c94c4c" : "#7c5c2e"}}
-                type="text" placeholder="Fill in to receive your reading from Coco"
+                type="text" placeholder={t ? t.chart.contact_placeholder : "Fill in to receive your reading from Coco"}
                 value={clientContact}
                 onChange={e => { setClientContact(e.target.value); setContactError(false); }} />
               {contactError && <div style={{color:"#c94c4c", fontSize:11, marginTop:4}}>Please enter your email or WhatsApp to continue.</div>}

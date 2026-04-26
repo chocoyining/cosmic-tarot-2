@@ -225,6 +225,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
       minHeight: "100vh",
       background: "linear-gradient(170deg, #060014 0%, #0d0221 30%, #1a0545 60%, #0d0221 100%)",
       fontFamily: lang === "zh" ? "'Noto Serif SC', 'Georgia', serif" : "'Georgia', serif",
+    }}>
       <style>{`
         @keyframes twinkle {
           0%, 100% { opacity: 0.2; transform: scale(1); }

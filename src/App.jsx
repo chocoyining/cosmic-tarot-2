@@ -1014,10 +1014,10 @@ export default function App() {
         {flipped.every((f) => f) && (
           <>
             <button onClick={sendAndSave} style={btn("#5a0e3a")} disabled={saving}>
-              {saving ? "Sending..." : {t ? t.draw.btn_send : "✦ Send My Spread to Coco"}}
+              {saving ? "Sending..." : (t ? t.draw.btn_send : "✦ Send My Spread to Coco")}
             </button>
             <button onClick={saveSpread} style={btn("#5a2e0e")} disabled={saving}>
-              {saving ? "Saving..." : {t ? t.draw.btn_save : "📸 Save My Spread"}}
+              {saving ? "Saving..." : (t ? t.draw.btn_save : "📸 Save My Spread")}
             </button>
           </>
         )}

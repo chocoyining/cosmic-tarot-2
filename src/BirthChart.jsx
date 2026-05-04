@@ -378,13 +378,13 @@ export default function BirthChart({onHome,lang,onToggleLang}){
           <div style={{fontSize:10,color:"#7a5a3a",marginBottom:14}}>{day}/{month}/{year} · {String(hour).padStart(2,"0")}:{String(minute).padStart(2,"0")} · {city.label}, {country}</div>
           <div style={{width:"100%",borderTop:"1px solid #7c5c2e44",marginBottom:8}}/>
           <div style={{display:"grid",gridTemplateColumns:colsD,width:"100%",marginBottom:6}}>
-            {["PLANET","SIGN","HOUSE"].map(h=><div key={h} style={{fontSize:9,color:"#a07840",letterSpacing:2,textAlign:"center",padding:"4px 0"}}>{h}</div>)}
+            {[t?t.chart.planet_header:"PLANET",t?t.chart.sign_header:"SIGN",t?t.chart.house_header:"HOUSE"].map(h=><div key={h} style={{fontSize:9,color:"#a07840",letterSpacing:2,textAlign:"center",padding:"4px 0"}}>{h}</div>)}
           </div>
           {chart.map(({planet,sign,signGlyph,degrees,minutes,house})=>(
             <div key={planet} style={{display:"grid",gridTemplateColumns:colsD,width:"100%",borderTop:"1px solid #7c5c2e22",padding:"5px 0"}}>
               <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:8}}><span style={{fontSize:13}}>{PLANET_GLYPHS[planet]}</span><span style={{fontSize:11,color:PLANET_COLORS[planet]}}>{t&&t.chart.planets[planet]?t.chart.planets[planet]:planet}</span></div>
               <div style={{textAlign:"center",fontSize:11,color:"#e8d5b7"}}>{signGlyph} {t&&t.chart.signs[sign]?t.chart.signs[sign]:sign} <span style={{color:"#a07840"}}>{degrees}°{String(minutes).padStart(2,"0")}'</span></div>
-              <div style={{textAlign:"center",fontSize:11,color:"#a07840"}}>{ordinal(house)}</div>
+              <div style={{textAlign:"center",fontSize:11,color:"#a07840"}}>{t?(t.chart.houses[house]||ordinal(house)):ordinal(house)}</div>
             </div>
           ))}
         </div>

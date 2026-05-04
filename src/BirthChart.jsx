@@ -211,7 +211,8 @@ const PLANET_GLYPHS = { Sun:"☀️",Moon:"🌙",Rising:"⬆️",Mercury:"☿",V
 const PLANET_COLORS = { Sun:"#F5C842",Moon:"#B8D4E8",Rising:"#C9A84C",Mercury:"#A8D8A8",Venus:"#F5A0C0",Mars:"#F07070",Jupiter:"#F0C080",Saturn:"#A09070",Uranus:"#80D8D8",Neptune:"#8080F0",Pluto:"#C080C0" };
 const SIGN_SHORT    = { Sagittarius:"Sagitt.",Capricorn:"Capric.",Aquarius:"Aquar." };
 
-function shortSign(name) { return SIGN_SHORT[name] || name; }
+// Only abbreviate English names — Chinese names are already short
+function shortSign(name, isChinese) { if (isChinese) return name; return SIGN_SHORT[name] || name; }
 
 function getSignGlyph(s) {
   const g={Aries:"♈",Taurus:"♉",Gemini:"♊",Cancer:"♋",Leo:"♌",Virgo:"♍",Libra:"♎",Scorpio:"♏",Sagittarius:"♐",Capricorn:"♑",Aquarius:"♒",Pisces:"♓"};
@@ -381,8 +382,8 @@ export default function BirthChart({onHome,lang,onToggleLang}){
           </div>
           {chart.map(({planet,sign,signGlyph,degrees,minutes,house})=>(
             <div key={planet} style={{display:"grid",gridTemplateColumns:colsD,width:"100%",borderTop:"1px solid #7c5c2e22",padding:"5px 0"}}>
-              <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:8}}><span style={{fontSize:13}}>{PLANET_GLYPHS[planet]}</span><span style={{fontSize:11,color:PLANET_COLORS[planet]}}>{planet}</span></div>
-              <div style={{textAlign:"center",fontSize:11,color:"#e8d5b7"}}>{signGlyph} {sign} <span style={{color:"#a07840"}}>{degrees}°{String(minutes).padStart(2,"0")}'</span></div>
+              <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:8}}><span style={{fontSize:13}}>{PLANET_GLYPHS[planet]}</span><span style={{fontSize:11,color:PLANET_COLORS[planet]}}>{t&&t.chart.planets[planet]?t.chart.planets[planet]:planet}</span></div>
+              <div style={{textAlign:"center",fontSize:11,color:"#e8d5b7"}}>{signGlyph} {t&&t.chart.signs[sign]?t.chart.signs[sign]:sign} <span style={{color:"#a07840"}}>{degrees}°{String(minutes).padStart(2,"0")}'</span></div>
               <div style={{textAlign:"center",fontSize:11,color:"#a07840"}}>{ordinal(house)}</div>
             </div>
           ))}
@@ -415,7 +416,7 @@ export default function BirthChart({onHome,lang,onToggleLang}){
                 </div>
                 <div style={{textAlign:"center",fontSize:desktop?14:11,color:"#e8d5b7"}}>
                   {signGlyph}{" "}
-                  {desktop?(t&&t.chart.signs[sign]?t.chart.signs[sign]:sign):shortSign(t&&t.chart.signs[sign]?t.chart.signs[sign]:sign)}{" "}
+                  {desktop?(t&&t.chart.signs[sign]?t.chart.signs[sign]:sign):shortSign(t&&t.chart.signs[sign]?t.chart.signs[sign]:sign, !!t)}{" "}
                   <span style={{color:"#a07840",fontSize:desktop?12:9}}>{degrees}°{String(minutes).padStart(2,"0")}'</span>
                 </div>
                 <div style={{textAlign:"right",fontSize:desktop?13:10,color:"#a07840"}}>

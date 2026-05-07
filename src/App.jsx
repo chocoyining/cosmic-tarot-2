@@ -547,20 +547,9 @@ export default function App() {
       <div style={{...bgStyle,justifyContent:"center"}}>
         <Stars/>
         <style>{`@keyframes card-lock{0%{transform:scale(1.15)}100%{transform:scale(1)}}
-        @keyframes shuffle{
-          0%  {transform:translateX(0px) rotate(0deg);}
-          10% {transform:translateX(-8px) rotate(-2deg);}
-          20% {transform:translateX(8px) rotate(2deg);}
-          30% {transform:translateX(-6px) rotate(-1.5deg);}
-          40% {transform:translateX(6px) rotate(1.5deg);}
-          50% {transform:translateX(-4px) rotate(-1deg);}
-          60% {transform:translateX(4px) rotate(1deg);}
-          80% {transform:translateX(-2px) rotate(-0.5deg);}
-          100%{transform:translateX(0px) rotate(0deg);}
-        }
-        @keyframes card-glow{
-          0%,100%{box-shadow:0 8px 32px #0009, 0 0 0px #c9a84c00;}
-          50%{box-shadow:0 8px 32px #0009, 0 0 24px #c9a84c55;}
+        @keyframes breathe{
+          0%,100%{transform:scale(1); box-shadow:0 8px 32px #0009, 0 0 0px #c9a84c00;}
+          50%{transform:scale(1.04); box-shadow:0 8px 40px #0009, 0 0 32px #c9a84c66;}
         }`}</style>
         <div style={{textAlign:"center",position:"relative",zIndex:1,marginBottom:24}}>
           <div style={{fontSize:desktop?14:12,color:"#a07840",letterSpacing:2,marginBottom:6}}>{spread.name.toUpperCase()}</div>
@@ -572,7 +561,7 @@ export default function App() {
           </div>
         </div>
         <div style={{position:"relative",zIndex:1,marginBottom:32}}>
-          <div style={{animation:isComplete?"card-lock 0.4s ease-out":"shuffle 0.6s ease-in-out infinite, card-glow 2s ease-in-out infinite"}}>
+          <div style={{animation:isComplete?"card-lock 0.4s ease-out":"breathe 2.5s ease-in-out infinite"}}>
           <div onClick={!isComplete?stopCard:undefined} style={{width:cardW,height:cardH,borderRadius:12,overflow:"hidden",border:`2px solid ${isComplete?"#c9a84c":"#7c5c2e"}`,cursor:isComplete?"default":"pointer"}}>
             <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778131327/ChatGPT_Image_May_7_2026_01_21_44_PM_fjtfbw.png" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="card back"/>
           </div>

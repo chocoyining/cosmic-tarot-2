@@ -129,7 +129,7 @@ function CardSlot({ label, img, flipped, onClick, cardBack, size }) {
       <div onClick={!flipped?onClick:undefined} style={{width:w,height:h,perspective:800,cursor:flipped?"default":"pointer"}}>
         <div style={{width:"100%",height:"100%",position:"relative",transformStyle:"preserve-3d",transform:flipped?"rotateY(180deg)":"rotateY(0deg)",transition:"transform 0.6s cubic-bezier(.4,0,.2,1)"}}>
           <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",borderRadius:10,overflow:"hidden",boxShadow:"0 4px 18px #0006",border:"2px solid #7c5c2e",background:"#0d0221"}}>
-            <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778131327/ChatGPT_Image_May_7_2026_01_21_44_PM_fjtfbw.png" style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}} alt="back"/>
+            <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778131327/ChatGPT_Image_May_7_2026_01_21_44_PM_fjtfbw.png" style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover",objectPosition:"center center"}} alt="back"/>
           </div>
           <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",transform:"rotateY(180deg)",borderRadius:10,overflow:"hidden",boxShadow:"0 4px 18px #0006",border:"2px solid #c9a84c",background:"#111"}}>
             {img?<img src={img} style={{width:"100%",height:"100%",objectFit:"cover"}} alt={label}/>:<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",color:"#c9a84c",fontSize:13,textAlign:"center",padding:8,background:"linear-gradient(135deg,#1a0545,#0d0221)"}}>{label}</div>}
@@ -572,8 +572,10 @@ export default function App() {
           </div>
         </div>
         <div style={{position:"relative",zIndex:1,marginBottom:32}}>
-          <div onClick={!isComplete?stopCard:undefined} style={{width:cardW,height:cardH,borderRadius:12,overflow:"hidden",border:`2px solid ${isComplete?"#c9a84c":"#7c5c2e"}`,animation:isComplete?"card-lock 0.4s ease-out":"shuffle 0.6s ease-in-out infinite, card-glow 2s ease-in-out infinite",cursor:isComplete?"default":"pointer"}}>
+          <div style={{animation:isComplete?"card-lock 0.4s ease-out":"shuffle 0.6s ease-in-out infinite, card-glow 2s ease-in-out infinite"}}>
+          <div onClick={!isComplete?stopCard:undefined} style={{width:cardW,height:cardH,borderRadius:12,overflow:"hidden",border:`2px solid ${isComplete?"#c9a84c":"#7c5c2e"}`,cursor:isComplete?"default":"pointer"}}>
             <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778131327/ChatGPT_Image_May_7_2026_01_21_44_PM_fjtfbw.png" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="card back"/>
+          </div>
           </div>
         </div>
         {picked>0&&(

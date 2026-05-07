@@ -329,12 +329,69 @@ export default function App() {
     setSaving(false);
   }
 
+  function isInAppBrowser() {
+    const ua = navigator.userAgent || "";
+    return /Instagram|FBAN|FBAV|FB_IAB|WhatsApp|Line|Twitter|TikTok|Snapchat/i.test(ua);
+  }
+
+
+
   async function shareOrDownload(jpgUrl,filename,label) {
-    const isMobile=navigator.maxTouchPoints>0&&/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-    if (isMobile&&navigator.share&&navigator.canShare) {
-      try { const blob=await(await fetch(jpgUrl)).blob(); const file=new File([blob],filename,{type:"image/jpeg"}); if(navigator.canShare({files:[file]})){await navigator.share({files:[file],title:`${label}'s Tarot Reading`});return;} } catch(e){}
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    // 1. Try Web Share API with files — works on iOS Safari + some Android
+    try {
+      const blob = await (await fetch(jpgUrl)).blob();
+      const file = new File([blob], filename, { type:"image/jpeg" });
+      if (navigator.share && navigator.canShare && navigator.canShare({ files:[file] })) {
+        await navigator.share({ files:[file], title:`${label}'s Tarot Reading` });
+        return;
+      }
+    } catch(e) {}
+
+    // 2. Try Blob object URL download — works in more contexts than data URLs
+    try {
+      const blob = await (await fetch(jpgUrl)).blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl; a.download = filename;
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      // Show Android-specific toast
+      if (/Android/i.test(navigator.userAgent)) {
+        const t = document.createElement("div");
+        t.style.cssText = "position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#2d0b6b,#1a0545);border:1px solid #c9a84c88;border-radius:32px;padding:12px 24px;font-size:13px;color:#c9a84c;letter-spacing:0.5px;text-align:center;z-index:99999;box-shadow:0 4px 24px #0009;white-space:nowrap;font-family:Georgia,serif;";
+        t.innerText = "✦ Saved! Check your Downloads or Gallery ✦";
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 4000);
+      }
+      return;
+    } catch(e) {}
+
+    // 3. iOS fallback — show toast then open image in new tab for long-press save
+    if (isIOS) {
+      const toast = document.createElement("div");
+      toast.style.cssText = "position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#2d0b6b,#1a0545);border:1px solid #c9a84c88;border-radius:32px;padding:12px 24px;font-size:13px;color:#c9a84c;letter-spacing:0.5px;text-align:center;z-index:99999;box-shadow:0 4px 24px #0009;white-space:nowrap;font-family:Georgia,serif;";
+      toast.innerText = "✦ Opening your card — long press the image to save ✦";
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+      setTimeout(() => {
+        const newTab = window.open(jpgUrl, "_blank");
+        if (!newTab) {
+          const img = document.createElement("img");
+          img.src = jpgUrl;
+          img.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;object-fit:contain;z-index:99999;background:#000;cursor:pointer;";
+          img.onclick = () => document.body.removeChild(img);
+          document.body.appendChild(img);
+        }
+      }, 600);
+      return;
     }
-    const a=document.createElement("a"); a.download=filename; a.href=jpgUrl; a.click();
+
+    // 4. Last resort — open in new tab
+    const newTab = window.open();
+    if (newTab) { newTab.document.write(`<img src="${jpgUrl}" style="max-width:100%" />`); newTab.document.title = filename; }
   }
 
   function showToast() { setToast(true); setTimeout(()=>setToast(false),5000); }

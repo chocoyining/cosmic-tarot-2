@@ -589,9 +589,9 @@ export default function App() {
           <div style={{fontSize:18,color:"#c9a84c",letterSpacing:2,marginBottom:2}}>{clientName}</div>
           {clientDob&&<div style={{fontSize:11,color:"#a07840",letterSpacing:1,marginBottom:4}}>{new Date(clientDob+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>}
           {clientQuestion&&<div style={{fontSize:12,color:"#c9a84c99",fontStyle:"italic",maxWidth:440,margin:"4px auto 8px",lineHeight:1.6}}>"{clientQuestion}"</div>}
-          <div style={{fontSize:15,color:"#c9a84c",letterSpacing:2,marginBottom:6}}>{spread.name}</div>
+          {spread&&<div style={{fontSize:15,color:"#c9a84c",letterSpacing:2,marginBottom:6}}>{spread.name}</div>}
         </div>
-        <div style={{width:"100%",display:"flex",justifyContent:"center"}}>{renderGrid(true)}</div>
+        {spread&&<div style={{width:"100%",display:"flex",justifyContent:"center"}}>{renderGrid(true)}</div>}
       </div>
 
       {/* Visible display */}
@@ -602,9 +602,9 @@ export default function App() {
           <div style={{fontSize:desktop?26:18,color:"#c9a84c",letterSpacing:2,marginBottom:2}}>{clientName}</div>
           {clientDob&&<div style={{fontSize:desktop?13:11,color:"#a07840",letterSpacing:1,marginBottom:4}}>{new Date(clientDob+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>}
           {clientQuestion&&<div style={{fontSize:desktop?14:12,color:"#c9a84c99",fontStyle:"italic",maxWidth:maxW,margin:"4px auto 8px",lineHeight:1.6}}>"{clientQuestion}"</div>}
-          <div style={{fontSize:desktop?20:15,color:"#c9a84c",letterSpacing:2,marginBottom:6}}>{spread.name}</div>
+          {spread&&<div style={{fontSize:desktop?20:15,color:"#c9a84c",letterSpacing:2,marginBottom:6}}>{spread.name}</div>}
         </div>
-        <div style={{overflowX:"auto",width:"100%",display:"flex",justifyContent:"center"}}>{renderGrid(false)}</div>
+        {spread&&<div style={{overflowX:"auto",width:"100%",display:"flex",justifyContent:"center"}}>{renderGrid(false)}</div>}
       </div>
 
       <div style={{display:"flex",gap:12,flexWrap:"wrap",justifyContent:"center",position:"relative",zIndex:1,marginTop:20}}>

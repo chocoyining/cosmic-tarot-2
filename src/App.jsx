@@ -129,10 +129,7 @@ function CardSlot({ label, img, flipped, onClick, cardBack, size }) {
       <div onClick={!flipped?onClick:undefined} style={{width:w,height:h,perspective:800,cursor:flipped?"default":"pointer"}}>
         <div style={{width:"100%",height:"100%",position:"relative",transformStyle:"preserve-3d",transform:flipped?"rotateY(180deg)":"rotateY(0deg)",transition:"transform 0.6s cubic-bezier(.4,0,.2,1)"}}>
           <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",borderRadius:10,overflow:"hidden",boxShadow:"0 4px 18px #0006",border:"2px solid #7c5c2e"}}>
-            {cardBack
-              ? <img src={cardBack} crossOrigin="anonymous" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="back"/>
-              : <div style={{width:"100%",height:"100%",background:"linear-gradient(135deg,#0d0221,#2d0b6b,#0d0221)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,color:"#c9a84c"}}>✦</div>
-            }
+            <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778128181/ChatGPT_Image_May_7_2026_12_29_17_PM_qsfguw.png" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="back"/>
           </div>
           <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",transform:"rotateY(180deg)",borderRadius:10,overflow:"hidden",boxShadow:"0 4px 18px #0006",border:"2px solid #c9a84c",background:"#111"}}>
             {img?<img src={img} style={{width:"100%",height:"100%",objectFit:"cover"}} alt={label}/>:<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",color:"#c9a84c",fontSize:13,textAlign:"center",padding:8,background:"linear-gradient(135deg,#1a0545,#0d0221)"}}>{label}</div>}

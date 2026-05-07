@@ -128,8 +128,8 @@ function CardSlot({ label, img, flipped, onClick, cardBack, size }) {
     <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
       <div onClick={!flipped?onClick:undefined} style={{width:w,height:h,perspective:800,cursor:flipped?"default":"pointer"}}>
         <div style={{width:"100%",height:"100%",position:"relative",transformStyle:"preserve-3d",transform:flipped?"rotateY(180deg)":"rotateY(0deg)",transition:"transform 0.6s cubic-bezier(.4,0,.2,1)"}}>
-          <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",borderRadius:10,overflow:"hidden",boxShadow:"0 4px 18px #0006",border:"2px solid #7c5c2e"}}>
-            <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778128181/ChatGPT_Image_May_7_2026_12_29_17_PM_qsfguw.png" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="back"/>
+          <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",borderRadius:10,overflow:"hidden",boxShadow:"0 4px 18px #0006",border:"2px solid #7c5c2e",background:"#0d0221"}}>
+            <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778128181/ChatGPT_Image_May_7_2026_12_29_17_PM_qsfguw.png" style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}} alt="back"/>
           </div>
           <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",transform:"rotateY(180deg)",borderRadius:10,overflow:"hidden",boxShadow:"0 4px 18px #0006",border:"2px solid #c9a84c",background:"#111"}}>
             {img?<img src={img} style={{width:"100%",height:"100%",objectFit:"cover"}} alt={label}/>:<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",color:"#c9a84c",fontSize:13,textAlign:"center",padding:8,background:"linear-gradient(135deg,#1a0545,#0d0221)"}}>{label}</div>}
@@ -558,24 +558,14 @@ export default function App() {
         </div>
         <div style={{position:"relative",zIndex:1,marginBottom:32}}>
           <div onClick={!isComplete?stopCard:undefined} style={{width:cardW,height:cardH,borderRadius:12,overflow:"hidden",border:`2px solid ${isComplete?"#c9a84c":"#7c5c2e"}`,boxShadow:isComplete?"0 0 24px #c9a84c88":"0 8px 32px #0009",animation:isComplete?"card-lock 0.4s ease-out":"none",cursor:isComplete?"default":"pointer"}}>
-            {CARD_BACK
-              ? <img src={CARD_BACK} crossOrigin="anonymous" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="card"/>
-              : <div style={{position:"relative",width:"100%",height:"100%"}}>
-                  <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[backColorIdx][0]},${PALETTE[backColorIdx][1]})`}}/>
-                  <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[topColorIdx][0]},${PALETTE[topColorIdx][1]})`,opacity:topOpacity}}/>
-                  <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:56,color:"#ffffff22",zIndex:10}}>✦</div>
-                </div>
-            }
+            <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778128181/ChatGPT_Image_May_7_2026_12_29_17_PM_qsfguw.png" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="card back"/>
           </div>
         </div>
         {picked>0&&(
           <div style={{display:"flex",gap:10,flexWrap:"wrap",justifyContent:"center",marginBottom:24,zIndex:1,position:"relative"}}>
             {slotPicked.map((_,i)=>(
               <div key={i} style={{width:desktop?60:46,height:Math.round((desktop?60:46)*1.6),borderRadius:6,overflow:"hidden",border:"2px solid #c9a84c",boxShadow:"0 0 10px #c9a84c44"}}>
-                {CARD_BACK
-                  ? <img src={CARD_BACK} crossOrigin="anonymous" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="card back"/>
-                  : <div style={{width:"100%",height:"100%",background:"linear-gradient(135deg,#0d0221,#2d0b6b,#0d0221)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:"#c9a84c"}}>✦</div>
-                }
+                <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778128181/ChatGPT_Image_May_7_2026_12_29_17_PM_qsfguw.png" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="card back"/>
               </div>
             ))}
           </div>

@@ -312,9 +312,9 @@ export default function OracleCard({ onHome, lang, onToggleLang, bgmOn, onToggle
       <style>{`
         @keyframes pulse-glow { 0%,100%{opacity:0.4;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)} }
         @keyframes float-card { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-8px)} }
-      }</style>
+      `}</style>
 
-      {/* Hidden capture div */,display:"flex",flexDirection:"column",alignItems:"center",gap:28,width:"100%",maxWidth:480}}>
+      <div style={{position:"relative",zIndex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:28,width:"100%",maxWidth:480}}>
 
         {/* Header */}
         <div style={{textAlign:"center"}}>

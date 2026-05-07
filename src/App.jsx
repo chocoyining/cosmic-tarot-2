@@ -128,9 +128,9 @@ function CardSlot({ label, img, flipped, onClick, cardBack, size }) {
     <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
       <div onClick={!flipped?onClick:undefined} style={{width:w,height:h,perspective:800,cursor:flipped?"default":"pointer"}}>
         <div style={{width:"100%",height:"100%",position:"relative",transformStyle:"preserve-3d",transform:flipped?"rotateY(180deg)":"rotateY(0deg)",transition:"transform 0.6s cubic-bezier(.4,0,.2,1)"}}>
-          <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",borderRadius:10,overflow:"hidden",boxShadow:"0 4px 18px #0006",border:"2px solid #7c5c2e",background:"#1a0545"}}>
+          <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",borderRadius:10,overflow:"hidden",boxShadow:"0 4px 18px #0006",border:"2px solid #7c5c2e"}}>
             {cardBack
-              ? <img src={cardBack} style={{width:"100%",height:"100%",objectFit:"cover"}} alt="back"/>
+              ? <img src={cardBack} crossOrigin="anonymous" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="back"/>
               : <div style={{width:"100%",height:"100%",background:"linear-gradient(135deg,#0d0221,#2d0b6b,#0d0221)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,color:"#c9a84c"}}>✦</div>
             }
           </div>
@@ -562,7 +562,7 @@ export default function App() {
         <div style={{position:"relative",zIndex:1,marginBottom:32}}>
           <div onClick={!isComplete?stopCard:undefined} style={{width:cardW,height:cardH,borderRadius:12,overflow:"hidden",border:`2px solid ${isComplete?"#c9a84c":"#7c5c2e"}`,boxShadow:isComplete?"0 0 24px #c9a84c88":"0 8px 32px #0009",animation:isComplete?"card-lock 0.4s ease-out":"none",cursor:isComplete?"default":"pointer"}}>
             {CARD_BACK
-              ? <img src={CARD_BACK} style={{width:"100%",height:"100%",objectFit:"cover"}} alt="card"/>
+              ? <img src={CARD_BACK} crossOrigin="anonymous" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="card"/>
               : <div style={{position:"relative",width:"100%",height:"100%"}}>
                   <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[backColorIdx][0]},${PALETTE[backColorIdx][1]})`}}/>
                   <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[topColorIdx][0]},${PALETTE[topColorIdx][1]})`,opacity:topOpacity}}/>
@@ -576,7 +576,7 @@ export default function App() {
             {slotPicked.map((_,i)=>(
               <div key={i} style={{width:desktop?60:46,height:Math.round((desktop?60:46)*1.6),borderRadius:6,overflow:"hidden",border:"2px solid #c9a84c",boxShadow:"0 0 10px #c9a84c44"}}>
                 {CARD_BACK
-                  ? <img src={CARD_BACK} style={{width:"100%",height:"100%",objectFit:"cover"}} alt="card back"/>
+                  ? <img src={CARD_BACK} crossOrigin="anonymous" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="card back"/>
                   : <div style={{width:"100%",height:"100%",background:"linear-gradient(135deg,#0d0221,#2d0b6b,#0d0221)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:"#c9a84c"}}>✦</div>
                 }
               </div>

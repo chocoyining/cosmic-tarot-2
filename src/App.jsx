@@ -101,7 +101,7 @@ const CARD_IMAGES = [
   "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901832/WhatsApp_Image_2026-04-11_at_17.58.10_2_jiuuek.jpg",
 ];
 
-const CARD_BACK = "";
+const CARD_BACK = "https://res.cloudinary.com/da1asg0hq/image/upload/v1778128181/ChatGPT_Image_May_7_2026_12_29_17_PM_qsfguw.png";
 const BGM_URL   = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775831307/Silver_Leaf_Drift_jrf2xh.mp3";
 const FLIP_URL  = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775905865/freesound_community-flipcard-91468_oiatib.mp3";
 
@@ -268,10 +268,10 @@ export default function App() {
     if (colorTimer.current) clearInterval(colorTimer.current);
     let opacity=1,front=0,back=1;
     setTopColorIdx(front); setBackColorIdx(back); setTopOpacity(1);
-    const STEP=50,fadeStep=STEP/500;
+    const STEP=50,fadeStep=STEP/1500;
     let holding=false,holdCount=0;
     colorTimer.current = setInterval(()=>{
-      if (holding) { holdCount++; if (holdCount>=2) { holding=false; holdCount=0; } return; }
+      if (holding) { holdCount++; if (holdCount>=12) { holding=false; holdCount=0; } return; }
       opacity-=fadeStep;
       if (opacity<=0) { opacity=1; front=back; back=(back+1)%PALETTE.length; setTopColorIdx(front); setBackColorIdx(back); setTopOpacity(1); holding=true; }
       else { setTopOpacity(opacity); }
@@ -559,7 +559,11 @@ export default function App() {
         <div style={{position:"relative",zIndex:1,marginBottom:32}}>
           <div onClick={!isComplete?stopCard:undefined} style={{width:cardW,height:cardH,borderRadius:12,overflow:"hidden",border:`2px solid ${isComplete?"#c9a84c":"#7c5c2e"}`,boxShadow:isComplete?"0 0 24px #c9a84c88":"0 8px 32px #0009",animation:isComplete?"card-lock 0.4s ease-out":"none",cursor:isComplete?"default":"pointer"}}>
             {CARD_BACK
-              ? <img src={CARD_BACK} style={{width:"100%",height:"100%",objectFit:"cover"}} alt="card"/>
+              ? <div style={{position:"relative",width:"100%",height:"100%"}}>
+                  <img src={CARD_BACK} style={{width:"100%",height:"100%",objectFit:"cover",position:"absolute",inset:0}} alt="card"/>
+                  <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[backColorIdx][0]},${PALETTE[backColorIdx][1]})`,opacity:0.3}}/>
+                  <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[topColorIdx][0]},${PALETTE[topColorIdx][1]})`,opacity:topOpacity*0.3}}/>
+                </div>
               : <div style={{position:"relative",width:"100%",height:"100%"}}>
                   <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[backColorIdx][0]},${PALETTE[backColorIdx][1]})`}}/>
                   <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[topColorIdx][0]},${PALETTE[topColorIdx][1]})`,opacity:topOpacity}}/>

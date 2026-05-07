@@ -223,19 +223,61 @@ export default function OracleCard({ onHome, lang, onToggleLang, bgmOn, onToggle
       });
       const filename = `coco_oracle_${drawnCard.en.replace(/\s+/g,"_")}.jpg`;
       const jpgData  = canvas.toDataURL("image/jpeg", 0.92);
-      const isMobile = navigator.maxTouchPoints > 0 && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-      if (isMobile && navigator.share && navigator.canShare) {
-        try {
-          const blob = await (await fetch(jpgData)).blob();
-          const file = new File([blob], filename, { type: "image/jpeg" });
-          if (navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: drawnCard.en });
-            setSaving(false); showToast(); return;
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+      // 1. Try Web Share API with files — works on iOS Safari + some Android
+      try {
+        const blob = await (await fetch(jpgData)).blob();
+        const file = new File([blob], filename, { type: "image/jpeg" });
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: drawnCard.en });
+          setSaving(false); showToast(); return;
+        }
+      } catch(e) {}
+
+      // 2. Try Blob object URL — works in more contexts than data URLs incl. some in-app browsers
+      try {
+        const blob = await (await fetch(jpgData)).blob();
+        const objectUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = objectUrl; a.download = filename;
+        document.body.appendChild(a); a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+        if (/Android/i.test(navigator.userAgent)) {
+          const t = document.createElement("div");
+          t.style.cssText = "position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#2d0b6b,#1a0545);border:1px solid #c9a84c88;border-radius:32px;padding:12px 24px;font-size:13px;color:#c9a84c;letter-spacing:0.5px;text-align:center;z-index:99999;box-shadow:0 4px 24px #0009;white-space:nowrap;font-family:Georgia,serif;";
+          t.innerText = "✦ Saved! Check your Downloads or Gallery ✦";
+          document.body.appendChild(t);
+          setTimeout(() => t.remove(), 4000);
+          setSaving(false); return;
+        }
+        showToast(); setSaving(false); return;
+      } catch(e) {}
+
+      // 3. iOS fallback — show toast then open image in new tab for long-press save
+      if (isIOS) {
+        const toast = document.createElement("div");
+        toast.style.cssText = "position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#2d0b6b,#1a0545);border:1px solid #c9a84c88;border-radius:32px;padding:12px 24px;font-size:13px;color:#c9a84c;letter-spacing:0.5px;text-align:center;z-index:99999;box-shadow:0 4px 24px #0009;white-space:nowrap;font-family:Georgia,serif;";
+        toast.innerText = "✦ Opening your card — long press the image to save ✦";
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+        setTimeout(() => {
+          const newTab = window.open(jpgData, "_blank");
+          if (!newTab) {
+            const img = document.createElement("img");
+            img.src = jpgData;
+            img.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;object-fit:contain;z-index:99999;background:#000;cursor:pointer;";
+            img.onclick = () => document.body.removeChild(img);
+            document.body.appendChild(img);
           }
-        } catch(e) {}
+        }, 600);
+        showToast(); setSaving(false); return;
       }
-      const link = document.createElement("a");
-      link.download = filename; link.href = jpgData; link.click();
+
+      // 4. Last resort — new tab
+      const newTab = window.open();
+      if (newTab) { newTab.document.write(`<img src="${jpgData}" style="max-width:100%" />`); newTab.document.title = filename; }
       showToast();
     } catch(e) { alert("Could not save. Please take a screenshot instead."); }
     setSaving(false);
@@ -272,26 +314,16 @@ export default function OracleCard({ onHome, lang, onToggleLang, bgmOn, onToggle
           spread_image:    imageUrl,
         });
       }
-
-      const isMobile = navigator.maxTouchPoints > 0 && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-      if (isMobile && navigator.share && navigator.canShare) {
-        try {
-          const blob = await (await fetch(jpgData)).blob();
-          const file = new File([blob], filename, { type: "image/jpeg" });
-          if (navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: drawnCard.en });
-            setSaving(false); showToast(); return;
-          }
-        } catch(e) {}
-      }
-      const link = document.createElement("a");
-      link.download = filename; link.href = jpgData; link.click();
-      showToast();
+      // Email only — no share sheet
+      showToast("send");
     } catch(e) { alert("Something went wrong. Please try again."); }
     setSaving(false);
   }
 
-  function showToast() { setToast(true); setTimeout(() => setToast(false), 5000); }
+  function showToast(type="save") {
+    setToast(type);
+    setTimeout(() => setToast(false), 5000);
+  }
 
   const bgStyle = {
     minHeight: "100vh",
@@ -531,7 +563,9 @@ export default function OracleCard({ onHome, lang, onToggleLang, bgmOn, onToggle
       `}</style>
       {toast && (
         <div style={{position:"fixed",bottom:40,left:"50%",transform:"translateX(-50%)",background:"linear-gradient(135deg,#2d0b6b,#1a0545)",border:"1px solid #c9a84c88",borderRadius:32,padding:"12px 24px",fontSize:13,color:"#c9a84c",letterSpacing:0.5,textAlign:"center",zIndex:999,boxShadow:"0 4px 24px #0009",animation:"toastIn 0.4s ease-out, toastOut 0.6s ease-in 4.3s forwards",whiteSpace:"nowrap"}}>
-          {isCN ? "✦ 已成功发送给 Coco！" : "✦ Successfully sent to Coco!"}
+          {toast === "send"
+            ? (isCN ? "✦ 已成功发送给 Coco！Coco 将尽快联系你 ✦" : "✦ Successfully sent to Coco! You will be contacted soon ✦")
+            : (isCN ? "✦ 已保存！" : "✦ Card saved successfully ✦")}
         </div>
       )}
     </div>

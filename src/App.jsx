@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import BirthChart from "./BirthChart";
+import OracleCard from "./OracleCard";
 import LandingPage from "./LandingPage";
 import ZH from "./translations";
 
@@ -155,7 +156,14 @@ function getIntentionMessages(t) {
 }
 
 export default function App() {
-  const [screen,setScreen]               = useState("home");
+  const [screen,setScreen] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get("mode");
+    if (mode === "oracle") return "oracle";
+    if (mode === "chart")  return "chart";
+    if (mode === "tarot")  return "info";
+    return "home";
+  });
   const [clientName,setClientName]       = useState("");
   const [clientDob,setClientDob]         = useState("");
   const [clientContact,setClientContact] = useState("");
@@ -359,7 +367,7 @@ export default function App() {
 
   // ── HOME ──
   if (screen==="home") return (
-    <LandingPage onBeginReading={()=>{startBgm();setScreen("info");}} onBeginChart={()=>setScreen("chart")} bgmOn={bgmOn} onToggleBgm={toggleBgm} lang={lang} onToggleLang={()=>setLang(l=>l==="en"?"zh":"en")}/>
+    <LandingPage onBeginReading={()=>{startBgm();setScreen("info");}} onBeginChart={()=>setScreen("chart")} onBeginOracle={()=>{startBgm();setScreen("oracle");}} bgmOn={bgmOn} onToggleBgm={toggleBgm} lang={lang} onToggleLang={()=>setLang(l=>l==="en"?"zh":"en")}/>
   );
 
   // ── BIRTH CHART ──

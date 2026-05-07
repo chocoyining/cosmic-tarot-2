@@ -184,7 +184,7 @@ function AboutCoco({ isMobile, t }) {
   );
 }
 
-export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onToggleBgm, lang, onToggleLang }) {
+export default function LandingPage({ onBeginReading, onBeginChart, onBeginOracle, bgmOn, onToggleBgm, lang, onToggleLang }) {
   const t = lang === "zh" ? ZH : null;
   const PHRASES = ["To stay or go?", "To fight or let go?", "To trust or walk away..."];
   const [phraseIdx, setPhraseIdx] = useState(0);
@@ -291,6 +291,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: 10 }}>
             <button className="cta-btn" onClick={onBeginReading}>{t ? t.landing.btn_reading : "🌙 Begin Your Tarot Reading"}</button>
             <button className="cta-btn" onClick={onBeginChart}>{t ? t.landing.btn_chart : "🌌 Calculate My Cosmic Blueprint"}</button>
+            <button className="cta-btn" onClick={onBeginOracle}>{t ? "🌸 抽取我的花语预言" : "🌸 Draw My Floriography Oracle"}</button>
           </div>
           <div style={{ fontSize: isMobile ? 12 : 13, color: "#c9a84c", letterSpacing: isMobile ? 1 : 2, marginBottom: isMobile ? 12 : 16, fontStyle: "italic" }}>
             {t ? t.landing.personal_line : "✦ Every reading is personally done by Coco Chen ✦"}
@@ -353,6 +354,7 @@ export default function LandingPage({ onBeginReading, onBeginChart, bgmOn, onTog
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
             <button className="cta-btn" onClick={onBeginReading}>{t ? t.landing.btn_reading : "🌙 Begin Your Tarot Reading"}</button>
             <button className="cta-btn" onClick={onBeginChart}>{t ? t.landing.btn_chart : "🌌 Calculate My Cosmic Blueprint"}</button>
+            <button className="cta-btn" onClick={onBeginOracle}>{t ? "🌸 抽取我的花语预言" : "🌸 Draw My Floriography Oracle"}</button>
           </div>
         </div>
       </section>

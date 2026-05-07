@@ -178,7 +178,7 @@ export default function OracleCard({ onHome, lang, onToggleLang, bgmOn, onToggle
   function startColorCycle() {
     if (colorTimer.current) clearInterval(colorTimer.current);
     let opacity = 1, front = 0, back = 1, holding = false, holdCount = 0;
-    const STEP = 50, fadeStep = STEP / 500, holdSteps = 100 / STEP;
+    const STEP = 50, fadeStep = STEP / 1500, holdSteps = 600 / STEP;
     setTopColorIdx(front); setBackColorIdx(back); setTopOpacity(1);
     colorTimer.current = setInterval(() => {
       if (holding) { holdCount++; if (holdCount >= holdSteps) { holding = false; holdCount = 0; } return; }
@@ -351,7 +351,11 @@ export default function OracleCard({ onHome, lang, onToggleLang, bgmOn, onToggle
             }}
           >
             {/* Card back image */}
-            <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778122835/ChatGPT_Image_May_7_2026_11_00_23_AM_dpsaxb.png" alt="card back" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+            <div style={{position:"relative",width:"100%",height:"100%"}}>
+              <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778122835/ChatGPT_Image_May_7_2026_11_00_23_AM_dpsaxb.png" alt="card back" style={{width:"100%",height:"100%",objectFit:"cover",position:"absolute",inset:0}}/>
+              <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[backColorIdx][0]},${PALETTE[backColorIdx][1]})`,opacity:0.3}}/>
+              <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[topColorIdx][0]},${PALETTE[topColorIdx][1]})`,opacity:topOpacity*0.3}}/>
+            </div>
           </div>
         </div>
 

@@ -217,6 +217,18 @@ export default function App() {
 
   const desktop = winW>600;
 
+  // Updates screen AND syncs the URL so direct links like ?mode=oracle work
+  function goTo(s) {
+    if (s === "home") {
+      window.history.pushState({}, "", "/");
+    } else {
+      const modeMap = { info:"tarot", spreads:"tarot", question:"tarot", intention:"tarot", fan:"tarot", draw:"tarot", chart:"chart", oracle:"oracle" };
+      const mode = modeMap[s];
+      if (mode) window.history.pushState({}, "", `?mode=${mode}`);
+    }
+    setScreen(s);
+  }
+
   function startBgm() {
     if (!BGM_URL||bgmOn) return;
     if (!bgmAudio.current) { const a=new Audio(BGM_URL); a.loop=true; a.volume=0.5; bgmAudio.current=a; }
@@ -246,11 +258,11 @@ export default function App() {
   function handleInfoSubmit() {
     if (!clientName.trim()) { setNameError(true); return; }
     if (!clientContact.trim()) { setContactError(true); return; }
-    setNameError(false); setContactError(false); startBgm(); setScreen("spreads");
+    setNameError(false); setContactError(false); startBgm(); goTo("spreads");
   }
 
-  function selectSpread(sp) { setSpread(sp); setClientQuestion(""); setScreen("question"); }
-  function handleQuestionSubmit() { setScreen("intention"); setIntentionMsg(0); }
+  function selectSpread(sp) { setSpread(sp); setClientQuestion(""); goTo("question"); }
+  function handleQuestionSubmit() { goTo("intention"); setIntentionMsg(0); }
 
   function startColorCycle() {
     if (colorTimer.current) clearInterval(colorTimer.current);
@@ -270,7 +282,7 @@ export default function App() {
     const deck=shuffle(CARD_IMAGES);
     setShuffledDeck(deck); setSlotPicked([]); setSlotCurrent(0);
     setTopColorIdx(0); setBackColorIdx(1); setTopOpacity(1);
-    startColorCycle(); setScreen("fan");
+    startColorCycle(); goTo("fan");
   }
 
   function flipCard(i) { playCardFlip(); setFlipped(prev=>{const n=[...prev];n[i]=true;return n;}); }
@@ -355,7 +367,7 @@ export default function App() {
   const resetHome = () => {
     if (slotTimer.current) { clearInterval(slotTimer.current); slotTimer.current=null; }
     if (colorTimer.current) { clearInterval(colorTimer.current); colorTimer.current=null; }
-    setScreen("home"); setClientName(""); setClientDob(""); setClientQuestion("");
+    goTo("home"); setClientName(""); setClientDob(""); setClientQuestion("");
     setSlotPicked([]); setSlotCurrent(0); setPickedIndices([]);
   };
 
@@ -367,11 +379,14 @@ export default function App() {
 
   // ── HOME ──
   if (screen==="home") return (
-    <LandingPage onBeginReading={()=>{startBgm();setScreen("info");}} onBeginChart={()=>setScreen("chart")} onBeginOracle={()=>{startBgm();setScreen("oracle");}} bgmOn={bgmOn} onToggleBgm={toggleBgm} lang={lang} onToggleLang={()=>setLang(l=>l==="en"?"zh":"en")}/>
+    <LandingPage onBeginReading={()=>{startBgm();goTo("info");}} onBeginChart={()=>goTo("chart")} onBeginOracle={()=>{startBgm();goTo("oracle");}} bgmOn={bgmOn} onToggleBgm={toggleBgm} lang={lang} onToggleLang={()=>setLang(l=>l==="en"?"zh":"en")}/>
   );
 
   // ── BIRTH CHART ──
-  if (screen==="chart") return <BirthChart onHome={()=>setScreen("home")} lang={lang} onToggleLang={()=>setLang(l=>l==="en"?"zh":"en")}/>;
+  if (screen==="chart") return <BirthChart onHome={()=>goTo("home")} lang={lang} onToggleLang={()=>setLang(l=>l==="en"?"zh":"en")}/>;
+
+  // ── ORACLE ──
+  if (screen==="oracle") return <OracleCard onHome={()=>goTo("home")} lang={lang} onToggleLang={()=>setLang(l=>l==="en"?"zh":"en")} bgmOn={bgmOn} onToggleBgm={toggleBgm}/>;
 
   // ── INFO ──
   if (screen==="info") return (
@@ -444,7 +459,7 @@ export default function App() {
             </div>
           </button>
         ))}
-        <button onClick={()=>setScreen("info")} style={{...btn("#2a1a1a"),fontSize:12,marginTop:4}}>{t?"← 返回":"← Back"}</button>
+        <button onClick={()=>goTo("info")} style={{...btn("#2a1a1a"),fontSize:12,marginTop:4}}>{t?"← 返回":"← Back"}</button>
         <button onClick={resetHome} style={{...btn("#2a1a1a"),fontSize:12}}>{t?"⌂ 主页":"⌂ Home"}</button>
       </div>
     </div>
@@ -473,7 +488,7 @@ export default function App() {
             <textarea style={{...inputStyle,minHeight:desktop?120:90,resize:"vertical",lineHeight:1.7}} placeholder="Or type your own question here..." value={clientQuestion} onChange={e=>setClientQuestion(e.target.value)}/>
           </div>
           <button onClick={handleQuestionSubmit} style={{...btn("#3b1f6e"),fontSize:desktop?16:15,padding:"15px 0",width:"100%",letterSpacing:2,minHeight:52}}>{t?"继续 →":"Continue →"}</button>
-          <button onClick={()=>setScreen("spreads")} style={{...btn("#2a1a1a"),fontSize:12}}>{t?"← 返回":"← Back"}</button>
+          <button onClick={()=>goTo("spreads")} style={{...btn("#2a1a1a"),fontSize:12}}>{t?"← 返回":"← Back"}</button>
           <button onClick={resetHome} style={{...btn("#2a1a1a"),fontSize:12}}>{t?"⌂ 主页":"⌂ Home"}</button>
         </div>
       </div>
@@ -516,7 +531,7 @@ export default function App() {
         setTimeout(()=>{
           if(colorTimer.current){clearInterval(colorTimer.current);colorTimer.current=null;}
           if(slotTimer.current){clearInterval(slotTimer.current);slotTimer.current=null;}
-          setDrawnCards(newPicked); setFlipped(new Array(needed).fill(false)); setScreen("draw");
+          setDrawnCards(newPicked); setFlipped(new Array(needed).fill(false)); goTo("draw");
         },800);
       } else {
         setTimeout(()=>{
@@ -576,7 +591,8 @@ export default function App() {
   }
 
   // ── DRAW ──
-  if (!spread) { setScreen("spreads"); return null; }
+  // spread is null if user somehow reaches draw without selecting one — send back to spreads
+  if (!spread) { setTimeout(()=>goTo("spreads"),0); return null; }
   return (
     <div style={bgStyle}>
       <Stars/>
@@ -617,7 +633,7 @@ export default function App() {
           </>
         )}
         <button onClick={()=>handleIntentionReady()} style={btn("#1f3a1f")}>{t?t.draw.btn_again:"Draw Again"}</button>
-        <button onClick={()=>setScreen("spreads")} style={btn("#2a1a2a")}>{t?t.draw.btn_spreads:"← Spreads"}</button>
+        <button onClick={()=>goTo("spreads")} style={btn("#2a1a2a")}>{t?t.draw.btn_spreads:"← Spreads"}</button>
         <button onClick={resetHome} style={btn("#2a1a1a")}>{t?"⌂ 主页":"⌂ Home"}</button>
         <BgmBtn/>
         <button onClick={()=>setLang(l=>l==="en"?"zh":"en")} style={{...btn("#2a1a40"),width:"auto",padding:"8px 16px",fontSize:12,letterSpacing:1}}>{lang==="en"?"中文":"EN"}</button>

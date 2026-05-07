@@ -576,6 +576,7 @@ export default function App() {
   }
 
   // ── DRAW ──
+  if (!spread) { setScreen("spreads"); return null; }
   return (
     <div style={bgStyle}>
       <Stars/>

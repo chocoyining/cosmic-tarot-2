@@ -562,11 +562,7 @@ export default function App() {
         <div style={{position:"relative",zIndex:1,marginBottom:32}}>
           <div onClick={!isComplete?stopCard:undefined} style={{width:cardW,height:cardH,borderRadius:12,overflow:"hidden",border:`2px solid ${isComplete?"#c9a84c":"#7c5c2e"}`,boxShadow:isComplete?"0 0 24px #c9a84c88":"0 8px 32px #0009",animation:isComplete?"card-lock 0.4s ease-out":"none",cursor:isComplete?"default":"pointer"}}>
             {CARD_BACK
-              ? <div style={{position:"relative",width:"100%",height:"100%"}}>
-                  <img src={CARD_BACK} style={{width:"100%",height:"100%",objectFit:"cover",position:"absolute",inset:0}} alt="card"/>
-                  <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[backColorIdx][0]},${PALETTE[backColorIdx][1]})`,opacity:0.3}}/>
-                  <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[topColorIdx][0]},${PALETTE[topColorIdx][1]})`,opacity:topOpacity*0.3}}/>
-                </div>
+              ? <img src={CARD_BACK} style={{width:"100%",height:"100%",objectFit:"cover"}} alt="card"/>
               : <div style={{position:"relative",width:"100%",height:"100%"}}>
                   <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[backColorIdx][0]},${PALETTE[backColorIdx][1]})`}}/>
                   <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[topColorIdx][0]},${PALETTE[topColorIdx][1]})`,opacity:topOpacity}}/>

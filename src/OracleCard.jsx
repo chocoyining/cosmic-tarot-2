@@ -333,13 +333,6 @@ export default function OracleCard({ onHome, lang, onToggleLang, bgmOn, onToggle
 
         {/* Flashing card */}
         <div style={{position:"relative"}}>
-          {/* Glow ring */}
-          <div style={{
-            position:"absolute", inset:-12, borderRadius:16,
-            background:"radial-gradient(circle,#c9a84c22 0%,transparent 70%)",
-            animation:"pulse-glow 2.5s ease-in-out infinite",
-            pointerEvents:"none",
-          }}/>
           <div
             onClick={selectCard}
             style={{
@@ -351,11 +344,7 @@ export default function OracleCard({ onHome, lang, onToggleLang, bgmOn, onToggle
             }}
           >
             {/* Card back image */}
-            <div style={{position:"relative",width:"100%",height:"100%"}}>
-              <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778122835/ChatGPT_Image_May_7_2026_11_00_23_AM_dpsaxb.png" alt="card back" style={{width:"100%",height:"100%",objectFit:"cover",position:"absolute",inset:0}}/>
-              <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[backColorIdx][0]},${PALETTE[backColorIdx][1]})`,opacity:0.3}}/>
-              <div style={{position:"absolute",inset:0,background:`linear-gradient(135deg,${PALETTE[topColorIdx][0]},${PALETTE[topColorIdx][1]})`,opacity:topOpacity*0.3}}/>
-            </div>
+            <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778122835/ChatGPT_Image_May_7_2026_11_00_23_AM_dpsaxb.png" alt="card back" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
           </div>
         </div>
 

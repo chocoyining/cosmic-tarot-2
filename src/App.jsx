@@ -101,7 +101,7 @@ const CARD_IMAGES = [
   "https://res.cloudinary.com/da1asg0hq/image/upload/v1775901832/WhatsApp_Image_2026-04-11_at_17.58.10_2_jiuuek.jpg",
 ];
 
-const CARD_BACK = "https://res.cloudinary.com/da1asg0hq/image/upload/v1778128181/ChatGPT_Image_May_7_2026_12_29_17_PM_qsfguw.png";
+const CARD_BACK = "https://res.cloudinary.com/da1asg0hq/image/upload/v1778131327/ChatGPT_Image_May_7_2026_01_21_44_PM_fjtfbw.png";
 const BGM_URL   = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775831307/Silver_Leaf_Drift_jrf2xh.mp3";
 const FLIP_URL  = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775905865/freesound_community-flipcard-91468_oiatib.mp3";
 
@@ -129,7 +129,7 @@ function CardSlot({ label, img, flipped, onClick, cardBack, size }) {
       <div onClick={!flipped?onClick:undefined} style={{width:w,height:h,perspective:800,cursor:flipped?"default":"pointer"}}>
         <div style={{width:"100%",height:"100%",position:"relative",transformStyle:"preserve-3d",transform:flipped?"rotateY(180deg)":"rotateY(0deg)",transition:"transform 0.6s cubic-bezier(.4,0,.2,1)"}}>
           <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",borderRadius:10,overflow:"hidden",boxShadow:"0 4px 18px #0006",border:"2px solid #7c5c2e",background:"#0d0221"}}>
-            <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778128181/ChatGPT_Image_May_7_2026_12_29_17_PM_qsfguw.png" style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}} alt="back"/>
+            <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778131327/ChatGPT_Image_May_7_2026_01_21_44_PM_fjtfbw.png" style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}} alt="back"/>
           </div>
           <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",transform:"rotateY(180deg)",borderRadius:10,overflow:"hidden",boxShadow:"0 4px 18px #0006",border:"2px solid #c9a84c",background:"#111"}}>
             {img?<img src={img} style={{width:"100%",height:"100%",objectFit:"cover"}} alt={label}/>:<div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",color:"#c9a84c",fontSize:13,textAlign:"center",padding:8,background:"linear-gradient(135deg,#1a0545,#0d0221)"}}>{label}</div>}
@@ -546,7 +546,22 @@ export default function App() {
     return (
       <div style={{...bgStyle,justifyContent:"center"}}>
         <Stars/>
-        <style>{`@keyframes card-lock{0%{transform:scale(1.15)}100%{transform:scale(1)}}`}</style>
+        <style>{`@keyframes card-lock{0%{transform:scale(1.15)}100%{transform:scale(1)}}
+        @keyframes shuffle{
+          0%  {transform:translateX(0px) rotate(0deg);}
+          10% {transform:translateX(-8px) rotate(-2deg);}
+          20% {transform:translateX(8px) rotate(2deg);}
+          30% {transform:translateX(-6px) rotate(-1.5deg);}
+          40% {transform:translateX(6px) rotate(1.5deg);}
+          50% {transform:translateX(-4px) rotate(-1deg);}
+          60% {transform:translateX(4px) rotate(1deg);}
+          80% {transform:translateX(-2px) rotate(-0.5deg);}
+          100%{transform:translateX(0px) rotate(0deg);}
+        }
+        @keyframes card-glow{
+          0%,100%{box-shadow:0 8px 32px #0009, 0 0 0px #c9a84c00;}
+          50%{box-shadow:0 8px 32px #0009, 0 0 24px #c9a84c55;}
+        }`}</style>
         <div style={{textAlign:"center",position:"relative",zIndex:1,marginBottom:24}}>
           <div style={{fontSize:desktop?14:12,color:"#a07840",letterSpacing:2,marginBottom:6}}>{spread.name.toUpperCase()}</div>
           <div style={{fontSize:desktop?22:18,color:"#c9a84c",letterSpacing:2,marginBottom:4}}>{isComplete?(t?"牌阵已就绪...":"Your cards are ready..."):(t?`第 ${picked+1} 张，共 ${needed} 张`:`Card ${picked+1} of ${needed}`)}</div>
@@ -557,15 +572,15 @@ export default function App() {
           </div>
         </div>
         <div style={{position:"relative",zIndex:1,marginBottom:32}}>
-          <div onClick={!isComplete?stopCard:undefined} style={{width:cardW,height:cardH,borderRadius:12,overflow:"hidden",border:`2px solid ${isComplete?"#c9a84c":"#7c5c2e"}`,boxShadow:isComplete?"0 0 24px #c9a84c88":"0 8px 32px #0009",animation:isComplete?"card-lock 0.4s ease-out":"none",cursor:isComplete?"default":"pointer"}}>
-            <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778128181/ChatGPT_Image_May_7_2026_12_29_17_PM_qsfguw.png" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="card back"/>
+          <div onClick={!isComplete?stopCard:undefined} style={{width:cardW,height:cardH,borderRadius:12,overflow:"hidden",border:`2px solid ${isComplete?"#c9a84c":"#7c5c2e"}`,animation:isComplete?"card-lock 0.4s ease-out":"shuffle 0.6s ease-in-out infinite, card-glow 2s ease-in-out infinite",cursor:isComplete?"default":"pointer"}}>
+            <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778131327/ChatGPT_Image_May_7_2026_01_21_44_PM_fjtfbw.png" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="card back"/>
           </div>
         </div>
         {picked>0&&(
           <div style={{display:"flex",gap:10,flexWrap:"wrap",justifyContent:"center",marginBottom:24,zIndex:1,position:"relative"}}>
             {slotPicked.map((_,i)=>(
               <div key={i} style={{width:desktop?60:46,height:Math.round((desktop?60:46)*1.6),borderRadius:6,overflow:"hidden",border:"2px solid #c9a84c",boxShadow:"0 0 10px #c9a84c44"}}>
-                <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778128181/ChatGPT_Image_May_7_2026_12_29_17_PM_qsfguw.png" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="card back"/>
+                <img src="https://res.cloudinary.com/da1asg0hq/image/upload/v1778131327/ChatGPT_Image_May_7_2026_01_21_44_PM_fjtfbw.png" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt="card back"/>
               </div>
             ))}
           </div>

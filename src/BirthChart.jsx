@@ -219,9 +219,21 @@ function getSignGlyph(s) {
   return g[s]||"✦";
 }
 
+// Find which house a longitude falls in, handling houses that cross 0° Aries.
+// cusps: 12 house cusp longitudes, cusps[0] = Ascendant.
+function getHouse(lon, cusps) {
+  const norm = x => ((x % 360) + 360) % 360;
+  for (let i = 0; i < 12; i++) {
+    const start = cusps[i], end = cusps[(i + 1) % 12];
+    if (norm(lon - start) < norm(end - start)) return i + 1;
+  }
+  return 0; // should never happen; 0 makes an error obvious instead of hiding it as 1st house
+}
+
 function calcChart(year,month,day,hour,minute,tz,lat,lon) {
   const origin=new Origin({year,month:month-1,date:day,hour,minute,latitude:lat,longitude:lon});
   const horoscope=new Horoscope({origin,houseSystem:"placidus",zodiac:"tropical",aspectPoints:[],aspectWithPoints:[],aspectTypes:[]});
+  const cusps=horoscope.Houses.map(h=>h.ChartPosition.StartPosition.Ecliptic.DecimalDegrees);
   const KEYS=[{key:"sun",name:"Sun"},{key:"moon",name:"Moon"},{key:"mercury",name:"Mercury"},{key:"venus",name:"Venus"},{key:"mars",name:"Mars"},{key:"jupiter",name:"Jupiter"},{key:"saturn",name:"Saturn"},{key:"uranus",name:"Uranus"},{key:"neptune",name:"Neptune"},{key:"pluto",name:"Pluto"}];
   const asc=horoscope.Ascendant;
   const aD=asc.ChartPosition.Ecliptic.DecimalDegrees;
@@ -232,7 +244,7 @@ function calcChart(year,month,day,hour,minute,tz,lat,lon) {
       const d=b.ChartPosition.Ecliptic.DecimalDegrees;
       const deg=Math.floor(d%30);
       const min=Math.floor(((d%30)-deg)*60);
-      results.push({planet:name,sign:b.Sign.label,signGlyph:getSignGlyph(b.Sign.label),degrees:deg,minutes:min,house:b.House?b.House.id:1});
+      results.push({planet:name,sign:b.Sign.label,signGlyph:getSignGlyph(b.Sign.label),degrees:deg,minutes:min,house:getHouse(d,cusps)});
     }catch(e){results.push({planet:name,sign:"?",signGlyph:"?",degrees:0,minutes:0,house:0});}
   }
   return results;

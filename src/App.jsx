@@ -103,6 +103,7 @@ const CARD_IMAGES = [
 
 const CARD_BACK = "https://res.cloudinary.com/da1asg0hq/image/upload/v1778131327/ChatGPT_Image_May_7_2026_01_21_44_PM_fjtfbw.png";
 const BGM_URL   = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775831307/Silver_Leaf_Drift_jrf2xh.mp3";
+const BGM_VOLUME = 0.2; // 0 = silent, 1 = full volume
 const FLIP_URL  = "https://res.cloudinary.com/da1asg0hq/video/upload/v1775905865/freesound_community-flipcard-91468_oiatib.mp3";
 
 const PALETTE = [
@@ -229,26 +230,10 @@ export default function App() {
     setScreen(s);
   }
 
-  function startBgm() {
-    if (!BGM_URL||bgmOn) return;
-    if (!bgmAudio.current) { const a=new Audio(BGM_URL); a.loop=true; a.volume=0.5; bgmAudio.current=a; }
-    bgmAudio.current.play().then(()=>setBgmOn(true)).catch(()=>{});
-  }
-
-  useEffect(() => {
-    const go = () => {
-      if (!BGM_URL||bgmAudio.current) return;
-      const a=new Audio(BGM_URL); a.loop=true; a.volume=0.5; bgmAudio.current=a;
-      a.play().then(()=>setBgmOn(true)).catch(()=>{});
-      window.removeEventListener("click",go); window.removeEventListener("touchstart",go);
-    };
-    window.addEventListener("click",go); window.addEventListener("touchstart",go);
-    return ()=>{ window.removeEventListener("click",go); window.removeEventListener("touchstart",go); };
-  },[]);
-
+  // Music is OFF by default — it only plays when the visitor taps the music button
   function toggleBgm() {
     if (!BGM_URL) return;
-    if (!bgmAudio.current) { const a=new Audio(BGM_URL); a.loop=true; a.volume=0.5; bgmAudio.current=a; }
+    if (!bgmAudio.current) { const a=new Audio(BGM_URL); a.loop=true; a.volume=BGM_VOLUME; bgmAudio.current=a; }
     if (bgmOn) { bgmAudio.current.pause(); setBgmOn(false); }
     else { bgmAudio.current.play().then(()=>setBgmOn(true)).catch(()=>{}); }
   }
@@ -258,7 +243,7 @@ export default function App() {
   function handleInfoSubmit() {
     if (!clientName.trim()) { setNameError(true); return; }
     if (!clientContact.trim()) { setContactError(true); return; }
-    setNameError(false); setContactError(false); startBgm(); goTo("spreads");
+    setNameError(false); setContactError(false); goTo("spreads");
   }
 
   function selectSpread(sp) { setSpread(sp); setClientQuestion(""); goTo("question"); }
@@ -436,7 +421,7 @@ export default function App() {
 
   // ── HOME ──
   if (screen==="home") return (
-    <LandingPage onBeginReading={()=>{startBgm();goTo("info");}} onBeginChart={()=>goTo("chart")} onBeginOracle={()=>{startBgm();goTo("oracle");}} bgmOn={bgmOn} onToggleBgm={toggleBgm} lang={lang} onToggleLang={()=>setLang(l=>l==="en"?"zh":"en")}/>
+    <LandingPage onBeginReading={()=>goTo("info")} onBeginChart={()=>goTo("chart")} onBeginOracle={()=>goTo("oracle")} bgmOn={bgmOn} onToggleBgm={toggleBgm} lang={lang} onToggleLang={()=>setLang(l=>l==="en"?"zh":"en")}/>
   );
 
   // ── BIRTH CHART ──
